@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PARRILLA 40 — Simulador de parrilla al costado de la ruta</title>
+<meta name="description" content="Prendé el carbón, cociná al punto y bancá la cola. Un simulador de parrilla argentina contrarreloj: 06:30 a 21:00 en cinco minutos reales.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<header class="nav" id="nav">
+  <a class="nav__brand" href="#top">
+    <span class="nav__dot"></span>PARRILLA 40
+  </a>
+  <nav class="nav__links">
+    <a href="#jornada">La jornada</a>
+    <a href="#punto">El punto</a>
+    <a href="#parrilla">La parrilla</a>
+    <a href="#clientes">Los clientes</a>
+    <a href="#tienda">La tienda</a>
+  </nav>
+  <a class="btn btn--sm" href="#wishlist">Seguir el proyecto</a>
+</header>
+
+<!-- ══ HERO ══ -->
+<section class="hero" id="top">
+  <div class="hero__sky" id="heroSky"></div>
+  <img class="hero__layer hero__stars" id="heroStars" src="assets/fondo/estrellas.png" alt="">
+  <img class="hero__layer hero__sun"   id="heroSun"   src="assets/fondo/sol.png" alt="">
+  <img class="hero__layer hero__far"   data-depth="0.12" src="assets/fondo/nubes-lejos.png" alt="">
+  <img class="hero__layer hero__near"  data-depth="0.26" src="assets/fondo/nubes-cerca.png" alt="">
+  <img class="hero__layer hero__land"  data-depth="0.05" src="assets/fondo/paisaje.png" alt="">
+  <div class="hero__vig"></div>
+
+  <div class="hero__content">
+    <p class="hero__kicker">Simulador de parrilla argentina · contrarreloj</p>
+    <h1 class="hero__title">
+      <span class="hero__title-line">PARRILLA</span> <span class="hero__title-line hero__title-line--hot hero__title-num">40</span>
+    </h1>
+    <p class="hero__sub">
+      Tu parrilla al costado de la <strong>Ruta&nbsp;40</strong>. Abrís a las 06:30, cerrás a las 21:00
+      y tenés <strong>cinco minutos reales</strong> para que no se te vaya nadie con hambre.
+    </p>
+
+    <div class="hero__cta">
+      <a class="btn btn--big" href="#punto">Ver cómo se juega</a>
+      <a class="btn btn--ghost btn--big" href="#wishlist">Sumate a la lista</a>
+    </div>
+
+    <ul class="hero__stats">
+      <li><b data-count="14.5" data-suffix=" h">0</b><span>de jornada</span></li>
+      <li><b data-count="5" data-suffix=" min">0</b><span>reales por día</span></li>
+      <li><b data-count="6" data-suffix="">0</b><span>puntos de cocción</span></li>
+      <li><b data-count="3" data-suffix="">0</b><span>strikes y cerrás</span></li>
+    </ul>
+  </div>
+
+  <div class="smoke" aria-hidden="true">
+    <span></span><span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <a class="hero__scroll" href="#pitch" aria-label="Bajar">
+    <span class="hero__scroll-wheel"></span>
+  </a>
+</section>
+
+<!-- ══ MARQUEE ══ -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee__track" id="marqueeTrack"></div>
+</div>
+
+<!-- ══ PITCH ══ -->
+<section class="section section--pitch" id="pitch">
+  <div class="wrap">
+    <p class="eyebrow reveal">Qué es</p>
+    <h2 class="h2 reveal">No es cocinar. Es <em>llegar</em>.</h2>
+    <p class="lead reveal">
+      Prendés el carbón, tirás los cortes, los das vuelta antes de que se pasen, armás el plato
+      con su pan y su chimi, y lo llevás arrastrando hasta el cliente que ya te está mirando feo.
+      Todo eso, mientras el reloj de la jornada no para nunca.
+    </p>
+
+    <div class="pillars">
+      <article class="pillar reveal" style="--d:0ms">
+        <div class="pillar__ico">
+          <img src="assets/extras/carbon-prendido.png" alt="" class="px float-slow">
+        </div>
+        <h3>El calor no espera</h3>
+        <p>Cada brasa reparte calor a los slots vecinos y se va apagando sola. La parrilla que
+           armaste hace dos minutos ya no es la misma.</p>
+      </article>
+      <article class="pillar reveal" style="--d:110ms">
+        <div class="pillar__ico">
+          <img src="assets/cortes/vacio-hecho.png" alt="" class="px float-slow">
+        </div>
+        <h3>Cada cara, por separado</h3>
+        <p>La carne cocina sólo del lado apoyado. Girala con el botón derecho y empezás a llenar
+           la otra cara. Quemarla no tiene vuelta atrás.</p>
+      </article>
+      <article class="pillar reveal" style="--d:220ms">
+        <div class="pillar__ico">
+          <img src="assets/clientes/pov2.png" alt="" class="px float-slow pillar__ico--tall">
+        </div>
+        <h3>La paciencia se ve</h3>
+        <p>Cada cliente entra con su barra corriendo. Cuando se pone roja, tiembla. Cuando llega
+           a cero, se va — y te clava un strike.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PUNTO DE COCCIÓN ══ -->
+<section class="section section--dark" id="punto">
+  <div class="wrap">
+    <p class="eyebrow reveal">El punto</p>
+    <h2 class="h2 reveal">Seis bandas. Cuatro te pagan.</h2>
+    <p class="lead reveal">
+      El calor acumulado se parte en seis tramos iguales. <b>Crudo</b> y <b>Quemado</b> se entregan
+      igual — pero el cliente se va asqueado, no paga y te deja un strike. Movelo y mirá.
+    </p>
+
+    <div class="cooker reveal">
+      <div class="cooker__stage">
+        <div class="cooker__grill">
+          <img class="px cooker__grillimg" src="assets/ui/parrilla.png" alt="Parrilla">
+          <img class="px cooker__meat" id="cookMeat" src="assets/cortes/vacio-crudo.png" alt="Corte de carne">
+          <div class="cooker__heat" id="cookHeat"></div>
+        </div>
+
+        <div class="cooker__readout">
+          <span class="cooker__state" id="cookState">Crudo</span>
+          <span class="cooker__verdict" id="cookVerdict">No lo entregues</span>
+        </div>
+      </div>
+
+      <div class="cooker__panel">
+        <div class="cooker__bar">
+          <div class="cooker__fill" id="cookFill"></div>
+          <div class="cooker__ticks"><i></i><i></i><i></i><i></i><i></i></div>
+        </div>
+        <input class="cooker__range" id="cookRange" type="range" min="0" max="5" step="1" value="0"
+               aria-label="Punto de cocción">
+        <div class="cooker__labels" id="cookLabels">
+          <button data-i="0">Crudo</button>
+          <button data-i="1">Jugoso</button>
+          <button data-i="2">Hecho</button>
+          <button data-i="3">Bien&nbsp;Hecho</button>
+          <button data-i="4">Pasado</button>
+          <button data-i="5">Quemado</button>
+        </div>
+
+        <div class="cooker__cuts">
+          <span class="cooker__cutslabel">Probá otro corte</span>
+          <div class="cooker__cutrow" id="cutRow">
+            <button data-cut="vacio" class="is-on"><img class="px" src="assets/cortes/vacio-hecho.png" alt="Vacío"><span>Vacío</span></button>
+            <button data-cut="tira"><img class="px" src="assets/cortes/tira-hecho.png" alt="Tira de asado"><span>Tira</span></button>
+            <button data-cut="chorizo"><img class="px" src="assets/cortes/chorizo-hecho.png" alt="Chorizo"><span>Chorizo</span></button>
+            <button data-cut="paty"><img class="px" src="assets/cortes/paty-hecho.png" alt="Paty"><span>Paty</span></button>
+            <button data-cut="choripan"><img class="px" src="assets/cortes/choripan-hecho.png" alt="Choripán"><span>Choripán</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ JORNADA ══ -->
+<section class="section" id="jornada">
+  <div class="wrap">
+    <p class="eyebrow reveal">La jornada</p>
+    <h2 class="h2 reveal">De las 06:30 a las 21:00, en cinco minutos.</h2>
+    <p class="lead reveal">
+      El cielo, el sol y la afluencia de gente siguen la hora del día. Al mediodía te llenás;
+      a la nochecita entra la última tanda. Cierra a las 21:00 — pero el día termina recién
+      cuando se va el último cliente.
+    </p>
+
+    <div class="clock reveal">
+      <div class="clock__sky" id="clockSky">
+        <img class="clock__stars px" id="clockStars" src="assets/fondo/estrellas.png" alt="">
+        <img class="clock__body px" id="clockSun" src="assets/fondo/sol.png" alt="Sol">
+        <img class="clock__body px" id="clockMoon" src="assets/fondo/luna.png" alt="Luna">
+        <img class="clock__land px" src="assets/fondo/paisaje.png" alt="">
+        <div class="clock__hud">
+          <span class="clock__hour" id="clockHour">06:30</span>
+          <span class="clock__phase" id="clockPhase">Abrimos</span>
+        </div>
+      </div>
+
+      <div class="clock__timeline">
+        <div class="clock__progress" id="clockProgress"></div>
+        <div class="clock__marks">
+          <span style="--p:0%">06:30<i>abre</i></span>
+          <span style="--p:38%">12:00<i>pico</i></span>
+          <span style="--p:72%">17:00<i>tarde</i></span>
+          <span style="--p:100%">21:00<i>cierra</i></span>
+        </div>
+      </div>
+      <button class="clock__btn" id="clockBtn" aria-pressed="true">Pausar el día</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PARRILLA / FEATURES ══ -->
+<section class="section section--dark" id="parrilla">
+  <div class="wrap">
+    <p class="eyebrow reveal">Adentro del puesto</p>
+    <h2 class="h2 reveal">Todo pasa en una sola mesa.</h2>
+    <p class="lead reveal">
+      Sin cambiar de pantalla: el stock entra por la izquierda, la parrilla está en el medio,
+      los panes y los frascos salen por la derecha y el plato se va arrastrando hasta el cliente.
+    </p>
+
+    <div class="grid">
+      <article class="card reveal" style="--d:0ms">
+        <span class="card__key">Q</span>
+        <h3>Panel de stock</h3>
+        <p>Se desliza desde la izquierda. Arrastrás el corte directo del cajón a la brasa, sin pasos
+           intermedios. Si el hueco no entra, la <b>R</b> rota la pieza.</p>
+      </article>
+      <article class="card reveal" style="--d:80ms">
+        <span class="card__key">Espacio</span>
+        <h3>Capa carne / carbón</h3>
+        <p>La misma grilla, dos capas. Pasás a carbón para acomodar brasas, volvés a carne para cocinar.
+           Con <b>R</b> limpiás las cenizas.</p>
+      </article>
+      <article class="card reveal" style="--d:160ms">
+        <span class="card__key">T</span>
+        <h3>Panel de toppings</h3>
+        <p>Panes, guarniciones y frascos. El chimi y la criolla se <b>vierten</b>: inclinás el frasco sobre
+           el plato y quedan las salpicaduras.</p>
+      </article>
+      <article class="card reveal" style="--d:0ms">
+        <span class="card__key">C</span>
+        <h3>Un plato por vez</h3>
+        <p>Un solo corte por plato. La carne queda donde la soltaste — la podés reacomodar, mandarla a la
+           bandeja o devolverla a la parrilla.</p>
+      </article>
+      <article class="card reveal" style="--d:80ms">
+        <span class="card__key">↺</span>
+        <h3>Arrepentite</h3>
+        <p>El botón de rollback deshace lo último: el pan, la guarnición, la salsa. Incluso la carne,
+           que vuelve a la bandeja con sus tiempos de cocción intactos.</p>
+      </article>
+      <article class="card reveal" style="--d:160ms">
+        <span class="card__key">M</span>
+        <h3>Se acabó</h3>
+        <p>¿No te queda el corte que pidió? Avisás y el cliente cambia el pedido por algo que sí tengas.
+           Te lo acepta, pero te quedás sin propina.</p>
+      </article>
+    </div>
+
+    <div class="extras reveal">
+      <span class="extras__label">Lo que le podés poner encima</span>
+      <div class="extras__row">
+        <figure><img class="px" src="assets/extras/pan-flauta.png" alt=""><figcaption>Pan flauta</figcaption></figure>
+        <figure><img class="px" src="assets/extras/pan-paty.png" alt=""><figcaption>Pan de paty</figcaption></figure>
+        <figure><img class="px" src="assets/extras/papas.png" alt=""><figcaption>Fritas</figcaption></figure>
+        <figure><img class="px" src="assets/extras/ensalada.png" alt=""><figcaption>Ensalada verde</figcaption></figure>
+        <figure><img class="px" src="assets/extras/ensalada-huevo.png" alt=""><figcaption>Papa y huevo</figcaption></figure>
+        <figure><img class="px" src="assets/extras/chimi.png" alt=""><figcaption>Chimichurri</figcaption></figure>
+        <figure><img class="px" src="assets/extras/criolla.png" alt=""><figcaption>Salsa criolla</figcaption></figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CLIENTES ══ -->
+<section class="section" id="clientes">
+  <div class="wrap">
+    <p class="eyebrow reveal">Los clientes</p>
+    <h2 class="h2 reveal">Cada uno trae su reloj.</h2>
+    <p class="lead reveal">
+      Entran según la hora y la curva de afluencia. Cada uno llega con su pedido en una burbuja
+      y una barra que no para. Cuando la barra se pone roja, tiembla. Vos ya sabés lo que viene.
+    </p>
+
+    <div class="queue reveal" id="queue">
+      <figure class="cust" style="--p:78%; --d:0s">
+        <div class="cust__bubble">Vacío · jugoso<br><small>con pan flauta</small></div>
+        <img class="px" src="assets/clientes/pov1.png" alt="Cliente">
+        <div class="cust__bar"><span></span></div>
+      </figure>
+      <figure class="cust" style="--p:52%; --d:.4s">
+        <div class="cust__bubble">Tira de asado · hecha<br><small>+ fritas</small></div>
+        <img class="px" src="assets/clientes/pov2.png" alt="Cliente">
+        <div class="cust__bar"><span></span></div>
+      </figure>
+      <figure class="cust cust--angry" style="--p:14%; --d:.8s">
+        <div class="cust__bubble">Choripán<br><small>con chimi</small></div>
+        <img class="px" src="assets/clientes/pov3.png" alt="Cliente impaciente">
+        <div class="cust__bar"><span></span></div>
+      </figure>
+      <figure class="cust" style="--p:91%; --d:1.2s">
+        <div class="cust__bubble">Paty · bien hecho<br><small>pan de paty</small></div>
+        <img class="px" src="assets/clientes/pov4.png" alt="Cliente">
+        <div class="cust__bar"><span></span></div>
+      </figure>
+      <figure class="cust" style="--p:64%; --d:1.6s">
+        <div class="cust__bubble">Chorizo<br><small>y ensalada</small></div>
+        <img class="px" src="assets/clientes/pov5.png" alt="Cliente">
+        <div class="cust__bar"><span></span></div>
+      </figure>
+    </div>
+
+    <div class="tip reveal">
+      <div class="tip__col">
+        <h3><img class="px tip__coin" src="assets/ui/moneda.png" alt="">Propina</h3>
+        <p>Clavaste el punto y el cliente todavía tenía paciencia: propina completa. Te fuiste
+           un punto para arriba, o llegaste sobre la hora: cobrás, pero seco.</p>
+      </div>
+      <div class="tip__col">
+        <h3><span class="strike-x">✕</span>Strike</h3>
+        <p>Se te fue uno con la barra en cero, o entregaste algo crudo o quemado. Tres de esos
+           y te clavan el cartel: cierra antes de hora y seguís atendiendo sólo a los que quedaron adentro.</p>
+      </div>
+    </div>
+
+    <div class="strikes reveal" id="strikes">
+      <span class="strikes__label">Te clavaron el cartel</span>
+      <div class="strikes__row">
+        <i class="strike" style="--d:0ms">✕</i>
+        <i class="strike" style="--d:260ms">✕</i>
+        <i class="strike" style="--d:520ms">✕</i>
+      </div>
+      <span class="strikes__closed">CERRADO</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TIENDA ══ -->
+<section class="section section--dark" id="tienda">
+  <div class="wrap">
+    <p class="eyebrow reveal">Entre noche y noche</p>
+    <h2 class="h2 reveal">Lo que ganaste, lo reponés.</h2>
+    <p class="lead reveal">
+      Cerrada la jornada se abre la tienda. Carbón, cortes, mejoras y salsas. No hay savegame
+      que te salve: si mañana abrís sin brasas, es problema tuyo.
+    </p>
+
+    <div class="shop">
+      <article class="shop__card reveal" style="--d:0ms">
+        <img class="px" src="assets/extras/carbon-prendido.png" alt="">
+        <h3>Carbón</h3>
+        <p>La tienda te sugiere cuánto comprar mirando lo que venís quemando por noche.</p>
+      </article>
+      <article class="shop__card reveal" style="--d:80ms">
+        <img class="px" src="assets/cortes/tira-hecho.png" alt="">
+        <h3>Cortes</h3>
+        <p>Vacío, tira de asado, matambre, chinchulín, costillita, pechuga, paty. Se desbloquean con las noches.</p>
+      </article>
+      <article class="shop__card reveal" style="--d:160ms">
+        <img class="px" src="assets/ui/radio.png" alt="">
+        <h3>Mejoras</h3>
+        <p>Carbón que dura más, más clientes a la vez, mejor propina — y una radio para el puesto.</p>
+      </article>
+      <article class="shop__card reveal" style="--d:240ms">
+        <img class="px" src="assets/extras/chimi.png" alt="">
+        <h3>Salsas</h3>
+        <p>Chimichurri y criolla por frasco. Lo que sube el ticket y lo que te deja propina.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA / FICHA ══ -->
+<section class="cta" id="wishlist">
+  <div class="cta__bg"></div>
+  <div class="wrap wrap--narrow">
+    <h2 class="cta__title reveal">Todavía está en la parrilla.</h2>
+    <p class="cta__sub reveal">
+      Parrilla 40 se está desarrollando ahora mismo. Dejá tu mail y te avisamos cuando
+      se pueda jugar la primera noche completa.
+    </p>
+
+    <form class="signup reveal" id="signup" novalidate>
+      <input type="email" id="signupMail" placeholder="tumail@ejemplo.com" aria-label="Tu correo" required>
+      <button class="btn btn--big" type="submit">Avisame</button>
+    </form>
+    <p class="signup__note" id="signupNote" role="status"></p>
+
+    <dl class="spec reveal">
+      <div><dt>Motor</dt><dd>Unity 2022.3 · URP 2D</dd></div>
+      <div><dt>Plataforma</dt><dd>PC</dd></div>
+      <div><dt>Idioma</dt><dd>Español rioplatense</dd></div>
+      <div><dt>Estado</dt><dd>En desarrollo</dd></div>
+    </dl>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap foot__in">
+    <span class="foot__brand">PARRILLA 40</span>
+    <span class="foot__meta">Arte y código del proyecto · página armada con los sprites del juego</span>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
