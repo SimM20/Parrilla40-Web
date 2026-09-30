@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Encuesta de playtest — Parrilla Rutera</title>
+  <title>Encuesta de playtest | Parrilla Rutera</title>
   <meta name="description" content="Contanos cómo fue tu experiencia en el playtest de Parrilla Rutera.">
   <link rel="icon" href="assets/extras/carbon-prendido.png">
   <link rel="stylesheet" href="styles.css">
@@ -18,11 +18,17 @@
   <header class="playtest-nav wrap"><a class="nav__brand" href="index.html"><span class="nav__dot"></span>PARRILLA 40</a><a href="index.html">Volver al sitio</a></header>
   <main class="wrap wrap--narrow playtest-main" id="main">
     <div class="playtest-intro">
-      <img class="px playtest-sprite" src="assets/extras/carbon-prendido.png" alt="">
-      <p class="eyebrow">Parrilla Rutera · Playtest</p>
-      <h1 class="h2">¿Cómo estuvo <em>la jornada?</em></h1>
-      <p class="lead">Tu experiencia nos ayuda a mejorar la próxima noche.</p>
-      <p class="survey-meta">15 preguntas · Todas obligatorias · Sin datos personales</p>
+      <div>
+        <p class="eyebrow">Encuesta del playtest</p>
+        <h1 class="h2">¿Cómo estuvo <em>la jornada?</em></h1>
+        <p class="lead">Ahora el cliente sos vos. Contanos cómo te atendió la parrilla y la próxima noche sale mejor.</p>
+        <ul class="survey-meta">
+          <li><b>15</b> preguntas</li>
+          <li><b>3</b> bloques</li>
+          <li><b>0</b> datos personales</li>
+        </ul>
+      </div>
+      <img class="px playtest-sprite" src="assets/clientes/pov1.png" alt="" width="150" height="250">
     </div>
     <noscript><p class="feedback">Activá JavaScript para completar y enviar la encuesta.</p></noscript>
     <form id="survey" novalidate hidden>
@@ -32,6 +38,7 @@
       </div>
       <div id="questions"></div>
       <div class="submit-area">
+        <img class="px" src="assets/extras/carbon-prendido.png" alt="" width="64" height="64">
         <h2>Gracias por estar del otro lado.</h2>
         <p id="completion-note">Antes de enviar, respondé las 15 preguntas.</p>
         <p id="survey-status" class="feedback" role="status" aria-live="polite"></p>
@@ -39,6 +46,7 @@
       </div>
     </form>
     <section id="success" class="playtest-panel" hidden aria-labelledby="thanks">
+      <img class="px" src="assets/cortes/choripan-hecho.png" alt="" width="96" height="96">
       <h2 id="thanks" class="h2" tabindex="-1">Gracias por <em>jugar.</em></h2>
       <p>Tus respuestas quedaron guardadas. Nos vemos en la próxima noche.</p>
       <a class="btn" href="index.html">Volver al sitio</a>

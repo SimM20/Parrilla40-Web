@@ -9,16 +9,27 @@
   const progress = document.querySelector('#survey-progress');
   const progressCount = document.querySelector('#progress-count');
   const sections = {
-    0: ['Tu partida', 'Empecemos por las noches que jugaste.'],
-    3: ['La experiencia', 'Pensá en cómo se sintió jugar, desde el primer pedido.'],
-    13: ['Lo que te llevás', 'Dos respuestas para ayudarnos a mejorar. No incluyas datos personales.']
+    0: ['Tu partida', 'Empecemos por las noches que jugaste.', 'assets/extras/carbon-prendido.png'],
+    3: ['La experiencia', 'Pensá en cómo se sintió jugar, desde el primer pedido.', 'assets/cortes/chorizo-jugoso.png'],
+    13: ['Lo que te llevás', 'Dos respuestas para ayudarnos a mejorar. No incluyas datos personales.', 'assets/cortes/choripan-hecho.png']
   };
+  let block = container;
 
   questions.forEach((q, index) => {
     if (sections[index]) {
+      const [title, text, sprite] = sections[index];
+      block = element('section', undefined, 'survey-block');
+      block.setAttribute('aria-labelledby', `block-${index}`);
       const heading = element('div', undefined, 'survey-section-heading');
-      heading.append(element('h2', sections[index][0]), element('p', sections[index][1]));
-      container.append(heading);
+      const img = element('img', undefined, 'px');
+      img.src = sprite; img.alt = ''; img.width = 56; img.height = 56;
+      const h2 = element('h2', title);
+      h2.id = `block-${index}`;
+      const copy = element('div');
+      copy.append(h2, element('p', text));
+      heading.append(img, copy);
+      block.append(heading);
+      container.append(block);
     }
     const group = element('fieldset', undefined, 'question');
     group.id = `question-${q.name}`;
@@ -64,7 +75,7 @@
     const error = element('p', '', 'field-error');
     error.id = `error-${q.name}`;
     group.append(error);
-    container.append(group);
+    block.append(group);
   });
   form.hidden = false;
 
