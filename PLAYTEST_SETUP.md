@@ -57,6 +57,8 @@ El cliente oficial Supabase está fijado a `2.117.2` por CDN; las páginas nueva
    - `supabasePublicKey`: clave publishable (o legacy anon), nunca clave privada/service role.
    - `buildVersion`: identificador real de la build probada, de 1 a 100 caracteres. Se cambia sólo aquí.
 
+   La URL y la clave publishable aparecen en **Connect** dentro del proyecto. También se puede elegir una clave desde **Settings → API Keys**. Usar la clave que comienza con `sb_publishable_`, no `sb_secret_`. Este sitio estático lee el archivo de configuración directamente; no necesita un archivo `.env` ni un build.
+
 8. Ejecutar las comprobaciones reales del apartado siguiente antes de publicar. No habilitar SELECT para resolver errores de inserción: el cliente inserta sin pedir filas de vuelta.
 
 ## Verificación de la conexión real

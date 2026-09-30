@@ -5,14 +5,31 @@
   const status = document.querySelector('#survey-status');
   const submit = document.querySelector('#submit-survey');
   let sending = false, submitted = false, sessionId;
+  const container = document.querySelector('#questions');
+  const progress = document.querySelector('#survey-progress');
+  const progressCount = document.querySelector('#progress-count');
+  const sections = {
+    0: ['Tu partida', 'Empecemos por las noches que jugaste.'],
+    3: ['La experiencia', 'Pensá en cómo se sintió jugar, desde el primer pedido.'],
+    13: ['Lo que te llevás', 'Dos respuestas para ayudarnos a mejorar. No incluyas datos personales.']
+  };
 
   questions.forEach((q, index) => {
+    if (sections[index]) {
+      const heading = element('div', undefined, 'survey-section-heading');
+      heading.append(element('h2', sections[index][0]), element('p', sections[index][1]));
+      container.append(heading);
+    }
     const group = element('fieldset', undefined, 'question');
     group.id = `question-${q.name}`;
-    group.append(element('legend', `${index + 1}. ${q.label}`));
+    const legend = element('legend');
+    const number = element('span', String(index + 1).padStart(2, '0'), 'question-number');
+    legend.append(number, element('span', q.label));
+    group.append(legend);
     if (q.options) {
       if (q.type === 'rating') {
-        const hint = element('p', `1 = ${q.low} · 5 = ${q.high}`, 'field-hint');
+        const hint = element('p', undefined, 'field-hint scale-ends');
+        hint.append(element('span', `1 · ${q.low}`), element('span', `5 · ${q.high}`));
         hint.id = `hint-${q.name}`;
         group.append(hint);
       }
@@ -26,6 +43,7 @@
         options.append(wrapper);
       }
       group.append(options);
+      if (q.type === 'rating') group.append(group.querySelector('.scale-ends'));
     } else {
       const label = element('label', q.label, 'sr-only');
       label.htmlFor = q.name;
@@ -37,34 +55,62 @@
       const hint = element('p', q.type === 'text' ? 'Hasta 4000 caracteres. No incluyas datos personales.' : 'Un número entero, sin decimales. Si no llegaste a ninguna noche, ingresá 0.', 'field-hint');
       hint.id = `hint-${q.name}`;
       group.append(label, input, hint);
+      if (q.type === 'text') {
+        const count = element('span', '0 / 4000', 'text-count');
+        count.id = `count-${q.name}`;
+        group.append(count);
+      }
     }
     const error = element('p', '', 'field-error');
     error.id = `error-${q.name}`;
     group.append(error);
-    document.querySelector('#questions').append(group);
+    container.append(group);
   });
   form.hidden = false;
 
-  function showErrors(errors) {
+  function updateProgress(errors) {
+    const count = questions.length - Object.keys(errors).length;
+    if (progress.value !== count) {
+      progress.value = count;
+      progressCount.textContent = `${count} de 15 respondidas`;
+    }
+    document.querySelector('#completion-note').textContent = count === 15
+      ? 'Todo listo. Podés revisar tus respuestas antes de enviarlas.'
+      : `Te ${15 - count === 1 ? 'falta 1 respuesta' : `faltan ${15 - count} respuestas`} para terminar.`;
     questions.forEach(q => {
-      document.querySelector(`#error-${q.name}`).textContent = errors[q.name] || '';
-      form.querySelectorAll(`[name="${q.name}"]`).forEach(input => {
-        input.setAttribute('aria-invalid', String(Boolean(errors[q.name])));
-      });
+      document.querySelector(`#question-${q.name}`).classList.toggle('is-complete', !errors[q.name]);
     });
+  }
+
+  function showFieldError(name, error) {
+    document.querySelector(`#error-${name}`).textContent = error || '';
+    document.querySelector(`#question-${name}`).classList.toggle('has-error', Boolean(error));
+    form.querySelectorAll(`[name="${name}"]`).forEach(input => input.setAttribute('aria-invalid', String(Boolean(error))));
+  }
+
+  function showErrors(errors) {
+    questions.forEach(q => showFieldError(q.name, errors[q.name]));
   }
   form.addEventListener('input', event => {
     const name = event.target.name;
     if (!name) return;
     const { errors } = validate(Object.fromEntries(new FormData(form)));
-    document.querySelector(`#error-${name}`).textContent = errors[name] || '';
-    form.querySelectorAll(`[name="${name}"]`).forEach(input => input.setAttribute('aria-invalid', String(Boolean(errors[name]))));
+    if (event.target.getAttribute('aria-invalid') === 'true') showFieldError(name, errors[name]);
+    const count = document.querySelector(`#count-${name}`);
+    if (count) count.textContent = `${event.target.value.length} / 4000`;
+    updateProgress(errors);
+  });
+  form.addEventListener('focusout', event => {
+    if (!event.target.name || sending || submitted) return;
+    const { errors } = validate(Object.fromEntries(new FormData(form)));
+    showFieldError(event.target.name, errors[event.target.name]);
   });
   form.addEventListener('submit', async event => {
     event.preventDefault();
     if (sending || submitted) return;
     const { answers, errors } = validate(Object.fromEntries(new FormData(form)));
     showErrors(errors);
+    updateProgress(errors);
     if (Object.keys(errors).length) {
       status.textContent = 'Revisá las preguntas marcadas. Tus respuestas siguen acá.';
       form.querySelector('[aria-invalid="true"]').focus();

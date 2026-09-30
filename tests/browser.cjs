@@ -38,7 +38,12 @@ const screenshots = process.env.SCREENSHOT_DIR;
       if (q.options) await page.locator(`input[name="${q.name}"]`).first().check();
       else await page.locator(`[name="${q.name}"]`).fill(q.type === 'number' ? '2' : 'Una respuesta del playtest');
     }
+    assert.equal(await page.locator('#survey-progress').getAttribute('value'), '15');
+    assert.equal(await page.locator('#progress-count').textContent(), '15 de 15 respondidas');
+    assert.match(await page.locator('#completion-note').textContent(), /Todo listo/);
+    assert.equal(await page.locator('#count-favorite_part').textContent(), '26 / 4000');
     await page.locator('#highest_night').fill('-1');
+    assert.equal(await page.locator('#survey-progress').getAttribute('value'), '14');
     await page.locator('#submit-survey').click();
     assert.match(await page.locator('#error-highest_night').textContent(), /entero/);
     await page.locator('#highest_night').fill('2');

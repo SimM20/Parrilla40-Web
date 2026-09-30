@@ -13,21 +13,27 @@
   <script defer src="playtest.js"></script>
   <script defer src="preguntas.js"></script>
 </head>
-<body class="playtest-page">
+<body class="playtest-page survey-page">
   <a class="skip-link" href="#main">Ir a la encuesta</a>
   <header class="playtest-nav wrap"><a class="nav__brand" href="index.html"><span class="nav__dot"></span>PARRILLA 40</a><a href="index.html">Volver al sitio</a></header>
   <main class="wrap wrap--narrow playtest-main" id="main">
     <div class="playtest-intro">
-      <img class="px playtest-sprite" src="assets/ui/parrilla.png" alt="">
+      <img class="px playtest-sprite" src="assets/extras/carbon-prendido.png" alt="">
       <p class="eyebrow">Parrilla Rutera · Playtest</p>
       <h1 class="h2">¿Cómo estuvo <em>la jornada?</em></h1>
       <p class="lead">Tu experiencia nos ayuda a mejorar la próxima noche.</p>
-      <p>Son 15 preguntas, todas obligatorias. La encuesta es anónima: no incluyas datos personales en tus respuestas.</p>
+      <p class="survey-meta">15 preguntas · Todas obligatorias · Sin datos personales</p>
     </div>
     <noscript><p class="feedback">Activá JavaScript para completar y enviar la encuesta.</p></noscript>
     <form id="survey" novalidate hidden>
+      <div class="survey-progress">
+        <div><span>Tu encuesta</span><strong id="progress-count" role="status">0 de 15 respondidas</strong></div>
+        <progress id="survey-progress" max="15" value="0" aria-label="Preguntas respondidas"></progress>
+      </div>
       <div id="questions"></div>
       <div class="submit-area">
+        <h2>Gracias por estar del otro lado.</h2>
+        <p id="completion-note">Antes de enviar, respondé las 15 preguntas.</p>
         <p id="survey-status" class="feedback" role="status" aria-live="polite"></p>
         <button class="btn btn--big" id="submit-survey" type="submit">Enviar respuestas</button>
       </div>

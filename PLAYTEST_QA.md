@@ -60,3 +60,12 @@ Los documentos de instrucciones originales y `prompts/` estaban sin seguimiento 
 4. Publicar archivos en el hosting estático existente y repetir los flujos con HTTPS y rutas directas.
 
 Las pruebas PostgreSQL locales no validan la configuración de Data API, red ni permisos efectivos de un proyecto remoto todavía no elegido.
+
+## Refinamiento posterior de la encuesta
+
+- Preguntas organizadas visualmente en tres temas, sin cambiar cantidad, orden ni contenido.
+- Progreso visible durante el recorrido, calculado sobre respuestas válidas; vuelve de 15 a 14 si una respuesta deja de ser válida.
+- Escalas con números grandes, extremos explicados y selección con marca y contraste; opciones breves adaptadas al móvil.
+- Menos bordes repetidos, jerarquía de lectura más clara y cierre con indicación de respuestas pendientes.
+- Contadores de texto y validación al salir del campo o enviar; una corrección elimina el error durante la escritura.
+- Repetidas las pruebas de navegador en cuatro anchos, flujo íntegro por teclado, errores/reintentos, panel y regresiones. Añadidas comprobaciones del progreso y los contadores. Capturas de escritorio, móvil y escala seleccionada inspeccionadas.
