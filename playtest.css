@@ -1,0 +1,68 @@
+/* Feature-only styles: the landing keeps its original stylesheet and behavior. */
+.playtest-page { overflow-x: visible; }
+.playtest-page [hidden] { display: none !important; }
+.playtest-page a:not(.btn):not(.nav__brand) { color: var(--gold); }
+.playtest-page :focus-visible { outline: 3px solid var(--gold); outline-offset: 5px; }
+.playtest-nav { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-block: 24px; flex-wrap: wrap; }
+.playtest-nav a { min-height: 44px; display: inline-flex; align-items: center; }
+.playtest-main { padding-block: 40px 80px; min-height: 75vh; }
+.playtest-intro { padding-bottom: 26px; border-bottom: 2px solid var(--ember); margin-bottom: 28px; }
+.playtest-intro .lead { margin-bottom: 16px; }
+.playtest-sprite { width: 84px; margin-bottom: 22px; }
+.question { min-width: 0; padding: 22px 24px 18px; margin: 0 0 28px; border: 1px solid rgba(246,232,214,.25); border-radius: var(--r); background: var(--char); }
+.question legend { font-size: 19px; font-weight: 900; padding: 0 8px; max-width: 100%; }
+.choices { display: flex; gap: 10px; flex-wrap: wrap; }
+.choice { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 10px 15px; border: 2px solid rgba(246,232,214,.3); border-radius: 10px; cursor: pointer; }
+.choice:hover { border-color: var(--ember); }
+.choice:has(input:checked) { border-color: var(--gold); background: var(--char2); font-weight: 900; }
+.choice:has(input:focus-visible) { outline: 3px solid var(--gold); outline-offset: 3px; }
+.choice input { accent-color: var(--gold); width: 18px; height: 18px; flex-shrink: 0; margin: 0; }
+.ratings { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.ratings .choice { justify-content: center; padding: 10px 5px; }
+.playtest-page input:not([type=radio]), .playtest-page textarea, .playtest-page select { width: 100%; min-width: 0; border: 2px solid rgba(246,232,214,.35); border-radius: 10px; background: var(--coal); color: var(--cream); padding: 12px 14px; font: inherit; }
+.playtest-page input[type=number] { max-width: 240px; }
+.playtest-page textarea { resize: vertical; min-height: 140px; }
+.playtest-page [aria-invalid=true]:not([type=radio]) { border-color: var(--gold); }
+.field-hint { font-size: 15px; color: var(--cream-dim); margin: 0 0 14px; }
+textarea + .field-hint, input + .field-hint { margin-top: 10px; }
+.field-error { color: var(--gold); font-weight: 700; margin: 12px 0 0; }
+.field-error:empty { display: none; }
+.feedback { color: var(--gold); overflow-wrap: anywhere; }
+.feedback:empty { display: none; }
+.submit-area { padding: 0 0 20px; }
+.playtest-page .btn:disabled { opacity: .65; cursor: wait; transform: none; }
+.playtest-panel { padding: 26px; border-radius: var(--r); background: var(--char); border: 1px solid rgba(246,232,214,.22); }
+.gate { max-width: 540px; }
+.gate label { display: block; margin-bottom: 8px; font-weight: 900; }
+.gate .btn { margin-top: 22px; }
+.results-tools { display: flex; gap: 20px; align-items: end; flex-wrap: wrap; margin-bottom: 28px; }
+.results-tools label { display: grid; gap: 8px; flex: 1; min-width: 0; }
+.metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-block: 24px; }
+.metric { margin: 0; padding: 22px; background: var(--char); border-radius: var(--r); }
+.metric dt { color: var(--cream-dim); }
+.metric dd { margin: 8px 0 0; font: 28px "Bungee", sans-serif; color: var(--gold); }
+.results-section { margin-block: 36px; }
+.results-section h2 { font: 23px "Bungee", sans-serif; }
+.rating-summary { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px 20px; }
+.rating-summary dt, .rating-summary dd { padding-block: 12px; margin: 0; border-bottom: 1px solid rgba(246,232,214,.2); }
+.rating-summary dd { color: var(--gold); font-weight: 900; }
+.distribution { display: grid; gap: 14px; padding: 0; list-style: none; }
+.distribution span { display: block; }
+.distribution progress { width: 100%; height: 12px; accent-color: var(--ember); }
+.response { border-top: 1px solid rgba(246,232,214,.25); padding-block: 22px; overflow-wrap: anywhere; }
+.response h3 { color: var(--gold); font-size: 16px; margin: 0 0 16px; }
+.response p { white-space: pre-wrap; margin: 6px 0 20px; }
+.sr-only, .skip-link:not(:focus) { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.skip-link:focus { position: fixed; z-index: 100; top: 12px; left: 12px; background: var(--coal); padding: 14px; }
+@media (max-width:620px) {
+  .playtest-main { padding-top: 24px; }
+  .question { padding: 18px 14px; }
+  .question legend { font-size: 18px; }
+  .ratings { gap: 6px; }
+  .ratings .choice { flex-direction: column; gap: 4px; }
+  .choices:not(.ratings) .choice { flex-grow: 1; }
+  .playtest-page .btn { max-width: 100%; white-space: normal; }
+  .submit-area .btn { width: 100%; }
+  .metrics { grid-template-columns: minmax(0, 1fr); }
+  .playtest-panel { padding: 20px; }
+}

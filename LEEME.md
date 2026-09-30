@@ -38,3 +38,12 @@ fonts/         Bungee y Nunito, las mismas del juego
 
 Es HTML plano: sirve cualquier hosting estático (GitHub Pages, Netlify, itch.io).
 Subís la carpeta entera tal cual está.
+
+## Encuesta de playtest V1
+
+El índice incluye un acceso a `preguntas.html`. La encuesta requiere un servidor HTTP
+estático y configurar Supabase para enviar respuestas. El panel privado se abre sólo
+por su URL y valida la contraseña en la base de datos.
+
+Ver [PLAYTEST_SETUP.md](PLAYTEST_SETUP.md) para ejecutar localmente, conectar Supabase,
+provisionar el verificador sin guardar la contraseña, probar y publicar la V1.

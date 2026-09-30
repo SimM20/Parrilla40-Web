@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Encuesta de playtest — Parrilla Rutera</title>
+  <meta name="description" content="Contanos cómo fue tu experiencia en el playtest de Parrilla Rutera.">
+  <link rel="icon" href="assets/extras/carbon-prendido.png">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="playtest.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
+  <script defer src="playtest-config.js"></script>
+  <script defer src="playtest.js"></script>
+  <script defer src="preguntas.js"></script>
+</head>
+<body class="playtest-page">
+  <a class="skip-link" href="#main">Ir a la encuesta</a>
+  <header class="playtest-nav wrap"><a class="nav__brand" href="index.html"><span class="nav__dot"></span>PARRILLA 40</a><a href="index.html">Volver al sitio</a></header>
+  <main class="wrap wrap--narrow playtest-main" id="main">
+    <div class="playtest-intro">
+      <img class="px playtest-sprite" src="assets/ui/parrilla.png" alt="">
+      <p class="eyebrow">Parrilla Rutera · Playtest</p>
+      <h1 class="h2">¿Cómo estuvo <em>la jornada?</em></h1>
+      <p class="lead">Tu experiencia nos ayuda a mejorar la próxima noche.</p>
+      <p>Son 15 preguntas, todas obligatorias. La encuesta es anónima: no incluyas datos personales en tus respuestas.</p>
+    </div>
+    <noscript><p class="feedback">Activá JavaScript para completar y enviar la encuesta.</p></noscript>
+    <form id="survey" novalidate hidden>
+      <div id="questions"></div>
+      <div class="submit-area">
+        <p id="survey-status" class="feedback" role="status" aria-live="polite"></p>
+        <button class="btn btn--big" id="submit-survey" type="submit">Enviar respuestas</button>
+      </div>
+    </form>
+    <section id="success" class="playtest-panel" hidden aria-labelledby="thanks">
+      <h2 id="thanks" class="h2" tabindex="-1">Gracias por <em>jugar.</em></h2>
+      <p>Tus respuestas quedaron guardadas. Nos vemos en la próxima noche.</p>
+      <a class="btn" href="index.html">Volver al sitio</a>
+    </section>
+  </main>
+  <footer class="foot"><div class="wrap"><span class="foot__brand">PARRILLA 40</span></div></footer>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="referrer" content="no-referrer">
+  <title>Resultados de playtest — Parrilla Rutera</title>
+  <link rel="icon" href="assets/extras/carbon-prendido.png">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="playtest.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
+  <script defer src="playtest-config.js"></script>
+  <script defer src="playtest.js"></script>
+  <script defer src="resultados.js"></script>
+</head>
+<body class="playtest-page">
+  <a class="skip-link" href="#main">Ir al contenido</a>
+  <header class="playtest-nav wrap"><a class="nav__brand" href="index.html"><span class="nav__dot"></span>PARRILLA 40</a><a href="index.html">Volver al sitio</a></header>
+  <main class="wrap wrap--narrow playtest-main" id="main">
+    <div class="playtest-intro">
+      <img class="px playtest-sprite" src="assets/ui/candado.png" alt="">
+      <p class="eyebrow">Parrilla Rutera · Equipo</p>
+      <h1 class="h2">Lo que dejó <em>la jornada.</em></h1>
+      <p class="lead">Resultados privados del playtest.</p>
+    </div>
+    <noscript><p class="feedback">Activá JavaScript para consultar los resultados.</p></noscript>
+    <form id="gate" class="playtest-panel gate" novalidate>
+      <p>Ingresá la contraseña del equipo para ver las respuestas.</p>
+      <label for="admin-password">Contraseña</label>
+      <input id="admin-password" name="admin-password" type="password" autocomplete="current-password" required aria-describedby="gate-status">
+      <p class="feedback" id="gate-status" role="status" aria-live="polite"></p>
+      <button class="btn" id="unlock" type="submit" disabled>Ver resultados</button>
+    </form>
+    <section id="dashboard" hidden aria-labelledby="results-heading">
+      <h2 id="results-heading" tabindex="-1">Resultados del playtest</h2>
+      <div class="results-tools">
+        <label id="build-filter-label" hidden>Build del juego<select id="build-filter"></select></label>
+        <button class="btn btn--ghost" id="lock" type="button">Cerrar resultados</button>
+      </div>
+      <div id="results-content" aria-live="polite"></div>
+    </section>
+  </main>
+  <footer class="foot"><div class="wrap"><span class="foot__brand">PARRILLA 40</span></div></footer>
+</body>
+</html>
