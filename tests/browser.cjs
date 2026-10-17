@@ -174,7 +174,10 @@ const screenshots = process.env.SCREENSHOT_DIR;
     assert.equal(await page.locator('#clockBtn').textContent(), 'Seguir el día');
     console.log('PASS landing: CTA, cooking, cut change, day pause, existing form, no results link, four widths');
     await page.goto(`${base}/preguntas.html`);
-    for (let i = 0; i < 4; i++) await page.keyboard.press('Tab');
+    for (let i = 0; i < 16; i++) {
+      await page.keyboard.press('Tab');
+      if (await page.evaluate(() => document.activeElement.name === 'completed_night_1')) break;
+    }
     for (const q of definitions) {
       assert.equal(await page.evaluate(() => document.activeElement.name), q.name);
       if (q.options) await page.keyboard.press('Space');
@@ -186,6 +189,8 @@ const screenshots = process.env.SCREENSHOT_DIR;
     await page.locator('#success').waitFor({ state: 'visible' });
     console.log('PASS full survey completed and submitted using keyboard only');
     await page.unroute('**/playtest-config.js');
+    // Keep this failure test offline even when real public configuration exists.
+    await page.route('**/playtest-config.js', route => route.fulfill({ contentType: 'application/javascript', body: 'window.PLAYTEST_CONFIG={};' }));
     await page.goto(`${base}/preguntas.html`);
     for (const q of definitions) {
       if (q.options) await page.locator(`input[name="${q.name}"]`).first().check();

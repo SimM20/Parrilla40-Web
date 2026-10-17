@@ -1,0 +1,162 @@
+{
+  "assets/extras/chimi.png": {
+    "width": 1238,
+    "height": 1246,
+    "variants": [
+      {
+        "width": 95,
+        "height": 96,
+        "stem": "chimi-95"
+      },
+      {
+        "width": 191,
+        "height": 192,
+        "stem": "chimi-191"
+      }
+    ]
+  },
+  "assets/extras/criolla.png": {
+    "width": 2624,
+    "height": 1622,
+    "variants": [
+      {
+        "width": 155,
+        "height": 96,
+        "stem": "criolla-155"
+      },
+      {
+        "width": 311,
+        "height": 192,
+        "stem": "criolla-311"
+      }
+    ]
+  },
+  "assets/extras/ensalada-huevo.png": {
+    "width": 1238,
+    "height": 1248,
+    "variants": [
+      {
+        "width": 95,
+        "height": 96,
+        "stem": "ensalada-huevo-95"
+      },
+      {
+        "width": 190,
+        "height": 192,
+        "stem": "ensalada-huevo-190"
+      }
+    ]
+  },
+  "assets/extras/ensalada.png": {
+    "width": 1240,
+    "height": 1248,
+    "variants": [
+      {
+        "width": 95,
+        "height": 96,
+        "stem": "ensalada-95"
+      },
+      {
+        "width": 191,
+        "height": 192,
+        "stem": "ensalada-191"
+      }
+    ]
+  },
+  "assets/extras/pan-flauta.png": {
+    "width": 1240,
+    "height": 1213,
+    "variants": [
+      {
+        "width": 98,
+        "height": 96,
+        "stem": "pan-flauta-98"
+      },
+      {
+        "width": 196,
+        "height": 192,
+        "stem": "pan-flauta-196"
+      }
+    ]
+  },
+  "assets/extras/pan-paty.png": {
+    "width": 1540,
+    "height": 1360,
+    "variants": [
+      {
+        "width": 109,
+        "height": 96,
+        "stem": "pan-paty-109"
+      },
+      {
+        "width": 217,
+        "height": 192,
+        "stem": "pan-paty-217"
+      }
+    ]
+  },
+  "assets/extras/papas.png": {
+    "width": 2624,
+    "height": 1622,
+    "variants": [
+      {
+        "width": 155,
+        "height": 96,
+        "stem": "papas-155"
+      },
+      {
+        "width": 311,
+        "height": 192,
+        "stem": "papas-311"
+      }
+    ]
+  },
+  "assets/ui/candado.png": {
+    "width": 163,
+    "height": 236,
+    "variants": [
+      {
+        "width": 169,
+        "height": 244,
+        "stem": "candado-169"
+      },
+      {
+        "width": 337,
+        "height": 488,
+        "stem": "candado-337"
+      }
+    ]
+  },
+  "assets/ui/moneda.png": {
+    "width": 294,
+    "height": 298,
+    "variants": [
+      {
+        "width": 95,
+        "height": 96,
+        "stem": "moneda-95"
+      },
+      {
+        "width": 189,
+        "height": 192,
+        "stem": "moneda-189"
+      }
+    ]
+  },
+  "assets/ui/radio.png": {
+    "width": 1536,
+    "height": 1024,
+    "variants": [
+      {
+        "width": 240,
+        "height": 160,
+        "stem": "radio-240"
+      },
+      {
+        "width": 480,
+        "height": 320,
+        "stem": "radio-480"
+      }
+    ]
+  }
+}

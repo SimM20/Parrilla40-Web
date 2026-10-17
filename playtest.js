@@ -1,5 +1,6 @@
 (function () {
   'use strict';
+  const t = window.Site?.t || (text => text);
   const choice = (name, label, options) => ({ name, label, type: 'choice', options });
   const rating = (name, label, low, high) => ({ name, label, type: 'rating', low, high,
     options: [1, 2, 3, 4, 5].map(value => [String(value), String(value)]) });
@@ -25,17 +26,17 @@
     const answers = {}, errors = {};
     for (const q of questions) {
       const value = String(values[q.name] ?? '').trim();
-      if (!value) errors[q.name] = 'Respondé esta pregunta para continuar.';
+      if (!value) errors[q.name] = t('Respondé esta pregunta para continuar.');
       else if (q.type === 'number') {
         // PostgreSQL integer storage bound, not a game progression limit.
         if (!/^\d+$/.test(value) || Number(value) > 2147483647) {
-          errors[q.name] = 'Ingresá un entero entre 0 y 2147483647, sin decimales.';
+          errors[q.name] = t('Ingresá un entero entre 0 y 2147483647, sin decimales.');
         } else answers[q.name] = Number(value);
       } else if (q.type === 'text') {
-        if ([...value].length > 4000) errors[q.name] = 'Usá como máximo 4000 caracteres.';
+        if ([...value].length > 4000) errors[q.name] = t('Usá como máximo 4000 caracteres.');
         else answers[q.name] = value;
       } else if (!q.options.some(([option]) => option === value)) {
-        errors[q.name] = 'Elegí una de las opciones disponibles.';
+        errors[q.name] = t('Elegí una de las opciones disponibles.');
       } else answers[q.name] = q.type === 'rating' ? Number(value)
         : q.name === 'completed_night_1' ? value === 'true' : value;
     }

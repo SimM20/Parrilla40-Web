@@ -3,12 +3,12 @@
    Tipografías y sprites tomados del proyecto Unity.
    ═══════════════════════════════════════════════════ */
 
-@font-face{font-family:"Bungee";src:url("fonts/Bungee-Regular.ttf") format("truetype");font-weight:400;font-display:swap}
-@font-face{font-family:"Bungee Inline";src:url("fonts/BungeeInline-Regular.ttf") format("truetype");font-weight:400;font-display:swap}
-@font-face{font-family:"Bungee Shade";src:url("fonts/BungeeShade-Regular.ttf") format("truetype");font-weight:400;font-display:swap}
-@font-face{font-family:"Nunito";src:url("fonts/Nunito-Regular.ttf") format("truetype");font-weight:400;font-display:swap}
-@font-face{font-family:"Nunito";src:url("fonts/Nunito-Bold.ttf") format("truetype");font-weight:700;font-display:swap}
-@font-face{font-family:"Nunito";src:url("fonts/Nunito-Black.ttf") format("truetype");font-weight:900;font-display:swap}
+@font-face{font-family:"Bungee";src:url("fonts/Bungee-Regular.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Bungee Inline";src:url("fonts/BungeeInline-Regular.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Bungee Shade";src:url("fonts/BungeeShade-Regular.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Nunito";src:url("fonts/Nunito-Regular.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Nunito";src:url("fonts/Nunito-Bold.woff2") format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Nunito";src:url("fonts/Nunito-Black.woff2") format("woff2");font-weight:900;font-display:swap}
 
 :root{
   --coal:#100c0a;
@@ -345,7 +345,7 @@ img{max-width:100%;display:block}
 .section--pitch{background:linear-gradient(180deg,var(--coal),#15100d)}
 
 /* reveal */
-.reveal{opacity:0;transform:translateY(30px);transition:opacity .7s var(--ease),transform .7s var(--ease);transition-delay:var(--d,0ms)}
+.reveal-ready{opacity:0;transform:translateY(30px);transition:opacity .7s var(--ease),transform .7s var(--ease);transition-delay:var(--d,0ms)}
 .reveal.is-in{opacity:1;transform:none}
 
 /* ── pilares ──────────────────────────────── */
@@ -548,7 +548,7 @@ img{max-width:100%;display:block}
 .clock__phase{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:900}
 
 .clock__timeline{position:relative;height:6px;border-radius:3px;background:rgba(246,232,214,.14);margin-top:8px}
-.clock__progress{height:100%;width:0;border-radius:3px;background:linear-gradient(90deg,var(--gold),var(--fire))}
+.clock__progress{height:100%;width:100%;transform:scaleX(0);transform-origin:left;border-radius:3px;background:linear-gradient(90deg,var(--gold),var(--fire))}
 .clock__marks{position:relative;height:44px}
 .clock__marks span{
   position:absolute;left:var(--p);top:10px;translate:-50% 0;
@@ -631,7 +631,7 @@ img{max-width:100%;display:block}
   background:var(--cream);color:#221912;
   font-size:11.5px;font-weight:900;line-height:1.32;text-align:center;
   box-shadow:0 8px 18px -8px #000;
-  opacity:0;transform:translateY(8px) scale(.9);
+  opacity:1;transform:none;
   transition:all .3s var(--ease);
 }
 .cust__bubble small{font-weight:700;opacity:.62;font-size:10.5px}
@@ -693,7 +693,7 @@ img{max-width:100%;display:block}
   width:56px;height:56px;border-radius:12px;
   border:3px solid rgba(224,72,58,.45);
   color:var(--red);font-size:30px;font-style:normal;font-weight:900;
-  opacity:0;transform:scale(2.4) rotate(-22deg);
+  opacity:1;transform:rotate(-4deg);
 }
 .strikes.is-in .strike{animation:stamp .5s var(--ease) forwards;animation-delay:var(--d)}
 @keyframes stamp{
@@ -704,7 +704,7 @@ img{max-width:100%;display:block}
 .strikes__closed{
   font-family:"Bungee",sans-serif;font-size:clamp(22px,4vw,34px);
   color:var(--red);letter-spacing:.14em;
-  opacity:0;transition:opacity .5s .95s;
+  opacity:1;transition:opacity .5s .95s;
 }
 .strikes.is-in .strikes__closed{opacity:1}
 
@@ -794,7 +794,12 @@ img{max-width:100%;display:block}
 }
 
 @media (prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+  *,*::before,*::after{animation:none !important;transition:none !important}
   html{scroll-behavior:auto}
   .reveal{opacity:1;transform:none}
 }
+
+/* Progressive reveals: content stays readable if JavaScript cannot start. */
+.motion-ready .queue:not(.is-in) .cust__bubble{opacity:0;transform:translateY(8px) scale(.9)}
+.motion-ready .strikes:not(.is-in) .strike{opacity:0;transform:scale(2.4) rotate(-22deg)}
+.motion-ready .strikes:not(.is-in) .strikes__closed{opacity:0}
