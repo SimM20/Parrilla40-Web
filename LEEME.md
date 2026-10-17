@@ -1,7 +1,8 @@
 # Parrilla 40 — página de marketing
 
-Landing estática para el juego. **Abrí `index.html` con doble clic** y listo: no necesita servidor
-ni conexión (fuentes, sprites y scripts son todos locales).
+Sitio estático para el juego, en español e inglés, sin framework ni build de producción.
+Para revisar todas las rutas, usá un servidor HTTP estático según `PLAYTEST_SETUP.md`.
+Las fuentes, imágenes e interacciones de la landing son locales; la encuesta y el panel usan Supabase.
 
 ## Qué hay adentro
 
@@ -47,3 +48,15 @@ por su URL y valida la contraseña en la base de datos.
 
 Ver [PLAYTEST_SETUP.md](PLAYTEST_SETUP.md) para ejecutar localmente, conectar Supabase,
 provisionar el verificador sin guardar la contraseña, probar y publicar la V1.
+
+## SEO, idiomas y rendimiento
+
+El dominio canónico confirmado es `https://parrilla40.com.ar/`. Las versiones públicas son
+`index.html`, `index-en.html`, `preguntas.html` y `preguntas-en.html`. El panel conserva su acceso privado.
+
+Ver [SEO_REPORT.md](SEO_REPORT.md) para cambios, pruebas y mediciones, y
+[SEO_DEPLOY.md](SEO_DEPLOY.md) para publicar los archivos correctos y conectar Search Console.
+
+Al editar contenido en español, metadatos, traducciones o preguntas, ejecutar `node tools/generate-site.cjs`
+y `node tests/seo.cjs`. Este paso de autoría actualiza el HTML estático que se guarda en Git;
+el hosting sólo sirve archivos. `node tools/package-site.cjs` reúne los archivos públicos en `test-artifacts/public`.

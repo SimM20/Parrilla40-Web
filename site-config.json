@@ -1,0 +1,26 @@
+{
+  "url": "https://parrilla40.com.ar/",
+  "name": "Parrilla 40",
+  "pages": [
+    {
+      "file": "index.html", "path": "", "language": "es", "alternate": "index-en.html",
+      "title": "Parrilla 40 — Simulador de parrilla argentina",
+      "description": "Prendé el carbón, cociná al punto y atendé a tus clientes junto a la Ruta 40. Conocé Parrilla 40, un juego de gestión y simulación de parrilla argentina."
+    },
+    {
+      "file": "index-en.html", "path": "index-en.html", "language": "en", "alternate": "index.html",
+      "title": "Parrilla 40 — Argentine roadside grill simulator",
+      "description": "Light the charcoal, grill each cut and serve your customers beside Route 40. Discover Parrilla 40, an Argentine grill management and simulation game."
+    },
+    {
+      "file": "preguntas.html", "path": "preguntas.html", "language": "es", "alternate": "preguntas-en.html",
+      "title": "Encuesta de playtest de Parrilla 40 — Tu experiencia",
+      "description": "Respondé las 15 preguntas del playtest de Parrilla 40. Contanos cómo fueron los controles, la cocción y los pedidos, sin compartir datos personales."
+    },
+    {
+      "file": "preguntas-en.html", "path": "preguntas-en.html", "language": "en", "alternate": "preguntas.html",
+      "title": "Parrilla 40 playtest survey — Share your experience",
+      "description": "Answer the 15 Parrilla 40 playtest questions. Share your experience with controls, cooking and customer orders without providing personal information."
+    }
+  ]
+}

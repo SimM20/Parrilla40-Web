@@ -7,6 +7,8 @@
   const $  = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const t = window.Site?.t || (text => text);
+  const motionAllowed = window.Site?.motionAllowed || (() => !reduced);
   const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
   const lerp  = (a, b, t) => a + (b - a) * t;
 
@@ -14,27 +16,32 @@
   const nav = $('#nav');
   const sections = $$('section[id]');
   const navLinks = $$('.nav__links a');
+  let sectionPositions = [];
+  function measureSections() { sectionPositions = sections.map(section => [section.id, section.offsetTop]); }
+  measureSections();
+  new ResizeObserver(measureSections).observe(document.body);
 
   function onScroll() {
-    nav.classList.toggle('is-stuck', window.scrollY > 40);
-
     const y = window.scrollY + 140;
     let current = '';
-    for (const s of sections) {
-      if (s.offsetTop <= y) current = s.id;
+    for (const [id, top] of sectionPositions) {
+      if (top <= y) current = id;
     }
+    nav.classList.toggle('is-stuck', window.scrollY > 40);
     navLinks.forEach(a => a.classList.toggle('is-active', a.hash === '#' + current));
   }
-  window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
   /* ── HERO: parallax de capas ───────────────────────────── */
   const layers = $$('.hero__layer[data-depth]');
   const hero = $('.hero');
+  const content = $('.hero__content');
   let ticking = false;
 
   function parallax() {
     ticking = false;
+    onScroll();
+    if (!motionAllowed()) return;
     const y = window.scrollY;
     if (y > window.innerHeight * 1.2) return;
     // El desplazamiento va por variable, no por transform inline: las nubes
@@ -43,13 +50,12 @@
     for (const l of layers) {
       l.style.setProperty('--py', (y * parseFloat(l.dataset.depth)) + 'px');
     }
-    const content = $('.hero__content');
     if (content) {
       content.style.transform = `translateY(${y * 0.22}px)`;
       content.style.opacity = String(clamp(1 - y / (window.innerHeight * 0.75), 0, 1));
     }
   }
-  if (!reduced && hero) {
+  if (hero) {
     window.addEventListener('scroll', () => {
       if (!ticking) { ticking = true; requestAnimationFrame(parallax); }
     }, { passive: true });
@@ -65,7 +71,11 @@
     }
   }, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' });
 
-  $$('.reveal').forEach(el => io.observe(el));
+  $$('.reveal').forEach(el => {
+    if (motionAllowed()) el.classList.add('reveal-ready');
+    io.observe(el);
+  });
+  if (motionAllowed()) document.documentElement.classList.add('motion-ready');
 
   /* ── CONTADORES del hero ───────────────────────────────── */
   const counters = $$('[data-count]');
@@ -80,6 +90,7 @@
       if (reduced) { el.textContent = target.toFixed(dec) + suffix; continue; }
       const dur = 1100, t0 = performance.now();
       const step = (t) => {
+        if (!motionAllowed()) { el.textContent = target.toFixed(dec) + suffix; return; }
         const p = clamp((t - t0) / dur, 0, 1);
         const eased = 1 - Math.pow(1 - p, 3);
         el.textContent = (target * eased).toFixed(dec) + suffix;
@@ -108,7 +119,7 @@
   const track = $('#marqueeTrack');
   if (track) {
     const build = () => MARQUEE.map(([src, txt]) =>
-      `<div class="marquee__item"><img class="px" src="${src}" alt=""><span>${txt}</span></div>`
+      `<div class="marquee__item">${window.Site?.picture(src) || `<img class="px" src="${src}" alt="" width="100" height="100" loading="lazy" decoding="async">`}<span>${t(txt)}</span></div>`
     ).join('');
     track.innerHTML = build() + build();   // duplicado para el loop infinito
   }
@@ -119,8 +130,8 @@
     { name: 'Jugoso',     file: 'jugoso',   color: '#ff8a3d', fill: '#ff7a18', heat: .28, verdict: 'Se paga · propina completa', cls: 'is-good' },
     { name: 'Hecho',      file: 'hecho',    color: '#ffc043', fill: '#ffa726', heat: .48, verdict: 'Se paga · propina completa', cls: 'is-good' },
     { name: 'Bien Hecho', file: 'muyhecho', color: '#e4a13a', fill: '#d98c25', heat: .66, verdict: 'Se paga · propina completa', cls: 'is-good' },
-    { name: 'Pasado',     file: 'pasado',   color: '#b0763a', fill: '#8a5a2b', heat: .82, verdict: 'Último punto válido', cls: ''       },
-    { name: 'Quemado',    file: 'pasado',   color: '#7a6a62', fill: '#3d3330', heat: 1,   verdict: 'Se va sin pagar — strike', cls: 'is-bad'  }
+    { name: 'Pasado',     file: 'pasado',   color: '#d6a365', fill: '#8a5a2b', heat: .82, verdict: 'Último punto válido', cls: ''       },
+    { name: 'Quemado',    file: 'pasado',   color: '#c9b9a5', fill: '#3d3330', heat: 1,   verdict: 'Se va sin pagar — strike', cls: 'is-bad'  }
   ];
 
   const meatImg  = $('#cookMeat');
@@ -141,16 +152,21 @@
       ? 'drop-shadow(0 10px 16px rgba(0,0,0,.7)) brightness(.34) saturate(.35) contrast(1.15)'
       : 'drop-shadow(0 10px 16px rgba(0,0,0,.7))';
 
-    stateEl.textContent = s.name;
+    stateEl.textContent = t(s.name);
+    rangeEl.setAttribute('aria-valuetext', t(s.name));
     stateEl.style.setProperty('--state', s.color);
-    verdEl.textContent = s.verdict;
+    verdEl.textContent = t(s.verdict);
     verdEl.className = 'cooker__verdict ' + s.cls;
 
     fillEl.style.width = ((i + 1) / 6 * 100) + '%';
     fillEl.style.setProperty('--fill', s.fill);
     heatEl.style.setProperty('--heat', String(s.heat));
 
-    labelBtns.forEach(b => b.classList.toggle('is-on', +b.dataset.i === i));
+    labelBtns.forEach(b => {
+      b.classList.toggle('is-on', +b.dataset.i === i);
+      b.setAttribute('aria-pressed', String(+b.dataset.i === i));
+    });
+    cutBtns.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.cut === currentCut)));
   }
 
   if (rangeEl) {
@@ -170,10 +186,11 @@
     const cooker = $('.cooker');
     const dio = new IntersectionObserver((entries) => {
       for (const e of entries) {
-        if (!e.isIntersecting || reduced) continue;
+        if (!e.isIntersecting || !motionAllowed()) continue;
         dio.disconnect();
         let i = 0;
         const t = setInterval(() => {
+          if (!motionAllowed()) { clearInterval(t); return; }
           i++;
           if (i > 2) { clearInterval(t); return; }
           rangeEl.value = i;
@@ -181,6 +198,7 @@
         }, 700);
         // Si el usuario toca algo, se corta la demo.
         cooker.addEventListener('pointerdown', () => clearInterval(t), { once: true });
+        cooker.addEventListener('focusin', () => clearInterval(t), { once: true });
       }
     }, { threshold: 0.45 });
     dio.observe(cooker);
@@ -240,14 +258,14 @@
         cProg = $('#clockProgress'), cBtn = $('#clockBtn');
 
   if (cSky) {
-    let t0 = performance.now(), paused = false, pausedAt = 0, raf = 0;
+    let elapsed = 0, lastTick = 0, paused = false, visible = false, raf = 0;
+    let W = cSky.clientWidth, H = cSky.clientHeight;
 
     function drawClock(p) {                       // p: 0..1 de la jornada
       const h = lerp(OPEN, CLOSE, p);
       const [top, bot] = skyAt(h);
       cSky.style.background = `linear-gradient(180deg,${top},${bot})`;
 
-      const W = cSky.clientWidth, H = cSky.clientHeight;
       // Arco del sol: sale por la izquierda, se pone por la derecha.
       const ang = Math.PI * p;
       const x = lerp(0.06, 0.94, p) * W;
@@ -262,61 +280,62 @@
       cSun.style.opacity  = String(clamp(1 - night * 1.25, 0, 1));
       cMoon.style.opacity = String(clamp(night * 1.1, 0, 1));
 
-      cHour.textContent = p >= 1 ? 'CERRADO' : fmt(h);
-      cPhase.textContent = p >= 1 ? 'Se va el último cliente' : phaseAt(h);
-      cProg.style.width = (p * 100) + '%';
+      cHour.textContent = p >= 1 ? t('CERRADO') : fmt(h);
+      cPhase.textContent = t(p >= 1 ? 'Se va el último cliente' : phaseAt(h));
+      cProg.style.transform = `scaleX(${p})`;
     }
 
-    // El timestamp del primer rAF puede ser anterior a t0. Sin el max(0) el
-    // módulo da negativo y el primer cuadro arranca mostrando "CERRADO".
-    const progress = (now) => (Math.max(0, now - t0) % LOOP_MS) / LOOP_MS;
-
+    const progress = () => (elapsed % LOOP_MS) / LOOP_MS;
     function tick(now) {
-      if (!paused) drawClock(progress(now));
+      elapsed += Math.max(0, now - lastTick);
+      lastTick = now;
+      drawClock(progress());
       raf = requestAnimationFrame(tick);
     }
-
-    if (reduced) {
-      drawClock(0.42);
-      cBtn.style.display = 'none';
-    } else {
-      raf = requestAnimationFrame(tick);
-      cBtn.addEventListener('click', () => {
-        paused = !paused;
-        if (paused) { pausedAt = performance.now(); }
-        else { t0 += performance.now() - pausedAt; }
-        cBtn.textContent = paused ? 'Seguir el día' : 'Pausar el día';
-        cBtn.setAttribute('aria-pressed', String(!paused));
-      });
-      // No gastar frames si la sección no se ve. Al volver, se corre t0 para
-      // que el día siga donde había quedado en vez de pegar un salto.
-      let hiddenAt = 0;
-      new IntersectionObserver((es) => {
-        for (const e of es) {
-          if (e.isIntersecting && !raf) {
-            if (hiddenAt) { t0 += performance.now() - hiddenAt; hiddenAt = 0; }
-            raf = requestAnimationFrame(tick);
-          } else if (!e.isIntersecting && raf) {
-            cancelAnimationFrame(raf); raf = 0; hiddenAt = performance.now();
-          }
-        }
-      }, { threshold: 0.05 }).observe(cSky);
-      window.addEventListener('resize', () => drawClock(progress(performance.now())));
+    function syncClock() {
+      if (raf) cancelAnimationFrame(raf);
+      raf = 0;
+      if (visible && !paused && !document.hidden && motionAllowed()) {
+        lastTick = performance.now();
+        raf = requestAnimationFrame(tick);
+      }
     }
+    drawClock(reduced ? 0.42 : 0);
+    cBtn.hidden = reduced;
+    cBtn.addEventListener('click', () => {
+      paused = !paused;
+      cBtn.textContent = t(paused ? 'Seguir el día' : 'Pausar el día');
+      cBtn.setAttribute('aria-pressed', String(!paused));
+      syncClock();
+    });
+    new IntersectionObserver(entries => {
+      visible = entries[0].isIntersecting;
+      syncClock();
+    }, { threshold: 0.05 }).observe(cSky);
+    new ResizeObserver(() => {
+      W = cSky.clientWidth; H = cSky.clientHeight;
+      drawClock(reduced ? 0.42 : progress());
+    }).observe(cSky);
+    document.addEventListener('visibilitychange', syncClock);
+    window.addEventListener('motionchange', () => {
+      cBtn.hidden = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      syncClock();
+    });
   }
 
   /* ── FORM de la lista ──────────────────────────────────── */
   const form = $('#signup'), mail = $('#signupMail'), note = $('#signupNote');
   if (form) {
+    form.querySelector('button').disabled = false;
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const v = mail.value.trim();
       const ok = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
       note.className = 'signup__note' + (ok ? '' : ' is-err');
-      note.textContent = ok
-        ? '¡Listo! Te avisamos cuando abra la parrilla. (Demo: todavía no hay backend conectado.)'
-        : 'Ese mail no parece válido — fijate de nuevo.';
-      if (ok) form.reset();
+      mail.setAttribute('aria-invalid', String(!ok));
+      note.textContent = t(ok
+        ? 'Demo: el formulario todavía no está conectado. Tu correo no se envió ni se guardó.'
+        : 'Ese mail no parece válido — fijate de nuevo.');
     });
   }
 })();
