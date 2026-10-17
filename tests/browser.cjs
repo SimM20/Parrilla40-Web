@@ -13,9 +13,9 @@ const screenshots = process.env.SCREENSHOT_DIR;
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
     page.on('console', message => {
-      // Resource errors are expected only for deliberately failed API requests
-      // and the original landing's missing favicon; script errors are not.
-      if (message.type() === 'error' && !message.text().startsWith('Failed to load resource')) errors.push(message.text());
+      const expected = message.text().startsWith('Failed to load resource') &&
+        message.location().url.startsWith('https://playtest-test.supabase.co/rest/v1/');
+      if (message.type() === 'error' && !expected) errors.push(message.text());
     });
     await page.route('**/playtest-config.js', route => route.fulfill({ contentType: 'application/javascript', body:
       "window.PLAYTEST_CONFIG={supabaseUrl:'https://playtest-test.supabase.co',supabasePublicKey:'sb_publishable_test',buildVersion:'test-build'};" }));

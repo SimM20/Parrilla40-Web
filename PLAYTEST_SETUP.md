@@ -1,6 +1,8 @@
 # Playtest V1 — ejecución y conexión
 
-Implementación estática, sin build ni servidor de aplicación. La conexión al proyecto Supabase y el despliegue se pospusieron por indicación del usuario. Los campos de configuración permanecen vacíos intencionalmente: no se simula un envío exitoso en el producto.
+Implementación estática, sin build ni servidor de aplicación. La configuración pública está en `playtest-config.js`.
+La presencia de URL y clave no verifica el esquema, el verificador de contraseña ni los permisos del proyecto remoto:
+comprobarlos con los pasos siguientes antes de publicar. El producto sólo muestra éxito cuando Supabase confirma el envío.
 
 ## Ejecutar localmente
 
@@ -100,18 +102,29 @@ El repositorio sólo documenta subir archivos a un hosting estático. No tiene w
 
    ```text
    index.html
+   index-en.html
    styles.css
    script.js
    preguntas.html
+   preguntas-en.html
    preguntas.js
    resultados.html
    resultados.js
    playtest.css
    playtest.js
    playtest-config.js
+   site.css
+   site.js
+   site-data.js
+   robots.txt
+   sitemap.xml
+   404.html
    assets/ (completo)
    fonts/ (completo)
    ```
+
+   Alternativa reproducible: `node tools/package-site.cjs` copia esta lista y sus assets a `test-artifacts/public`.
+   Publicar el contenido de esa carpeta. Ver `SEO_DEPLOY.md` para HTTPS, canonical, redirecciones, MIME y Search Console.
 
    No hay comando de build. No es necesario publicar `supabase/`, `tools/`, `tests/`, `prompts/` ni documentos internos. Si el hosting publica el repositorio completo, estos archivos tampoco contienen secretos; no agregar allí el verificador.
 4. Usar HTTPS. Si existe CSP, permitir scripts desde `https://cdn.jsdelivr.net`, conexiones al URL HTTPS del proyecto y recursos locales. Servir `.js` con MIME JavaScript; no reescribir las dos páginas a `index.html`.

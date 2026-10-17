@@ -10,11 +10,19 @@ fs.mkdirSync(output, { recursive: true });
 (async () => {
   const browser = await chromium.launch({ channel: process.env.BROWSER_CHANNEL || 'msedge', headless: true });
   const errors = [], accessibility = [];
+  function observe(page) {
+    page.on('pageerror', error => errors.push(error.message));
+    page.on('console', message => {
+      const expected = message.text().startsWith('Failed to load resource') &&
+        message.location().url.startsWith('https://seo-test.supabase.co/rest/v1/');
+      if (message.type() === 'error' && !expected) errors.push(`${message.location().url}: ${message.text()}`);
+    });
+  }
   try {
     for (const theme of ['dark', 'light']) {
       const context = await browser.newContext({ colorScheme: theme, reducedMotion: 'reduce' });
       const page = await context.newPage();
-      page.on('pageerror', error => errors.push(error.message));
+      observe(page);
       await page.route('**/rest/v1/**', route => { errors.push('Unexpected API request'); return route.abort(); });
       for (const file of ['index.html', 'index-en.html', 'preguntas.html', 'preguntas-en.html', 'resultados.html']) {
         for (const width of [320, 390, 768, 1440]) {
@@ -107,7 +115,7 @@ fs.mkdirSync(output, { recursive: true });
 
     const context = await browser.newContext({ colorScheme: 'light', reducedMotion: 'no-preference' });
     const page = await context.newPage();
-    page.on('pageerror', error => errors.push(error.message));
+    observe(page);
     await page.goto(base);
     assert.equal(await page.locator('html').getAttribute('data-theme'), 'light');
     await page.emulateMedia({ colorScheme: 'dark' });
@@ -131,7 +139,7 @@ fs.mkdirSync(output, { recursive: true });
       Object.defineProperty(Storage.prototype, 'setItem', { value() { throw new DOMException('Blocked', 'SecurityError'); } });
     });
     const blockedPage = await blocked.newPage();
-    blockedPage.on('pageerror', error => errors.push(error.message));
+    observe(blockedPage);
     await blockedPage.goto(base);
     assert.equal(await blockedPage.locator('html').getAttribute('data-theme'), 'dark');
     await blockedPage.locator('#theme-toggle').click();
@@ -147,5 +155,8 @@ fs.mkdirSync(output, { recursive: true });
     assert.deepEqual(violations, [], 'axe violations');
     assert.deepEqual(errors, [], 'browser errors');
     console.log('PASS browser SEO: 40 responsive/theme combinations, ES/EN, keyboard menu, theme persistence/system/storage denial, reduced motion, static no-JS content, PNG fallback, 404, axe and no JS exceptions');
-  } finally { await browser.close(); }
+  } finally {
+    if (errors.length) console.error('Browser diagnostics:', JSON.stringify(errors));
+    await browser.close();
+  }
 })().catch(error => { console.error(error); process.exitCode = 1; });
