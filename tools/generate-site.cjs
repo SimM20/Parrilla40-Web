@@ -92,7 +92,7 @@ function optimizeImages(html) {
     if (/id="heroStars"/.test(tag) && !/fetchpriority/.test(tag)) tag = tag.replace('>', ' fetchpriority="high">');
     const data = images[source];
     if (!data) return tag;
-    const sizes = source.endsWith('radio.png') ? '90px' : source.endsWith('candado.png') ? '84px' : '60px';
+    const sizes = source.endsWith('radio.png') ? '90px' : source.endsWith('candado.png') ? '84px' : source.endsWith('paisaje.png') ? '100vw' : '60px';
     return `<picture><source type="image/avif" srcset="${data.variants.map(v => `assets/optimized/${v.stem}.avif ${v.width}w`).join(', ')}" sizes="${sizes}"><source type="image/webp" srcset="${data.variants.map(v => `assets/optimized/${v.stem}.webp ${v.width}w`).join(', ')}" sizes="${sizes}">${tag}</picture>`;
   });
 }

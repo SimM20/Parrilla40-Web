@@ -71,9 +71,9 @@
   <div class="hero__sky" id="heroSky"></div>
   <img class="hero__layer hero__stars" id="heroStars" src="assets/fondo/estrellas.png" alt="" width="480" height="75" loading="eager" decoding="async" fetchpriority="high">
   <img class="hero__layer hero__sun"   id="heroSun"   src="assets/fondo/sol.png" alt="" width="26" height="26" loading="eager" decoding="async">
-  <img class="hero__layer hero__far"   data-depth="0.12" src="assets/fondo/nubes-lejos.png" alt="" width="1920" height="152" loading="eager" decoding="async">
-  <img class="hero__layer hero__near"  data-depth="0.26" src="assets/fondo/nubes-cerca.png" alt="" width="1920" height="152" loading="eager" decoding="async">
-  <img class="hero__layer hero__land"  data-depth="0.05" src="assets/fondo/paisaje.png" alt="" width="1920" height="810" loading="eager" decoding="async">
+  <img class="hero__layer hero__far"   data-depth="0.12" src="assets/fondo/nubes-lejos.png" alt="" width="720" height="57" loading="eager" decoding="async">
+  <img class="hero__layer hero__near"  data-depth="0.26" src="assets/fondo/nubes-cerca.png" alt="" width="720" height="57" loading="eager" decoding="async">
+  <picture><source type="image/avif" srcset="assets/optimized/paisaje-720.avif 720w" sizes="100vw"><source type="image/webp" srcset="assets/optimized/paisaje-720.webp 720w" sizes="100vw"><img class="hero__layer hero__land"  data-depth="0.05" src="assets/fondo/paisaje.png" alt="" width="720" height="405" loading="eager" decoding="async"></picture>
   <div class="hero__vig"></div>
 
   <div class="hero__content">
@@ -174,7 +174,7 @@
 
         <div class="cooker__readout">
           <span class="cooker__state" id="cookState">Crudo</span>
-          <span class="cooker__verdict" id="cookVerdict">No lo entregues</span>
+          <span class="cooker__verdict" id="cookVerdict">No te conviene</span>
         </div>
       </div>
 
@@ -225,7 +225,7 @@
         <img class="clock__stars px" id="clockStars" src="assets/fondo/estrellas.png" alt="" width="480" height="75" loading="lazy" decoding="async">
         <img class="clock__body px" id="clockSun" src="assets/fondo/sol.png" alt="Sol" width="26" height="26" loading="lazy" decoding="async">
         <img class="clock__body px" id="clockMoon" src="assets/fondo/luna.png" alt="Luna" width="20" height="20" loading="lazy" decoding="async">
-        <img class="clock__land px" src="assets/fondo/paisaje.png" alt="" width="1920" height="810" loading="lazy" decoding="async">
+        <picture><source type="image/avif" srcset="assets/optimized/paisaje-720.avif 720w" sizes="100vw"><source type="image/webp" srcset="assets/optimized/paisaje-720.webp 720w" sizes="100vw"><img class="clock__land px" src="assets/fondo/paisaje.png" alt="" width="720" height="405" loading="lazy" decoding="async"></picture>
         <div class="clock__hud">
           <span class="clock__hour" id="clockHour">06:30</span>
           <span class="clock__phase" id="clockPhase">Abrimos</span>
@@ -303,8 +303,8 @@
         <figure><picture><source type="image/avif" srcset="assets/optimized/papas-155.avif 155w, assets/optimized/papas-311.avif 311w" sizes="60px"><source type="image/webp" srcset="assets/optimized/papas-155.webp 155w, assets/optimized/papas-311.webp 311w" sizes="60px"><img class="px" src="assets/extras/papas.png" alt="" width="2624" height="1622" loading="lazy" decoding="async"></picture><figcaption>Fritas</figcaption></figure>
         <figure><picture><source type="image/avif" srcset="assets/optimized/ensalada-95.avif 95w, assets/optimized/ensalada-191.avif 191w" sizes="60px"><source type="image/webp" srcset="assets/optimized/ensalada-95.webp 95w, assets/optimized/ensalada-191.webp 191w" sizes="60px"><img class="px" src="assets/extras/ensalada.png" alt="" width="1240" height="1248" loading="lazy" decoding="async"></picture><figcaption>Ensalada verde</figcaption></figure>
         <figure><picture><source type="image/avif" srcset="assets/optimized/ensalada-huevo-95.avif 95w, assets/optimized/ensalada-huevo-190.avif 190w" sizes="60px"><source type="image/webp" srcset="assets/optimized/ensalada-huevo-95.webp 95w, assets/optimized/ensalada-huevo-190.webp 190w" sizes="60px"><img class="px" src="assets/extras/ensalada-huevo.png" alt="" width="1238" height="1248" loading="lazy" decoding="async"></picture><figcaption>Papa y huevo</figcaption></figure>
-        <figure><picture><source type="image/avif" srcset="assets/optimized/chimi-95.avif 95w, assets/optimized/chimi-191.avif 191w" sizes="60px"><source type="image/webp" srcset="assets/optimized/chimi-95.webp 95w, assets/optimized/chimi-191.webp 191w" sizes="60px"><img class="px" src="assets/extras/chimi.png" alt="" width="1238" height="1246" loading="lazy" decoding="async"></picture><figcaption>Chimichurri</figcaption></figure>
-        <figure><picture><source type="image/avif" srcset="assets/optimized/criolla-155.avif 155w, assets/optimized/criolla-311.avif 311w" sizes="60px"><source type="image/webp" srcset="assets/optimized/criolla-155.webp 155w, assets/optimized/criolla-311.webp 311w" sizes="60px"><img class="px" src="assets/extras/criolla.png" alt="" width="2624" height="1622" loading="lazy" decoding="async"></picture><figcaption>Salsa criolla</figcaption></figure>
+        <figure><img class="px" src="assets/extras/chimi.png" alt="" width="552" height="1344" loading="lazy" decoding="async"><figcaption>Chimichurri</figcaption></figure>
+        <figure><img class="px" src="assets/extras/criolla.png" alt="" width="552" height="1344" loading="lazy" decoding="async"><figcaption>Salsa criolla</figcaption></figure>
       </div>
     </div>
   </div>
@@ -344,6 +344,16 @@
       <figure class="cust" style="--p:64%; --d:1.6s">
         <div class="cust__bubble">Chorizo<br><small>y ensalada</small></div>
         <img class="px" src="assets/clientes/pov5.png" alt="Cliente" width="300" height="500" loading="lazy" decoding="async">
+        <div class="cust__bar"><span></span></div>
+      </figure>
+      <figure class="cust" style="--p:43%; --d:2s">
+        <div class="cust__bubble">Vacío · hecho<br><small>con criolla</small></div>
+        <img class="px" src="assets/clientes/pov6.png" alt="Cliente" width="300" height="500" loading="lazy" decoding="async">
+        <div class="cust__bar"><span></span></div>
+      </figure>
+      <figure class="cust" style="--p:86%; --d:2.4s">
+        <div class="cust__bubble">Paty · jugoso<br><small>+ fritas</small></div>
+        <img class="px" src="assets/clientes/pov7.png" alt="Cliente" width="300" height="500" loading="lazy" decoding="async">
         <div class="cust__bar"><span></span></div>
       </figure>
     </div>
@@ -400,7 +410,7 @@
         <p>Carbón que dura más, más clientes a la vez, mejor propina — y una radio para el puesto.</p>
       </article>
       <article class="shop__card reveal" style="--d:240ms">
-        <picture><source type="image/avif" srcset="assets/optimized/chimi-95.avif 95w, assets/optimized/chimi-191.avif 191w" sizes="60px"><source type="image/webp" srcset="assets/optimized/chimi-95.webp 95w, assets/optimized/chimi-191.webp 191w" sizes="60px"><img class="px" src="assets/extras/chimi.png" alt="" width="1238" height="1246" loading="lazy" decoding="async"></picture>
+        <img class="px" src="assets/extras/chimi.png" alt="" width="552" height="1344" loading="lazy" decoding="async">
         <h3>Salsas</h3>
         <p>Chimichurri y criolla por frasco. Lo que sube el ticket y lo que te deja propina.</p>
       </article>

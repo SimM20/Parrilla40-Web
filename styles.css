@@ -617,7 +617,7 @@ img{max-width:100%;display:block}
 }
 .cust{
   margin:0;position:relative;
-  width:clamp(104px,14vw,158px);
+  width:clamp(72px,10vw,146px);
   display:grid;justify-items:center;
   animation:bob 3.4s ease-in-out infinite;
   animation-delay:var(--d);
@@ -788,6 +788,7 @@ img{max-width:100%;display:block}
   .hero__stats li{min-width:calc(50% - 6px)}
   .cooker__labels button{min-width:64px;font-size:11px}
   .cooker__cutrow{justify-content:center}
+  .cust{width:calc(25% - 8px)}
   .cust__bubble{display:none}
   .strike{width:46px;height:46px;font-size:24px}
   .clock__hud{left:14px;top:14px;padding:9px 13px}

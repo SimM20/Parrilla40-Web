@@ -126,13 +126,15 @@
 
   /* ── COCINERO: punto de cocción interactivo ────────────── */
   const STATES = [
-    { name: 'Crudo',      file: 'crudo',    color: '#e0483a', fill: '#b23a2c', heat: .10, verdict: 'No lo entregues — strike', cls: 'is-bad'  },
+    { name: 'Crudo',      file: 'crudo',    color: '#e0483a', fill: '#b23a2c', heat: .10, verdict: 'No te conviene — strike', cls: 'is-bad'  },
     { name: 'Jugoso',     file: 'jugoso',   color: '#ff8a3d', fill: '#ff7a18', heat: .28, verdict: 'Se paga · propina completa', cls: 'is-good' },
     { name: 'Hecho',      file: 'hecho',    color: '#ffc043', fill: '#ffa726', heat: .48, verdict: 'Se paga · propina completa', cls: 'is-good' },
     { name: 'Bien Hecho', file: 'muyhecho', color: '#e4a13a', fill: '#d98c25', heat: .66, verdict: 'Se paga · propina completa', cls: 'is-good' },
     { name: 'Pasado',     file: 'pasado',   color: '#d6a365', fill: '#8a5a2b', heat: .82, verdict: 'Último punto válido', cls: ''       },
-    { name: 'Quemado',    file: 'pasado',   color: '#c9b9a5', fill: '#3d3330', heat: 1,   verdict: 'Se va sin pagar — strike', cls: 'is-bad'  }
+    { name: 'Quemado',    file: 'quemado',  color: '#c9b9a5', fill: '#3d3330', heat: 1,   verdict: 'Se va sin pagar — strike', cls: 'is-bad'  }
   ];
+  // Cortes que todavía no tienen sprite "Quemado" en el juego.
+  const NO_BURNT_SPRITE = new Set(['vacio', 'choripan']);
 
   const meatImg  = $('#cookMeat');
   const stateEl  = $('#cookState');
@@ -146,9 +148,10 @@
 
   function renderCook(i) {
     const s = STATES[i];
-    meatImg.src = `assets/cortes/${currentCut}-${s.file}.png`;
-    // "Quemado" no tiene sprite propio: se oscurece el de "Pasado".
-    meatImg.style.filter = (i === 5)
+    const fakeBurnt = i === 5 && NO_BURNT_SPRITE.has(currentCut);
+    meatImg.src = `assets/cortes/${currentCut}-${fakeBurnt ? 'pasado' : s.file}.png`;
+    // Sin sprite "Quemado" propio, se oscurece el de "Pasado".
+    meatImg.style.filter = fakeBurnt
       ? 'drop-shadow(0 10px 16px rgba(0,0,0,.7)) brightness(.34) saturate(.35) contrast(1.15)'
       : 'drop-shadow(0 10px 16px rgba(0,0,0,.7))';
 

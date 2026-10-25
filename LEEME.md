@@ -28,9 +28,9 @@ fonts/         Bungee y Nunito, las mismas del juego
 
 - **El formulario no manda nada.** Valida el mail y muestra un mensaje, pero no hay backend.
   Si querés que funcione de verdad, hay que apuntarlo a un servicio (Formspree, Mailchimp, etc.).
-- **El estado "Quemado" no tiene sprite propio** en el proyecto, así que la página usa el de
-  "Pasado" oscurecido por CSS. Si en algún momento dibujás los quemados, cambiá el array
-  `STATES` en `script.js` y copiá los PNG a `assets/cortes/`.
+- **El estado "Quemado"** usa el sprite del juego para tira, chorizo y paty. Vacío y choripán
+  todavía no tienen uno, así que la página usa el de "Pasado" oscurecido por CSS. Cuando existan,
+  copiá los PNG a `assets/cortes/` y sacalos de `NO_BURNT_SPRITE` en `script.js`.
 - Los textos salen de cómo funciona el juego hoy (jornada de 06:30 a 21:00 en 5 minutos,
   6 puntos de cocción, 3 strikes, tienda entre noches). Si cambiás el diseño, revisalos.
 - Respeta `prefers-reduced-motion`: con esa opción activada del sistema, se apagan las animaciones.

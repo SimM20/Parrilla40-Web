@@ -19,12 +19,17 @@ for source in sorted((ROOT / "assets").rglob("*.png")):
         continue
     if source.name in ("menu.png", "caja.png"):
         continue  # Not used by the website.
+    if source.stem.startswith("og-"):
+        continue  # Social cards are generated below and only read by crawlers.
     image = Image.open(source).convert("RGBA")
     max_height = 160 if source.stem == "radio" else 96
     if source.stem == "candado":
         max_height = 244
+    heights = (max_height, max_height * 2)
+    if source.stem == "paisaje":
+        heights = (image.height,)  # Full-bleed background: keep the native pixel grid.
     variants = []
-    for height in (max_height, max_height * 2):
+    for height in heights:
         width = round(image.width * height / image.height)
         resized = image.resize((width, height), Image.Resampling.LANCZOS)
         stem = f"{source.stem}-{width}"
@@ -43,7 +48,8 @@ for lang, subtitle in (("es", "Simulador de parrilla argentina"),
                        ("en", "An Argentine roadside grill simulator")):
     card = Image.new("RGB", (1200, 630), "#100c0a")
     landscape = Image.open(ROOT / "assets/fondo/paisaje.png").convert("RGBA")
-    landscape = landscape.resize((1200, 506), Image.Resampling.NEAREST)
+    landscape = landscape.resize((1200, round(1200 * landscape.height / landscape.width)),
+                                 Image.Resampling.NEAREST)
     card.paste(landscape, (0, 345), landscape)
     shade = Image.new("RGBA", card.size, (16, 12, 10, 135))
     card = Image.alpha_composite(card.convert("RGBA"), shade)
