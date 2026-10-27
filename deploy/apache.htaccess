@@ -35,6 +35,11 @@ ErrorDocument 404 /404.html
     Header always set Cache-Control "no-store"
     Header always set Referrer-Policy "no-referrer"
   </Files>
+  <Files "ranking-evento.html">
+    Header always set X-Robots-Tag "noindex, nofollow, noarchive"
+    Header always set Cache-Control "no-store"
+    Header always set Referrer-Policy "no-referrer"
+  </Files>
 </IfModule>
 
 <IfModule mod_brotli.c>

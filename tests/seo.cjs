@@ -19,6 +19,7 @@ for (const page of config.pages) {
   assert(head.includes(`rel="canonical" href="${new URL(page.path, config.url).href}"`));
   assert(!head.includes('noindex'));
   assert(!html.includes('resultados.html'));
+  assert(!html.includes('ranking-evento'));
   assert(!head.includes('name="keywords"'));
   const title = head.match(/<title>([^<]+)<\/title>/)[1];
   const description = head.match(/name="description" content="([^"]+)"/)[1];
@@ -60,10 +61,13 @@ const sitemap = read('sitemap.xml');
 assert.deepEqual([...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => match[1]), urls);
 assert(!sitemap.includes('lastmod'));
 assert(!sitemap.includes('resultados'));
+assert(!sitemap.includes('ranking-evento'));
+assert(!read('robots.txt').includes('ranking-evento'));
 const robots = read('robots.txt');
 assert(robots.includes(`Sitemap: ${new URL('sitemap.xml', config.url).href}`));
 assert(!robots.includes('Disallow:'));
 assert.match(read('resultados.html'), /name="robots" content="noindex, nofollow, noarchive"/);
+assert.match(read('ranking-evento.html'), /name="robots" content="noindex, nofollow, noarchive"/);
 assert.match(read('404.html'), /name="robots" content="noindex, follow"/);
 for (const data of Object.values(require('../assets/optimized/manifest.json'))) {
   for (const variant of data.variants) {
@@ -75,7 +79,7 @@ for (const data of Object.values(require('../assets/optimized/manifest.json'))) 
   }
 }
 for (const file of fs.readdirSync('.').filter(file => file.endsWith('.js'))) execFileSync(process.execPath, ['--check', file]);
-const generated = [...config.pages.map(page => page.file), 'resultados.html', '404.html', 'robots.txt', 'sitemap.xml', 'site-data.js'];
+const generated = [...config.pages.map(page => page.file), 'resultados.html', 'ranking-evento.html', '404.html', 'robots.txt', 'sitemap.xml', 'site-data.js'];
 const before = generated.map(read);
 execFileSync(process.execPath, ['tools/generate-site.cjs']);
 assert.deepEqual(generated.map(read), before, 'generation must be idempotent');

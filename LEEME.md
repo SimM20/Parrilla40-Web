@@ -49,6 +49,13 @@ por su URL y valida la contraseña en la base de datos.
 Ver [PLAYTEST_SETUP.md](PLAYTEST_SETUP.md) para ejecutar localmente, conectar Supabase,
 provisionar el verificador sin guardar la contraseña, probar y publicar la V1.
 
+## Ranking del evento
+
+`ranking-evento.html` muestra el leaderboard del evento (rama `event/leaderboard` del juego):
+la mejor run de cada nombre según la plata total cobrada, sin restar lo gastado. No está enlazada
+ni en el sitemap y lleva `noindex`; se abre sólo con el link y se actualiza sola cada 20 s.
+Antes de usarla, correr una vez `supabase/event-leaderboard.sql` en el SQL Editor de Supabase.
+
 ## SEO, idiomas y rendimiento
 
 El dominio canónico confirmado es `https://parrilla40.com.ar/`. Las versiones públicas son

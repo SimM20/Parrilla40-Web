@@ -140,3 +140,21 @@ textarea + .field-hint, input + .field-hint { margin-top: 10px; }
   .survey-page .ratings .choice { min-height: 54px; font-size: 19px; }
   .survey-page .submit-area { padding: 30px 18px; }
 }
+
+/* Ranking del evento (ranking-evento.html) */
+.ranking { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.ranking-row { display: grid; grid-template-columns: 3ch minmax(0, 1fr) auto; gap: 18px; align-items: center; padding: 16px 22px; background: var(--char); border: 1px solid rgba(246,232,214,.16); border-radius: var(--r); }
+.ranking-pos { font: 22px "Bungee", sans-serif; color: var(--cream-dim); text-align: center; }
+.ranking-who { display: grid; min-width: 0; }
+.ranking-name { font-size: 22px; overflow-wrap: anywhere; }
+.ranking-runs { color: var(--cream-dim); font-size: 14px; }
+.ranking-money { font: 24px "Bungee", sans-serif; color: var(--gold); white-space: nowrap; }
+.ranking-row--top1 { border-color: var(--gold); }
+.ranking-row--top1 .ranking-pos { color: var(--gold); font-size: 30px; }
+.ranking-row--top2 .ranking-pos, .ranking-row--top3 .ranking-pos { color: var(--ember); }
+.ranking-status { margin-bottom: 18px; }
+@media (max-width:620px) {
+  .ranking-row { gap: 12px; padding: 14px; }
+  .ranking-name { font-size: 18px; }
+  .ranking-money { font-size: 18px; }
+}
