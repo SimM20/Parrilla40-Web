@@ -54,7 +54,8 @@ provisionar el verificador sin guardar la contraseña, probar y publicar la V1.
 `ranking-evento.html` muestra el leaderboard del evento (rama `event/leaderboard` del juego):
 la mejor run de cada nombre según la plata total cobrada, sin restar lo gastado. No está enlazada
 ni en el sitemap y lleva `noindex`; se abre sólo con el link y se actualiza sola cada 20 s.
-Antes de usarla, correr una vez `supabase/event-leaderboard.sql` en el SQL Editor de Supabase.
+Usa su propio proyecto de Supabase (`ranking-evento-config.js`), separado del de la encuesta. Antes de usarla,
+correr una vez `supabase/event-leaderboard.sql` en el SQL Editor de ese proyecto.
 
 ## SEO, idiomas y rendimiento
 

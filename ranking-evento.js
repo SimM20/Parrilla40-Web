@@ -1,6 +1,18 @@
 (function () {
   'use strict';
-  const { getClient, element } = window.Playtest;
+  const { element } = window.Playtest;
+  let client;
+  // Own project, not the survey's: see ranking-evento-config.js.
+  function getClient() {
+    const config = window.EVENT_RANKING_CONFIG;
+    if (!config?.supabaseUrl || !config?.supabasePublicKey || !window.supabase) {
+      throw new Error('Supabase configuration or client unavailable');
+    }
+    if (!client) client = window.supabase.createClient(config.supabaseUrl, config.supabasePublicKey, {
+      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+    });
+    return client;
+  }
   const list = document.querySelector('#ranking');
   const status = document.querySelector('#ranking-status');
   // The page stays open on a screen during the event: refresh without reloading.
