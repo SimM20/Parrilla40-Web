@@ -38,7 +38,7 @@ V1 includes:
 
 1. A single new button added to the existing `index` that sends players to the survey.
 2. A survey on a separate HTML page/route.
-3. A maximum of 15 questions.
+3. 15 anonymous survey questions plus Q16, an optional launch-notice opt-in (see Q16).
 4. Client-side validation and clear completion states.
 5. Storage of each completed response in Supabase.
 6. Automatic storage of response metadata:
@@ -340,6 +340,19 @@ Input:
 Stored field:
 `one_thing_to_change`
 
+### Q16 — Launch notice (added after V1)
+
+**¿Querés que te avisemos cuando puedas agregarlo a tu lista de deseados en Steam?**
+
+Options:
+- Sí, avisame
+- No, gracias
+
+If the player chooses yes, an email field appears and becomes required. The yes/no answer is not stored with
+the response. The email goes to `public.launch_notify_signups` (insert-only for `anon`, created by
+`supabase/launch-notify.sql`), with no `session_id` or link to the anonymous answers. It is used only to send
+one email when the game can be added to a Steam wishlist. This is the only email collection in the project.
+
 ## Form behavior
 
 ### Entry
@@ -348,7 +361,7 @@ The player enters from the new index button or by direct URL.
 
 ### Completion
 
-The player answers the 15 questions and submits once.
+The player answers the 16 questions and submits once.
 
 Required behavior:
 

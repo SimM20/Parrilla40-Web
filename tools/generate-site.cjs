@@ -23,7 +23,8 @@ function survey(language) {
   const blocks = {
     0: ['Tu partida', 'Empecemos por las noches que jugaste.', 'assets/extras/carbon-prendido.png'],
     3: ['La experiencia', 'Pensá en cómo se sintió jugar, desde el primer pedido.', 'assets/cortes/chorizo-jugoso.png'],
-    13: ['Lo que te llevás', 'Dos respuestas para ayudarnos a mejorar. No incluyas datos personales.', 'assets/cortes/choripan-hecho.png']
+    13: ['Lo que te llevás', 'Dos respuestas para ayudarnos a mejorar. No incluyas datos personales.', 'assets/cortes/choripan-hecho.png'],
+    15: ['Una última cosa', 'Cada lista de deseados en Steam nos da una mano enorme.', 'assets/ui/radio.png']
   };
   let html = '<div id="questions">';
   questions.forEach((q, index) => {
@@ -40,6 +41,12 @@ function survey(language) {
       }
       html += '</div>';
       if (q.type === 'rating') html += `<p class="field-hint scale-ends" id="hint-${q.name}"><span>1 · ${escape(t(q.low, language))}</span><span>5 · ${escape(t(q.high, language))}</span></p>`;
+      if (q.name === 'launch_notify') {
+        html += `<div class="notify-email" id="notify-email" hidden><label for="launch_email">${escape(t('¿A qué email te escribimos?', language))}</label>`;
+        html += `<input id="launch_email" name="launch_email" type="email" autocomplete="email" inputmode="email" maxlength="254" spellcheck="false" placeholder="${escape(t('vos@ejemplo.com', language))}" required disabled aria-describedby="hint-launch_email error-launch_email">`;
+        html += `<p class="field-hint" id="hint-launch_email">${escape(t('Un solo email, cuando ya se pueda. Se guarda aparte de tus respuestas y no lo compartimos con nadie.', language))}</p>`;
+        html += '<p class="field-error" id="error-launch_email"></p></div>';
+      }
     } else {
       html += `<label class="sr-only" for="${q.name}">${escape(t(q.label, language))}</label>`;
       const attributes = `id="${q.name}" name="${q.name}" required aria-describedby="hint-${q.name} error-${q.name}"`;

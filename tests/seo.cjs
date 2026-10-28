@@ -55,7 +55,7 @@ for (const page of config.pages) {
     assert(/\bwidth=/.test(match[0]) && /\bheight=/.test(match[0]));
     if (/hero__layer/.test(match[0])) assert(!match[0].includes('loading="lazy"'));
   }
-  if (page.file.startsWith('preguntas')) assert.equal((html.match(/<fieldset\b/g) || []).length, 15);
+  if (page.file.startsWith('preguntas')) assert.equal((html.match(/<fieldset\b/g) || []).length, 16);
 }
 const sitemap = read('sitemap.xml');
 assert.deepEqual([...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => match[1]), urls);
@@ -83,4 +83,4 @@ const generated = [...config.pages.map(page => page.file), 'resultados.html', 'r
 const before = generated.map(read);
 execFileSync(process.execPath, ['tools/generate-site.cjs']);
 assert.deepEqual(generated.map(read), before, 'generation must be idempotent');
-console.log('PASS SEO: initial HTML, 15 static questions per language, metadata, reciprocal hreflang, canonical, JSON-LD, sitemap, robots, assets, syntax, repeatable generation');
+console.log('PASS SEO: initial HTML, 16 static questions per language, metadata, reciprocal hreflang, canonical, JSON-LD, sitemap, robots, assets, syntax, repeatable generation');

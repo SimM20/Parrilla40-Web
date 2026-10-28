@@ -75,7 +75,7 @@ Avoid:
 
 ## Questionnaire integrity
 
-V1 has exactly 15 questions as defined in `context.md`.
+The survey has exactly 16 questions as defined in `context.md`: 15 anonymous questions plus the Q16 launch-notice opt-in.
 
 Do not:
 
@@ -122,6 +122,8 @@ Do not add:
 - phone;
 - account ID;
 - demographic profile.
+
+The only exception is the optional Q16 launch-notice email, stored apart from the answers as described in `context.md`.
 
 Use anonymous session IDs.
 

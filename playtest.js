@@ -19,12 +19,27 @@
     choice('stress_experience', '¿El estrés de atender varios pedidos te resultó divertido o frustrante?', [['very_fun', 'Muy divertido'], ['mostly_fun', 'Más divertido que frustrante'], ['balanced', 'Mitad y mitad'], ['mostly_frustrating', 'Más frustrante que divertido'], ['very_frustrating', 'Muy frustrante']]),
     choice('want_to_continue', '¿Te dieron ganas de jugar otra noche para intentar hacerlo mejor?', [['yes', 'Sí'], ['maybe', 'Tal vez'], ['no', 'No']]),
     { name: 'favorite_part', label: '¿Qué fue lo que más te gustó?', type: 'text' },
-    { name: 'one_thing_to_change', label: 'Si pudieras cambiar una sola cosa del juego, ¿qué cambiarías?', type: 'text' }
+    { name: 'one_thing_to_change', label: 'Si pudieras cambiar una sola cosa del juego, ¿qué cambiarías?', type: 'text' },
+    // Not stored with the anonymous answers: a "yes" only adds a separate launch-notice email.
+    choice('launch_notify', '¿Querés que te avisemos cuando puedas agregarlo a tu lista de deseados en Steam?', [['true', 'Sí, avisame'], ['false', 'No, gracias']])
   ];
 
   function validate(values) {
     const answers = {}, errors = {};
+    let notifyEmail = null;
     for (const q of questions) {
+      if (q.name === 'launch_notify') {
+        const value = String(values[q.name] ?? '');
+        if (!value) errors[q.name] = t('Respondé esta pregunta para continuar.');
+        else if (value !== 'true' && value !== 'false') errors[q.name] = t('Elegí una de las opciones disponibles.');
+        else if (value === 'true') {
+          const email = String(values.launch_email ?? '').trim().toLowerCase();
+          if (!email) errors.launch_email = t('Escribí tu email para que podamos avisarte.');
+          else if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.launch_email = t('Revisá el email: parece que le falta algo.');
+          else notifyEmail = email;
+        }
+        continue;
+      }
       const value = String(values[q.name] ?? '').trim();
       if (!value) errors[q.name] = t('Respondé esta pregunta para continuar.');
       else if (q.type === 'number') {
@@ -40,7 +55,7 @@
       } else answers[q.name] = q.type === 'rating' ? Number(value)
         : q.name === 'completed_night_1' ? value === 'true' : value;
     }
-    return { answers, errors };
+    return { answers, errors, notifyEmail };
   }
 
   let client;

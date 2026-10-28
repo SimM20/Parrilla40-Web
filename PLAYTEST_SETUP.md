@@ -61,13 +61,14 @@ El cliente oficial Supabase está fijado a `2.117.2` por CDN; las páginas nueva
 
    La URL y la clave publishable aparecen en **Connect** dentro del proyecto. También se puede elegir una clave desde **Settings → API Keys**. Usar la clave que comienza con `sb_publishable_`, no `sb_secret_`. Este sitio estático lee el archivo de configuración directamente; no necesita un archivo `.env` ni un build.
 
-8. Ejecutar las comprobaciones reales del apartado siguiente antes de publicar. No habilitar SELECT para resolver errores de inserción: el cliente inserta sin pedir filas de vuelta.
+8. Ejecutar completo `supabase/launch-notify.sql` **una sola vez** (también sobre una instalación existente). Crea `launch_notify_signups`, donde quedan los emails de la pregunta 16, separados de las respuestas y sin UUID de sesión. `anon` sólo puede insertar `email` y `language`; no puede leerlos. Para exportar la lista, usar la consulta comentada al final del archivo en el SQL Editor.
+9. Ejecutar las comprobaciones reales del apartado siguiente antes de publicar. No habilitar SELECT para resolver errores de inserción: el cliente inserta sin pedir filas de vuelta.
 
 ## Verificación de la conexión real
 
 Con el sitio servido y el proyecto de desarrollo configurado:
 
-1. Enviar una encuesta completa y comprobar en SQL Editor la fila: 15 respuestas, UUID de sesión, build correcta y `created_at` generado por la base.
+1. Enviar una encuesta completa y comprobar en SQL Editor la fila: 15 respuestas (la 16 no se guarda ahí), UUID de sesión, build correcta y `created_at` generado por la base.
 2. Con la clave pública, realizar GET, PATCH y DELETE sobre `/rest/v1/playtest_responses`. Deben fallar por permisos y no devolver datos. No usar una clave privilegiada para esta prueba.
 3. Abrir resultados directamente. No debe haber solicitudes de datos antes del submit. Una contraseña incorrecta debe devolver `P0001` sin filas; la correcta debe mostrar resultados.
 4. Revisar permisos y configuración:

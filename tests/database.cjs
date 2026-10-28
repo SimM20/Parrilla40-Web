@@ -16,12 +16,14 @@ const { pgcrypto } = packageRequire('@electric-sql/pglite/contrib/pgcrypto');
       grant usage on schema public to anon, authenticated;
       alter default privileges in schema public grant all on tables to anon, authenticated;`);
     await db.exec(fs.readFileSync('supabase/setup.sql', 'utf8'));
+    await db.exec(fs.readFileSync('supabase/launch-notify.sql', 'utf8'));
     const context = { window: {} };
     vm.createContext(context);
     vm.runInContext(fs.readFileSync('playtest.js', 'utf8'), context);
     const { questions, validate } = context.window.Playtest;
     const values = Object.fromEntries(questions.map(q => [q.name, q.options ? q.options[0][0] : q.type === 'number' ? '2' : 'Una respuesta de prueba']));
-    const row = { ...validate(values).answers, session_id: randomUUID(), build_version: 'qa' };
+    const row = { ...validate({ ...values, launch_email: 'qa@example.com' }).answers, session_id: randomUUID(), build_version: 'qa' };
+    assert.equal(row.launch_notify, undefined);
     async function insert(data) {
       const fields = Object.keys(data);
       return db.query(`insert into public.playtest_responses (${fields.join(',')}) values (${fields.map((_, i) => `$${i + 1}`).join(',')})`, Object.values(data));
@@ -38,7 +40,7 @@ const { pgcrypto } = packageRequire('@electric-sql/pglite/contrib/pgcrypto');
     ]) await assert.rejects(db.exec(sql), /permission denied/);
     await assert.rejects(insert({ ...row, created_at: new Date().toISOString() }), /permission denied/);
     await assert.rejects(insert({ ...row, id: randomUUID() }), /permission denied/);
-    for (const q of questions) {
+    for (const q of questions.filter(item => item.name !== 'launch_notify')) {
       await assert.rejects(insert({ ...row, [q.name]: null }), /not-null constraint/);
       if (q.type === 'rating') {
         for (const value of [0, 6]) await assert.rejects(insert({ ...row, [q.name]: value }), /check constraint/);
@@ -52,7 +54,21 @@ const { pgcrypto } = packageRequire('@electric-sql/pglite/contrib/pgcrypto');
     await assert.rejects(insert({ ...row, highest_night: 1.5 }), /invalid input syntax/);
     await assert.rejects(insert({ ...row, highest_night: 2147483648 }), /out of range/);
     await assert.rejects(insert({ ...row, build_version: ' ' }), /check constraint/);
+    const signup = (email, language = 'es') => db.query('insert into public.launch_notify_signups (email, language) values ($1, $2)', [email, language]);
+    await signup('qa@example.com');
+    await signup('qa@example.com', 'en');
+    for (const invalid of ['QA@example.com', 'qa@example', 'qa example@x.com', 'a@b', 'x'.repeat(250) + '@x.com']) await assert.rejects(signup(invalid), /check constraint/);
+    await assert.rejects(signup('qa@example.com', 'fr'), /check constraint/);
+    await assert.rejects(signup(null), /not-null constraint/);
+    for (const sql of [
+      'select * from public.launch_notify_signups',
+      "update public.launch_notify_signups set email = 'x@y.z'",
+      'delete from public.launch_notify_signups',
+      'truncate public.launch_notify_signups'
+    ]) await assert.rejects(db.exec(sql), /permission denied/);
+    await assert.rejects(db.query("insert into public.launch_notify_signups (id, email, language) values ($1, 'qa@example.com', 'es')", [randomUUID()]), /permission denied/);
     await db.exec('reset role; set role authenticated');
+    await assert.rejects(signup('qa@example.com'), /permission denied/);
     await assert.rejects(insert(row), /permission denied/);
     await assert.rejects(db.query('select public.playtest_results($1)', ['denied']), /permission denied/);
     await db.exec('reset role');
@@ -73,9 +89,11 @@ const { pgcrypto } = packageRequire('@electric-sql/pglite/contrib/pgcrypto');
     await db.exec('reset role');
     const policies = await db.query("select cmd from pg_policies where tablename = 'playtest_responses'");
     assert.deepEqual(policies.rows, [{ cmd: 'INSERT' }]);
+    const signups = await db.query('select email, language from public.launch_notify_signups order by language desc');
+    assert.deepEqual(signups.rows, [{ email: 'qa@example.com', language: 'es' }, { email: 'qa@example.com', language: 'en' }]);
     const secure = await db.query("select prosecdef, proconfig from pg_proc where oid = 'public.playtest_results(text)'::regprocedure");
     assert.equal(secure.rows[0].prosecdef, true);
     assert(secure.rows[0].proconfig.some(value => value === 'search_path=""'));
-    console.log('PASS PostgreSQL: exact setup.sql, anonymous insert, server timestamp, all field constraints, no SELECT/UPDATE/DELETE/TRUNCATE, no verifier access, protected RPC, fail-closed without verifier, wrong/null/oversized password, valid bcrypt password, fixed search_path, minimum payload');
+    console.log('PASS PostgreSQL: exact setup.sql, anonymous insert, server timestamp, insert-only launch emails with format checks, all field constraints, no SELECT/UPDATE/DELETE/TRUNCATE, no verifier access, protected RPC, fail-closed without verifier, wrong/null/oversized password, valid bcrypt password, fixed search_path, minimum payload');
   } finally { await db.close(); }
 })().catch(error => { console.error(error.message); process.exitCode = 1; });

@@ -74,7 +74,7 @@ fs.mkdirSync(output, { recursive: true });
       await page.goto(`${base}/preguntas-en.html`);
       assert.equal(await page.locator('html').getAttribute('data-theme'), chosen);
       await page.locator('#submit-survey').click();
-      assert.equal(await page.locator('.field-error:not(:empty)').count(), 15);
+      assert.equal(await page.locator('.field-error:not(:empty)').count(), 16);
       assert.match(await page.locator('#survey-status').textContent(), /highlighted questions/);
       assert.match(await page.locator('fieldset legend').first().textContent(), /first night/);
       await page.route('**/playtest-config.js', route => route.fulfill({ contentType: 'application/javascript', body: "window.PLAYTEST_CONFIG={supabaseUrl:'https://seo-test.supabase.co',supabasePublicKey:'sb_publishable_test',buildVersion:'seo-test'};" }));
@@ -86,6 +86,7 @@ fs.mkdirSync(output, { recursive: true });
         if (question.options) await page.locator(`[name="${question.name}"]`).first().check();
         else await page.locator(`[name="${question.name}"]`).fill(question.type === 'number' ? '1' : 'Playtest feedback');
       }
+      await page.locator('[name="launch_notify"][value="false"]').check();
       await page.locator('#submit-survey').click();
       await page.waitForFunction(() => document.querySelector('#survey-status').textContent.includes("couldn't confirm"));
       assert.equal(await page.locator('#favorite_part').inputValue(), 'Playtest feedback');
@@ -109,7 +110,7 @@ fs.mkdirSync(output, { recursive: true });
     assert.equal(await plain.locator('#pitch .lead').evaluate(el => getComputedStyle(el).opacity), '1');
     assert.match(await plain.locator('[data-count]').first().textContent(), /14.5/);
     await plain.goto(`${base}/preguntas-en.html`);
-    assert.equal(await plain.locator('fieldset').count(), 15);
+    assert.equal(await plain.locator('fieldset').count(), 16);
     assert(await plain.locator('#submit-survey').isDisabled());
     await noJS.close();
 

@@ -148,5 +148,6 @@
       }
     }
   });
-  function validateRow(row) { return window.Playtest.validate(row).errors; }
+  // The launch-notice question is never stored with the answers.
+  function validateRow(row) { return window.Playtest.validate({ ...row, launch_notify: 'false' }).errors; }
 })();

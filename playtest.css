@@ -116,6 +116,10 @@ textarea + .field-hint, input + .field-hint { margin-top: 10px; }
 .survey-page input:not([type=radio]), .survey-page textarea { background: #120e0b; border: 1px solid rgba(246,232,214,.24); border-radius: 12px; padding: 14px 16px; transition: border-color .18s, box-shadow .18s; }
 .survey-page input:not([type=radio]):focus, .survey-page textarea:focus { border-color: var(--ember); box-shadow: 0 0 0 4px rgba(255,122,24,.18); }
 .survey-page .field-error { margin-top: 12px; padding: 10px 14px; border-radius: 10px; background: rgba(255,192,67,.08); border: 1px solid rgba(255,192,67,.35); font-size: 15px; }
+.notify-email { margin-top: 18px; padding: 18px 18px 16px; border: 1px dashed rgba(255,122,24,.5); border-radius: 12px; background: rgba(255,122,24,.06); }
+.notify-email label { display: block; margin-bottom: 10px; font-weight: 900; }
+.notify-email .field-hint { margin-bottom: 0; }
+.survey-page #success .notify-done { color: var(--gold); font-weight: 700; max-width: 44ch; text-wrap: balance; }
 .text-count { display: block; text-align: right; color: var(--cream-dim); font-size: 13px; font-variant-numeric: tabular-nums; }
 .survey-page input, .survey-page textarea { scroll-margin-block: 120px 40px; }
 
