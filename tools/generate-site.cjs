@@ -62,7 +62,8 @@ function survey(language) {
   return `<!-- QUESTIONS:START -->\n${html}</section></div>\n<!-- QUESTIONS:END -->`;
 }
 
-function translate(html) {
+function translate(html, page) {
+  const spanish = config.pages.find(p => p.file === page.alternate);
   const unchanged = new Set(['PARRILLA 40', 'PARRILLA', 'EN', 'Q', 'R', 'T', 'C', 'M', 'Strike', '2026 release', 'Management', 'PC (Steam)']);
   const start = html.indexOf('<body');
   return html.slice(0, start) + html.slice(start)
@@ -76,8 +77,10 @@ function translate(html) {
     .replace(/\b(alt|aria-label|placeholder)="([^"]+)"/g, (match, attr, text) => `${attr}="${escape(t(text, 'en'))}"`)
     .replace(/href="index.html"/g, 'href="index-en.html"')
     .replace(/href="preguntas.html"/g, 'href="preguntas-en.html"')
+    .replace(/href="\/"/g, 'href="/index-en.html"')
+    .replace(/href="wishlist\/"/g, 'href="wishlist/en/"')
     .replace(/<a class="site-control"[^>]+data-language-link>EN<\/a>/g, match => match
-      .replace(/href="[^"]+"/, `href="${html.includes('id="survey"') ? 'preguntas.html' : 'index.html'}"`)
+      .replace(/href="[^"]+"/, `href="${page.file.includes('/') ? '/' + spanish.path : spanish.file}"`)
       .replace('lang="en"', 'lang="es"').replace('hreflang="en"', 'hreflang="es"')
       .replace('aria-label="EN: Switch to English"', 'aria-label="ES: Switch to Spanish"').replace('>EN<', '>ES<'));
 }
@@ -86,7 +89,9 @@ function optimizeImages(html) {
   // Replacing an existing picture instead of nesting one keeps regeneration stable.
   html = html.replace(/<picture><source[^>]+><source[^>]+>(<img\b[^>]+>)<\/picture>/g, '$1');
   return html.replace(/<img\b[^>]+>/g, tag => {
-    const source = tag.match(/\bsrc="([^"]+)"/)?.[1];
+    const src = tag.match(/\bsrc="([^"]+)"/)?.[1];
+    // Directory pages reference assets from the site root ("/assets/...").
+    const prefix = src?.startsWith('/') ? '/' : '', source = src?.slice(prefix.length);
     if (!source || !fs.existsSync(path.join(root, source))) return tag;
     const png = fs.readFileSync(path.join(root, source));
     if (path.extname(source) !== '.png') return tag;
@@ -100,7 +105,7 @@ function optimizeImages(html) {
     const data = images[source];
     if (!data) return tag;
     const sizes = source.endsWith('radio.png') ? '90px' : source.endsWith('candado.png') ? '84px' : source.endsWith('paisaje.png') ? '100vw' : '60px';
-    return `<picture><source type="image/avif" srcset="${data.variants.map(v => `assets/optimized/${v.stem}.avif ${v.width}w`).join(', ')}" sizes="${sizes}"><source type="image/webp" srcset="${data.variants.map(v => `assets/optimized/${v.stem}.webp ${v.width}w`).join(', ')}" sizes="${sizes}">${tag}</picture>`;
+    return `<picture><source type="image/avif" srcset="${data.variants.map(v => `${prefix}assets/optimized/${v.stem}.avif ${v.width}w`).join(', ')}" sizes="${sizes}"><source type="image/webp" srcset="${data.variants.map(v => `${prefix}assets/optimized/${v.stem}.webp ${v.width}w`).join(', ')}" sizes="${sizes}">${tag}</picture>`;
   });
 }
 
@@ -109,7 +114,8 @@ function head(html, page) {
   html = html.replace(/<!-- SEO:START -->[\s\S]*?<!-- SEO:END -->\n?/g, '')
     .replace(/<!-- SITE:START -->[\s\S]*?<!-- SITE:END -->\n?/g, '');
   let [before, after] = html.split('</head>');
-  const prefix = page.file === '404.html' ? '/' : '';
+  // Pages served from a directory (and the 404 at any path) use root-absolute assets.
+  const prefix = page.file === '404.html' || page.file.includes('/') ? '/' : '';
   before = before.replace(/<script defer src="\/?site(?:-data)?\.js"><\/script>\n?/g, '');
   if (config.pages.includes(page)) {
     before = before.replace(/<title>[\s\S]*?<\/title>\n?/g, '').replace(/<meta name="(?:description|robots|theme-color)"[^>]*>\n?/g, '');
@@ -165,9 +171,11 @@ function head(html, page) {
 // Keep the questionnaire definition in playtest.js; no duplicated field definitions.
 let surveySource = read('preguntas.html').replace(/<!-- QUESTIONS:START -->[\s\S]*?<!-- QUESTIONS:END -->|<div id="questions"><\/div>/, '<!-- QUESTIONS -->');
 for (const page of config.pages) {
-  const source = page.file.startsWith('index') ? read('index.html') : surveySource;
-  let html = page.language === 'en' ? translate(source) : source;
+  const spanish = page.language === 'es' ? page : config.pages.find(p => p.file === page.alternate);
+  const source = spanish.file === 'preguntas.html' ? surveySource : read(spanish.file);
+  let html = page.language === 'en' ? translate(source, page) : source;
   if (page.file.startsWith('preguntas')) html = html.replace('<!-- QUESTIONS -->', survey(page.language));
+  fs.mkdirSync(path.dirname(path.join(root, page.file)), { recursive: true });
   write(page.file, optimizeImages(head(html, page)));
 }
 for (const file of ['resultados.html', 'ranking-evento.html', '404.html']) write(file, optimizeImages(head(read(file), { file, language: 'es' })));

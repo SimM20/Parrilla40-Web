@@ -24,7 +24,7 @@ fs.mkdirSync(output, { recursive: true });
       const page = await context.newPage();
       observe(page);
       await page.route('**/rest/v1/**', route => { errors.push('Unexpected API request'); return route.abort(); });
-      for (const file of ['index.html', 'index-en.html', 'preguntas.html', 'preguntas-en.html', 'resultados.html']) {
+      for (const file of ['index.html', 'index-en.html', 'preguntas.html', 'preguntas-en.html', 'resultados.html', 'wishlist/', 'wishlist/en/']) {
         for (const width of [320, 390, 768, 1440]) {
           await page.setViewportSize({ width, height: 900 });
           const response = await page.goto(`${base}/${file}`);
@@ -32,42 +32,29 @@ fs.mkdirSync(output, { recursive: true });
           await page.evaluate(() => document.fonts.ready);
           assert.equal(await page.locator('html').getAttribute('data-theme'), theme);
           assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${file} ${theme} overflow at ${width}`);
-          if (file.startsWith('index')) {
-            assert(await page.locator('#cookLabels button').evaluateAll(buttons => buttons.every(button => button.scrollWidth <= button.clientWidth + 1)), `cooking labels overflow at ${width}`);
-          }
           if (width === 390 || width === 1440) {
-            await page.screenshot({ path: path.join(output, `${file}-${theme}-${width}.png`) });
+            await page.screenshot({ path: path.join(output, `${file.replace(/\//g, '-')}-${theme}-${width}.png`) });
             if (file === 'index.html' && theme === 'light') {
-              for (const [name, selector] of [['pitch', '#pitch'], ['cooker', '#punto .cooker'], ['images', '#parrilla .extras']]) {
+              for (const [name, selector] of [['hero', '.hero__content'], ['wishlist', '#wishlist']]) {
                 await page.locator(selector).screenshot({ path: path.join(output, `${name}-${theme}-${width}.png`) });
               }
             }
           }
         }
-        if (file.includes('-en')) {
+        if (file.includes('-en') || file.includes('/en/')) {
           assert.equal(await page.locator('html').getAttribute('lang'), 'en');
           assert(!/¿|Respondé|Volver al sitio|Pausar el día/.test(await page.locator('main').innerText()));
         }
         const scan = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22a', 'wcag22aa']).analyze();
         accessibility.push({ file, theme, violations: scan.violations.map(v => ({ id: v.id, impact: v.impact, nodes: v.nodes.map(n => ({ target: n.target, failureSummary: n.failureSummary })) })) });
       }
-      // Keyboard-operated menu, focus return and equivalent language route.
+      // Equivalent language route keeps the section.
       await page.setViewportSize({ width: 390, height: 900 });
-      await page.goto(`${base}/index.html`);
-      await page.locator('#menu-toggle').focus();
-      await page.keyboard.press('Enter');
-      assert.equal(await page.locator('#menu-toggle').getAttribute('aria-expanded'), 'true');
-      assert(await page.locator('#navigation').isVisible());
-      assert.equal(await page.evaluate(() => document.activeElement.getAttribute('href')), '#jornada');
-      await page.keyboard.press('Escape');
-      assert.equal(await page.evaluate(() => document.activeElement.id), 'menu-toggle');
-      assert.equal(await page.locator('#navigation').isVisible(), false);
-      await page.goto(`${base}/index.html#punto`);
+      await page.goto(`${base}/index.html#wishlist`);
       await page.locator('[data-language-link]').click();
-      await page.waitForURL('**/index-en.html#punto');
-      await page.locator('#cookLabels button').nth(2).click();
-      assert.equal(await page.locator('#cookState').textContent(), 'Medium');
-      assert.equal(await page.locator('#cookRange').getAttribute('aria-valuetext'), 'Medium');
+      await page.waitForURL('**/index-en.html#wishlist');
+      assert.equal(await page.locator('.hero__cta a').textContent(), "Notify me when it's available");
+      assert.equal(await page.locator('.hero__cta a').getAttribute('href'), 'wishlist/en/');
       await page.locator('#theme-toggle').click();
       const chosen = theme === 'dark' ? 'light' : 'dark';
       assert.equal(await page.locator('html').getAttribute('data-theme'), chosen);
@@ -107,7 +94,7 @@ fs.mkdirSync(output, { recursive: true });
     const noJS = await browser.newContext({ javaScriptEnabled: false, colorScheme: 'dark' });
     const plain = await noJS.newPage();
     await plain.goto(`${base}/index-en.html`);
-    assert.equal(await plain.locator('#pitch .lead').evaluate(el => getComputedStyle(el).opacity), '1');
+    assert.equal(await plain.locator('#wishlist .cta__sub').evaluate(el => getComputedStyle(el).opacity), '1');
     assert.match(await plain.locator('[data-count]').first().textContent(), /14.5/);
     await plain.goto(`${base}/preguntas-en.html`);
     assert.equal(await plain.locator('fieldset').count(), 16);
@@ -123,10 +110,7 @@ fs.mkdirSync(output, { recursive: true });
     await page.waitForFunction(() => document.documentElement.dataset.theme === 'dark');
     await page.locator('#motion-toggle').click();
     assert.equal(await page.locator('html').getAttribute('data-motion'), 'paused');
-    await page.locator('#clockHour').scrollIntoViewIfNeeded();
-    const hour = await page.locator('#clockHour').textContent();
-    await page.waitForTimeout(400);
-    assert.equal(await page.locator('#clockHour').textContent(), hour);
+    assert.equal(await page.locator('.hero__near').evaluate(el => getComputedStyle(el).animationPlayState), 'paused');
     await page.locator('#motion-toggle').click();
     assert.equal(await page.locator('html').getAttribute('data-motion'), 'running');
     await page.emulateMedia({ reducedMotion: 'reduce' });

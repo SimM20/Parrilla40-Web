@@ -24,6 +24,12 @@
     choice('launch_notify', '¿Querés que te avisemos cuando puedas agregarlo a tu lista de deseados en Steam?', [['true', 'Sí, avisame'], ['false', 'No, gracias']])
   ];
 
+  // Same rule as the launch_notify_signups CHECK constraint. Returns the stored form, or null.
+  function launchEmail(value) {
+    const email = String(value ?? '').trim().toLowerCase();
+    return email.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : null;
+  }
+
   function validate(values) {
     const answers = {}, errors = {};
     let notifyEmail = null;
@@ -33,10 +39,9 @@
         if (!value) errors[q.name] = t('Respondé esta pregunta para continuar.');
         else if (value !== 'true' && value !== 'false') errors[q.name] = t('Elegí una de las opciones disponibles.');
         else if (value === 'true') {
-          const email = String(values.launch_email ?? '').trim().toLowerCase();
-          if (!email) errors.launch_email = t('Escribí tu email para que podamos avisarte.');
-          else if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.launch_email = t('Revisá el email: parece que le falta algo.');
-          else notifyEmail = email;
+          notifyEmail = launchEmail(values.launch_email);
+          if (!String(values.launch_email ?? '').trim()) errors.launch_email = t('Escribí tu email para que podamos avisarte.');
+          else if (!notifyEmail) errors.launch_email = t('Revisá el email: parece que le falta algo.');
         }
         continue;
       }
@@ -70,11 +75,17 @@
     return client;
   }
 
+  // Kept apart from playtest_responses, with no session ID, so survey answers stay anonymous.
+  function saveLaunchEmail(email) {
+    return getClient().from('launch_notify_signups').insert({ email,
+      language: document.documentElement.lang === 'en' ? 'en' : 'es' }).abortSignal(AbortSignal.timeout(20000));
+  }
+
   function element(tag, text, className) {
     const node = document.createElement(tag);
     if (text !== undefined) node.textContent = text;
     if (className) node.className = className;
     return node;
   }
-  window.Playtest = { questions, validate, getClient, element };
+  window.Playtest = { questions, validate, launchEmail, saveLaunchEmail, getClient, element };
 })();

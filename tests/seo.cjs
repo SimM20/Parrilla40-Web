@@ -13,8 +13,8 @@ for (const page of config.pages) {
   assert.equal((html.match(/<main\b/g) || []).length, 1);
   assert.equal((head.match(/<title>/g) || []).length, 1);
   assert.equal((head.match(/rel="canonical"/g) || []).length, 1);
-  assert.equal((head.match(/src="site.js"/g) || []).length, 1);
-  assert.equal((head.match(/src="site-data.js"/g) || []).length, 1);
+  assert.equal((head.match(/src="\/?site\.js"/g) || []).length, 1);
+  assert.equal((head.match(/src="\/?site-data\.js"/g) || []).length, 1);
   assert(head.indexOf("localStorage.getItem('parrilla40-theme')") < head.indexOf('rel="stylesheet"'));
   assert(head.includes(`rel="canonical" href="${new URL(page.path, config.url).href}"`));
   assert(!head.includes('noindex'));

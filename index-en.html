@@ -50,18 +50,10 @@
   <a class="nav__brand" href="#top">
     <span class="nav__dot"></span>PARRILLA 40
   </a>
-  <nav class="nav__links" id="navigation" aria-label="Main navigation">
-    <a href="#jornada">THE DAY</a>
-    <a href="#punto">DONENESS</a>
-    <a href="#parrilla">THE GRILL</a>
-    <a href="#clientes">CUSTOMERS</a>
-    <a href="#tienda">THE SHOP</a>
-  </nav>
-  <a class="btn btn--sm" href="#wishlist">Follow the project</a>
+  <a class="btn btn--sm" href="wishlist/en/">Follow the project</a>
   <div class="site-tools">
     <a class="site-control" href="index.html" lang="es" hreflang="es" aria-label="ES: Switch to Spanish" data-language-link>ES</a>
     <button class="site-control" id="theme-toggle" type="button" aria-label="Dark mode" aria-pressed="true" hidden><span aria-hidden="true">☀</span></button>
-    <button class="site-control" id="menu-toggle" type="button" aria-controls="navigation" aria-expanded="false" hidden>Menu</button>
   </div>
 </header>
 
@@ -86,9 +78,7 @@
     </p>
 
     <div class="hero__cta">
-      <a class="btn btn--big" href="#punto">See how to play</a>
-      <a class="btn btn--ghost btn--big" href="#wishlist">Join the list</a>
-      <a class="btn btn--big" href="preguntas-en.html">Take the survey</a>
+      <a class="btn btn--big btn--huge" href="wishlist/en/">Notify me when it's available</a>
     </div>
 
     <ul class="hero__stats">
@@ -103,299 +93,9 @@
     <span></span><span></span><span></span><span></span><span></span><span></span>
   </div>
 
-  <a class="hero__scroll" href="#pitch" aria-label="Scroll to the game overview">
+  <a class="hero__scroll" href="#wishlist" aria-label="Scroll to the game overview">
     <span class="hero__scroll-wheel"></span>
   </a>
-</section>
-
-<!-- ══ MARQUEE ══ -->
-<div class="marquee" aria-hidden="true">
-  <div class="marquee__track" id="marqueeTrack"></div>
-</div>
-
-<!-- ══ PITCH ══ -->
-<section class="section section--pitch" id="pitch">
-  <div class="wrap">
-    <p class="eyebrow reveal">The game</p>
-    <h2 class="h2 reveal">Cooking is easy. Keeping up is <em>everything</em>.</h2>
-    <p class="lead reveal">
-      Light the charcoal, put the cuts on the grill, flip them before they overcook, add bread and chimichurri to the plate, then drag it over to the customer already glaring at you. All while the clock keeps ticking.
-    </p>
-
-    <div class="pillars">
-      <article class="pillar reveal" style="--d:0ms">
-        <div class="pillar__ico">
-          <img src="assets/extras/carbon-prendido.png" alt="" class="px float-slow" width="200" height="200" loading="lazy" decoding="async">
-        </div>
-        <h3>The heat won't wait</h3>
-        <p>Each ember heats the neighbouring slots and slowly burns out. The grill you set up two minutes ago has already changed.</p>
-      </article>
-      <article class="pillar reveal" style="--d:110ms">
-        <div class="pillar__ico">
-          <img src="assets/cortes/vacio-hecho.png" alt="" class="px float-slow" width="100" height="100" loading="lazy" decoding="async">
-        </div>
-        <h3>Each side cooks separately</h3>
-        <p>Only the side touching the grill cooks. Right-click to flip the meat and start cooking the other side. Once it's burnt, there's no going back.</p>
-      </article>
-      <article class="pillar reveal" style="--d:220ms">
-        <div class="pillar__ico">
-          <img src="assets/clientes/pov2.png" alt="" class="px float-slow pillar__ico--tall" width="300" height="500" loading="lazy" decoding="async">
-        </div>
-        <h3>Patience you can see</h3>
-        <p>Every customer arrives with a ticking patience bar. When it turns red, they shake. When it reaches zero, they leave and you get a strike.</p>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- ══ PUNTO DE COCCIÓN ══ -->
-<section class="section section--dark" id="punto">
-  <div class="wrap">
-    <p class="eyebrow reveal">Doneness</p>
-    <h2 class="h2 reveal">Six levels. Four get you paid.</h2>
-    <p class="lead reveal">
-      Accumulated heat is divided into six equal levels. <b>Raw</b> and <b>Burnt</b> can still be served, but the disgusted customer leaves without paying and you get a strike. Move the slider and see.
-    </p>
-
-    <div class="cooker reveal">
-      <div class="cooker__stage">
-        <div class="cooker__grill">
-          <img class="px cooker__grillimg" src="assets/ui/parrilla.png" alt="Grill" width="640" height="192" loading="lazy" decoding="async">
-          <img class="px cooker__meat" id="cookMeat" src="assets/cortes/vacio-crudo.png" alt="Cut of meat" width="100" height="100" loading="lazy" decoding="async">
-          <div class="cooker__heat" id="cookHeat"></div>
-        </div>
-
-        <div class="cooker__readout">
-          <span class="cooker__state" id="cookState">Raw</span>
-          <span class="cooker__verdict" id="cookVerdict">Not worth serving</span>
-        </div>
-      </div>
-
-      <div class="cooker__panel">
-        <div class="cooker__bar">
-          <div class="cooker__fill" id="cookFill"></div>
-          <div class="cooker__ticks"><i></i><i></i><i></i><i></i><i></i></div>
-        </div>
-        <input class="cooker__range" id="cookRange" type="range" min="0" max="5" step="1" value="0"
-               aria-label="Doneness level">
-        <div class="cooker__labels" id="cookLabels">
-          <button data-i="0">Raw</button>
-          <button data-i="1">Rare</button>
-          <button data-i="2">Medium</button>
-          <button data-i="3">Well done</button>
-          <button data-i="4">Overdone</button>
-          <button data-i="5">Burnt</button>
-        </div>
-
-        <div class="cooker__cuts">
-          <span class="cooker__cutslabel">Try another cut</span>
-          <div class="cooker__cutrow" id="cutRow">
-            <button data-cut="vacio" class="is-on"><img class="px" src="assets/cortes/vacio-hecho.png" alt="Flank steak" width="100" height="100" loading="lazy" decoding="async"><span>Flank steak</span></button>
-            <button data-cut="tira"><img class="px" src="assets/cortes/tira-hecho.png" alt="Short ribs" width="100" height="100" loading="lazy" decoding="async"><span>Short ribs</span></button>
-            <button data-cut="chorizo"><img class="px" src="assets/cortes/chorizo-hecho.png" alt="Sausage" width="100" height="100" loading="lazy" decoding="async"><span>Sausage</span></button>
-            <button data-cut="paty"><img class="px" src="assets/cortes/paty-hecho.png" alt="Burger" width="100" height="100" loading="lazy" decoding="async"><span>Burger</span></button>
-            <button data-cut="choripan"><img class="px" src="assets/cortes/choripan-hecho.png" alt="Choripán" width="100" height="100" loading="lazy" decoding="async"><span>Choripán</span></button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ JORNADA ══ -->
-<section class="section" id="jornada">
-  <div class="wrap">
-    <p class="eyebrow reveal">The working day</p>
-    <h2 class="h2 reveal">06:30 to 21:00, in five minutes.</h2>
-    <p class="lead reveal">
-      The sky, the sun and customer arrivals follow the time of day. Lunch gets busy; the last crowd arrives at dusk. You close at 21:00, but the day only ends when the last customer leaves.
-    </p>
-
-    <div class="clock reveal">
-      <div class="clock__sky" id="clockSky">
-        <img class="clock__stars px" id="clockStars" src="assets/fondo/estrellas.png" alt="" width="480" height="75" loading="lazy" decoding="async">
-        <img class="clock__body px" id="clockSun" src="assets/fondo/sol.png" alt="Sun" width="26" height="26" loading="lazy" decoding="async">
-        <img class="clock__body px" id="clockMoon" src="assets/fondo/luna.png" alt="Moon" width="20" height="20" loading="lazy" decoding="async">
-        <picture><source type="image/avif" srcset="assets/optimized/paisaje-720.avif 720w" sizes="100vw"><source type="image/webp" srcset="assets/optimized/paisaje-720.webp 720w" sizes="100vw"><img class="clock__land px" src="assets/fondo/paisaje.png" alt="" width="720" height="405" loading="lazy" decoding="async"></picture>
-        <div class="clock__hud">
-          <span class="clock__hour" id="clockHour">06:30</span>
-          <span class="clock__phase" id="clockPhase">Open for business</span>
-        </div>
-      </div>
-
-      <div class="clock__timeline">
-        <div class="clock__progress" id="clockProgress"></div>
-        <div class="clock__marks">
-          <span style="--p:0%">06:30<i>open</i></span>
-          <span style="--p:38%">12:00<i>rush hour</i></span>
-          <span style="--p:72%">17:00<i>afternoon</i></span>
-          <span style="--p:100%">21:00<i>close</i></span>
-        </div>
-      </div>
-      <button class="clock__btn" id="clockBtn" aria-pressed="true">Pause the day</button>
-    </div>
-  </div>
-</section>
-
-<!-- ══ PARRILLA / FEATURES ══ -->
-<section class="section section--dark" id="parrilla">
-  <div class="wrap">
-    <p class="eyebrow reveal">Inside the stand</p>
-    <h2 class="h2 reveal">It all happens on one table.</h2>
-    <p class="lead reveal">
-      Everything stays on one screen: stock on the left, the grill in the middle, bread and jars on the right. Drag the finished plate to the customer.
-    </p>
-
-    <div class="grid">
-      <article class="card reveal" style="--d:0ms">
-        <span class="card__key">Q</span>
-        <h3>Stock panel</h3>
-        <p>Slides in from the left. Drag meat straight from the crate onto the embers. If it doesn't fit, press <b>R</b> to rotate it.</p>
-      </article>
-      <article class="card reveal" style="--d:80ms">
-        <span class="card__key">Space</span>
-        <h3>Meat / charcoal layers</h3>
-        <p>One grid, two layers. Switch to charcoal to arrange the embers, then back to meat to cook. Press <b>R</b> to clear the ashes.</p>
-      </article>
-      <article class="card reveal" style="--d:160ms">
-        <span class="card__key">T</span>
-        <h3>Toppings panel</h3>
-        <p>Bread, side dishes and jars. Chimichurri and salsa criolla are <b>poured</b>: tilt the jar over the plate and watch the sauce splash.</p>
-      </article>
-      <article class="card reveal" style="--d:0ms">
-        <span class="card__key">C</span>
-        <h3>One plate at a time</h3>
-        <p>One cut per plate. Meat stays where you drop it. Reposition it, move it to the tray or put it back on the grill.</p>
-      </article>
-      <article class="card reveal" style="--d:80ms">
-        <span class="card__key">↺</span>
-        <h3>Undo that</h3>
-        <p>The undo button removes the last addition: bread, a side or sauce. Even meat returns to the tray with its cooking times intact.</p>
-      </article>
-      <article class="card reveal" style="--d:160ms">
-        <span class="card__key">M</span>
-        <h3>Sold out</h3>
-        <p>Out of the cut they ordered? Let the customer know and they'll choose something you have. They'll accept it, but you lose the tip.</p>
-      </article>
-    </div>
-
-    <div class="extras reveal">
-      <span class="extras__label">What goes on the plate</span>
-      <div class="extras__row">
-        <figure><picture><source type="image/avif" srcset="assets/optimized/pan-flauta-98.avif 98w, assets/optimized/pan-flauta-196.avif 196w" sizes="60px"><source type="image/webp" srcset="assets/optimized/pan-flauta-98.webp 98w, assets/optimized/pan-flauta-196.webp 196w" sizes="60px"><img class="px" src="assets/extras/pan-flauta.png" alt="" width="1240" height="1213" loading="lazy" decoding="async"></picture><figcaption>Baguette</figcaption></figure>
-        <figure><picture><source type="image/avif" srcset="assets/optimized/pan-paty-109.avif 109w, assets/optimized/pan-paty-217.avif 217w" sizes="60px"><source type="image/webp" srcset="assets/optimized/pan-paty-109.webp 109w, assets/optimized/pan-paty-217.webp 217w" sizes="60px"><img class="px" src="assets/extras/pan-paty.png" alt="" width="1540" height="1360" loading="lazy" decoding="async"></picture><figcaption>Burger bun</figcaption></figure>
-        <figure><picture><source type="image/avif" srcset="assets/optimized/papas-155.avif 155w, assets/optimized/papas-311.avif 311w" sizes="60px"><source type="image/webp" srcset="assets/optimized/papas-155.webp 155w, assets/optimized/papas-311.webp 311w" sizes="60px"><img class="px" src="assets/extras/papas.png" alt="" width="2624" height="1622" loading="lazy" decoding="async"></picture><figcaption>Fries</figcaption></figure>
-        <figure><picture><source type="image/avif" srcset="assets/optimized/ensalada-95.avif 95w, assets/optimized/ensalada-191.avif 191w" sizes="60px"><source type="image/webp" srcset="assets/optimized/ensalada-95.webp 95w, assets/optimized/ensalada-191.webp 191w" sizes="60px"><img class="px" src="assets/extras/ensalada.png" alt="" width="1240" height="1248" loading="lazy" decoding="async"></picture><figcaption>Green salad</figcaption></figure>
-        <figure><picture><source type="image/avif" srcset="assets/optimized/ensalada-huevo-95.avif 95w, assets/optimized/ensalada-huevo-190.avif 190w" sizes="60px"><source type="image/webp" srcset="assets/optimized/ensalada-huevo-95.webp 95w, assets/optimized/ensalada-huevo-190.webp 190w" sizes="60px"><img class="px" src="assets/extras/ensalada-huevo.png" alt="" width="1238" height="1248" loading="lazy" decoding="async"></picture><figcaption>Potato and egg salad</figcaption></figure>
-        <figure><img class="px" src="assets/extras/chimi.png" alt="" width="552" height="1344" loading="lazy" decoding="async"><figcaption>Chimichurri</figcaption></figure>
-        <figure><img class="px" src="assets/extras/criolla.png" alt="" width="552" height="1344" loading="lazy" decoding="async"><figcaption>Salsa criolla</figcaption></figure>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ CLIENTES ══ -->
-<section class="section" id="clientes">
-  <div class="wrap">
-    <p class="eyebrow reveal">Customers</p>
-    <h2 class="h2 reveal">Everyone brings a ticking clock.</h2>
-    <p class="lead reveal">
-      Customers arrive according to the time of day. Each brings an order bubble and a patience bar that won't stop. When it turns red, they shake. You know what comes next.
-    </p>
-
-    <div class="queue reveal" id="queue">
-      <figure class="cust" style="--p:78%; --d:0s">
-        <div class="cust__bubble">Flank steak · rare<br><small>with baguette</small></div>
-        <img class="px" src="assets/clientes/pov1.png" alt="Customer" width="300" height="500" loading="lazy" decoding="async">
-        <div class="cust__bar"><span></span></div>
-      </figure>
-      <figure class="cust" style="--p:52%; --d:.4s">
-        <div class="cust__bubble">Short ribs · medium<br><small>+ fries</small></div>
-        <img class="px" src="assets/clientes/pov2.png" alt="Customer" width="300" height="500" loading="lazy" decoding="async">
-        <div class="cust__bar"><span></span></div>
-      </figure>
-      <figure class="cust cust--angry" style="--p:14%; --d:.8s">
-        <div class="cust__bubble">Choripán<br><small>with chimichurri</small></div>
-        <img class="px" src="assets/clientes/pov3.png" alt="Impatient customer" width="300" height="500" loading="lazy" decoding="async">
-        <div class="cust__bar"><span></span></div>
-      </figure>
-      <figure class="cust" style="--p:91%; --d:1.2s">
-        <div class="cust__bubble">Burger · well done<br><small>burger bun</small></div>
-        <img class="px" src="assets/clientes/pov4.png" alt="Customer" width="300" height="500" loading="lazy" decoding="async">
-        <div class="cust__bar"><span></span></div>
-      </figure>
-      <figure class="cust" style="--p:64%; --d:1.6s">
-        <div class="cust__bubble">Sausage<br><small>and salad</small></div>
-        <img class="px" src="assets/clientes/pov5.png" alt="Customer" width="300" height="500" loading="lazy" decoding="async">
-        <div class="cust__bar"><span></span></div>
-      </figure>
-      <figure class="cust" style="--p:43%; --d:2s">
-        <div class="cust__bubble">Flank steak · medium<br><small>with salsa criolla</small></div>
-        <img class="px" src="assets/clientes/pov6.png" alt="Customer" width="300" height="500" loading="lazy" decoding="async">
-        <div class="cust__bar"><span></span></div>
-      </figure>
-      <figure class="cust" style="--p:86%; --d:2.4s">
-        <div class="cust__bubble">Burger · rare<br><small>+ fries</small></div>
-        <img class="px" src="assets/clientes/pov7.png" alt="Customer" width="300" height="500" loading="lazy" decoding="async">
-        <div class="cust__bar"><span></span></div>
-      </figure>
-    </div>
-
-    <div class="tip reveal">
-      <div class="tip__col">
-        <h3><picture><source type="image/avif" srcset="assets/optimized/moneda-95.avif 95w, assets/optimized/moneda-189.avif 189w" sizes="60px"><source type="image/webp" srcset="assets/optimized/moneda-95.webp 95w, assets/optimized/moneda-189.webp 189w" sizes="60px"><img class="px tip__coin" src="assets/ui/moneda.png" alt="" width="294" height="298" loading="lazy" decoding="async"></picture>Tip</h3>
-        <p>Nail the doneness while the customer still has patience: full tip. Overcook it by one level or cut it too close: you get paid, but no tip.</p>
-      </div>
-      <div class="tip__col">
-        <h3><span class="strike-x">✕</span>Strike</h3>
-        <p>A customer left with an empty bar, or you served raw or burnt food. Three strikes and the closed sign goes up early. You can only serve those already inside.</p>
-      </div>
-    </div>
-
-    <div class="strikes reveal" id="strikes">
-      <span class="strikes__label">The sign is up</span>
-      <div class="strikes__row">
-        <i class="strike" style="--d:0ms">✕</i>
-        <i class="strike" style="--d:260ms">✕</i>
-        <i class="strike" style="--d:520ms">✕</i>
-      </div>
-      <span class="strikes__closed">CLOSED</span>
-    </div>
-  </div>
-</section>
-
-<!-- ══ TIENDA ══ -->
-<section class="section section--dark" id="tienda">
-  <div class="wrap">
-    <p class="eyebrow reveal">Between nights</p>
-    <h2 class="h2 reveal">Earn it. Restock it.</h2>
-    <p class="lead reveal">
-      When the day ends, the shop opens. Charcoal, meat, upgrades and sauces. No save file will rescue you if you open tomorrow without embers.
-    </p>
-
-    <div class="shop">
-      <article class="shop__card reveal" style="--d:0ms">
-        <img class="px" src="assets/extras/carbon-prendido.png" alt="" width="200" height="200" loading="lazy" decoding="async">
-        <h3>Charcoal</h3>
-        <p>The shop suggests how much to buy based on how much you burn each night.</p>
-      </article>
-      <article class="shop__card reveal" style="--d:80ms">
-        <img class="px" src="assets/cortes/tira-hecho.png" alt="" width="100" height="100" loading="lazy" decoding="async">
-        <h3>Cuts of meat</h3>
-        <p>Flank steak, short ribs, matambre, chitterlings, chops, chicken breast and burgers. Unlock them as the nights go by.</p>
-      </article>
-      <article class="shop__card reveal" style="--d:160ms">
-        <picture><source type="image/avif" srcset="assets/optimized/radio-240.avif 240w, assets/optimized/radio-480.avif 480w" sizes="90px"><source type="image/webp" srcset="assets/optimized/radio-240.webp 240w, assets/optimized/radio-480.webp 480w" sizes="90px"><img class="px" src="assets/ui/radio.png" alt="" width="1536" height="1024" loading="lazy" decoding="async"></picture>
-        <h3>Upgrades</h3>
-        <p>Longer-lasting charcoal, more customers at once, better tips and a radio for the stand.</p>
-      </article>
-      <article class="shop__card reveal" style="--d:240ms">
-        <img class="px" src="assets/extras/chimi.png" alt="" width="552" height="1344" loading="lazy" decoding="async">
-        <h3>Sauces</h3>
-        <p>Jars of chimichurri and salsa criolla. The extras that boost your bill and earn a tip.</p>
-      </article>
-    </div>
-  </div>
 </section>
 
 <!-- ══ CTA / FICHA ══ -->
@@ -404,14 +104,10 @@
   <div class="wrap wrap--narrow">
     <h2 class="cta__title reveal">Still on the grill.</h2>
     <p class="cta__sub reveal">
-      Parrilla 40 is currently in development. Leave your email to hear when the first full night is ready to play.
+      Parrilla 40 is currently in development. Leave your email and we'll let you know when you can add it to your Steam wishlist.
     </p>
 
-    <form class="signup reveal" id="signup" novalidate>
-      <input type="email" id="signupMail" placeholder="you@example.com" aria-label="Your email" required>
-      <button class="btn btn--big" type="submit" disabled>Notify me</button>
-    </form>
-    <p class="signup__note" id="signupNote" role="status"></p>
+    <a class="btn btn--big reveal" href="wishlist/en/">Notify me</a>
 
     <dl class="spec reveal">
       <div><dt>Release</dt><dd>December 2025 (early access)</dd><dd>2026 release</dd></div>
