@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  const { questions, validate, getClient } = window.Playtest;
+  const { questions, validate, getClient, saveLaunchEmail } = window.Playtest;
   const form = document.querySelector('#survey');
   const status = document.querySelector('#survey-status');
   const submit = document.querySelector('#submit-survey');
@@ -93,10 +93,8 @@
         if (error) throw error;
         responseSaved = true;
       }
-      // Stored apart from the answers, with no session ID, so responses stay anonymous.
       if (email && !emailSaved) {
-        const { error } = await getClient().from('launch_notify_signups').insert({ email,
-          language: document.documentElement.lang === 'en' ? 'en' : 'es' }).abortSignal(AbortSignal.timeout(20000));
+        const { error } = await saveLaunchEmail(email);
         if (error) throw error;
         emailSaved = true;
       }

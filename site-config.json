@@ -21,6 +21,16 @@
       "file": "preguntas-en.html", "path": "preguntas-en.html", "language": "en", "alternate": "preguntas.html",
       "title": "Parrilla 40 playtest survey — Share your experience",
       "description": "Answer the 16 Parrilla 40 playtest questions. Share your experience with controls, cooking and customer orders, and we'll let you know when you can wishlist it on Steam."
+    },
+    {
+      "file": "wishlist/index.html", "path": "wishlist/", "language": "es", "alternate": "wishlist/en/index.html",
+      "title": "Parrilla 40 en Steam — Avisame cuando esté disponible",
+      "description": "Dejá tu mail y te avisamos apenas puedas agregar Parrilla 40, el simulador de parrilla argentina, a tu lista de deseados en Steam."
+    },
+    {
+      "file": "wishlist/en/index.html", "path": "wishlist/en/", "language": "en", "alternate": "wishlist/index.html",
+      "title": "Parrilla 40 on Steam — Get notified when it's available",
+      "description": "Leave your email and we'll let you know as soon as you can add Parrilla 40, the Argentine grill simulator, to your Steam wishlist."
     }
   ]
 }

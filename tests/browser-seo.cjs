@@ -24,7 +24,7 @@ fs.mkdirSync(output, { recursive: true });
       const page = await context.newPage();
       observe(page);
       await page.route('**/rest/v1/**', route => { errors.push('Unexpected API request'); return route.abort(); });
-      for (const file of ['index.html', 'index-en.html', 'preguntas.html', 'preguntas-en.html', 'resultados.html']) {
+      for (const file of ['index.html', 'index-en.html', 'preguntas.html', 'preguntas-en.html', 'resultados.html', 'wishlist/', 'wishlist/en/']) {
         for (const width of [320, 390, 768, 1440]) {
           await page.setViewportSize({ width, height: 900 });
           const response = await page.goto(`${base}/${file}`);
@@ -36,7 +36,7 @@ fs.mkdirSync(output, { recursive: true });
             assert(await page.locator('#cookLabels button').evaluateAll(buttons => buttons.every(button => button.scrollWidth <= button.clientWidth + 1)), `cooking labels overflow at ${width}`);
           }
           if (width === 390 || width === 1440) {
-            await page.screenshot({ path: path.join(output, `${file}-${theme}-${width}.png`) });
+            await page.screenshot({ path: path.join(output, `${file.replace(/\//g, '-')}-${theme}-${width}.png`) });
             if (file === 'index.html' && theme === 'light') {
               for (const [name, selector] of [['pitch', '#pitch'], ['cooker', '#punto .cooker'], ['images', '#parrilla .extras']]) {
                 await page.locator(selector).screenshot({ path: path.join(output, `${name}-${theme}-${width}.png`) });
@@ -44,7 +44,7 @@ fs.mkdirSync(output, { recursive: true });
             }
           }
         }
-        if (file.includes('-en')) {
+        if (file.includes('-en') || file.includes('/en/')) {
           assert.equal(await page.locator('html').getAttribute('lang'), 'en');
           assert(!/¿|Respondé|Volver al sitio|Pausar el día/.test(await page.locator('main').innerText()));
         }

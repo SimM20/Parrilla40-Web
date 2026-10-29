@@ -325,20 +325,4 @@
       syncClock();
     });
   }
-
-  /* ── FORM de la lista ──────────────────────────────────── */
-  const form = $('#signup'), mail = $('#signupMail'), note = $('#signupNote');
-  if (form) {
-    form.querySelector('button').disabled = false;
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const v = mail.value.trim();
-      const ok = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
-      note.className = 'signup__note' + (ok ? '' : ' is-err');
-      mail.setAttribute('aria-invalid', String(!ok));
-      note.textContent = t(ok
-        ? 'Demo: el formulario todavía no está conectado. Tu correo no se envió ni se guardó.'
-        : 'Ese mail no parece válido — fijate de nuevo.');
-    });
-  }
 })();

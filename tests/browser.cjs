@@ -196,14 +196,53 @@ const screenshots = process.env.SCREENSHOT_DIR;
     assert.equal(await page.locator('#cookState').textContent(), 'Hecho');
     await page.locator('[data-cut="chorizo"]').click();
     assert.match(await page.locator('#cookMeat').getAttribute('src'), /chorizo-hecho/);
-    await page.locator('#signupMail').fill('local-test@example.test');
-    await page.locator('#signup button').click();
-    assert.match(await page.locator('#signupNote').textContent(), /Demo/);
     await page.emulateMedia({ reducedMotion: 'no-preference' });
     await page.reload();
     await page.locator('#clockBtn').click();
     assert.equal(await page.locator('#clockBtn').textContent(), 'Seguir el día');
-    console.log('PASS landing: CTA, cooking, cut change, day pause, existing form, no results link, four widths');
+    // Every follow/notify button leads to the /wishlist/ sign-up page.
+    await page.goto(base);
+    assert.equal(await page.locator('a[href="wishlist/"]').count(), 3);
+    await page.locator('.hero__cta a[href="wishlist/"]').click();
+    await page.waitForURL(`${base}/wishlist/`);
+    await page.locator('#signupMail').fill('local-test');
+    await page.locator('#signup button').click();
+    assert.match(await page.locator('#signupNote').textContent(), /no parece válido/);
+    const before = signups.length;
+    failSignup = true;
+    await page.locator('#signupMail').fill(' Local@Ejemplo.com ');
+    await page.locator('#signup button').click();
+    await page.waitForFunction(() => document.querySelector('#signupNote').textContent.includes('No pudimos'));
+    assert.equal(signups.length, before + 1);
+    failSignup = false;
+    await page.locator('#signup button').click();
+    await page.waitForFunction(() => document.querySelector('#signupNote').textContent.includes('Listo'));
+    assert.equal(signups.length, before + 2);
+    assert.deepEqual(signups.at(-1), { email: 'local@ejemplo.com', language: 'es' });
+    assert(await page.locator('#signup button').isDisabled());
+    for (const width of [320, 390, 768, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      for (const url of ['wishlist/', 'wishlist/en/']) {
+        await page.goto(`${base}/${url}`);
+        assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${url} overflow ${width}`);
+        if (screenshots) await page.screenshot({ path: path.join(screenshots, `${url.replace(/\//g, '-')}${width}.png`), fullPage: true });
+      }
+    }
+    // With a public Steam page configured, /wishlist/ leaves for the store before rendering; anything else stays.
+    let storeVisits = 0;
+    await page.route('https://store.steampowered.com/**', route => { storeVisits++; return route.fulfill({ contentType: 'text/html', body: '<title>Steam</title>' }); });
+    await page.route('**/steam-config.js', route => route.fulfill({ contentType: 'application/javascript', body: "window.STEAM_URL='https://evil.example/app/1';" }));
+    await page.goto(`${base}/wishlist/`);
+    assert.equal(new URL(page.url()).pathname, '/wishlist/');
+    await page.unroute('**/steam-config.js');
+    await page.route('**/steam-config.js', route => route.fulfill({ contentType: 'application/javascript', body: "window.STEAM_URL='https://store.steampowered.com/app/123/Parrilla_40/';" }));
+    for (const url of ['wishlist/', 'wishlist/en/']) {
+      await page.goto(`${base}/${url}`);
+      await page.waitForURL('https://store.steampowered.com/app/123/Parrilla_40/');
+    }
+    assert.equal(storeVisits, 2);
+    await page.unroute('**/steam-config.js');
+    console.log('PASS landing + wishlist: CTA, cooking, cut change, day pause, notify buttons to /wishlist/, signup with failure and retry, Steam redirect (store URLs only), no results link, four widths');
     await page.goto(`${base}/preguntas.html`);
     for (let i = 0; i < 16; i++) {
       await page.keyboard.press('Tab');
