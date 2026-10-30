@@ -1,5 +1,7 @@
 # PROMPT_SYSTEM.md
 
+Current product contract: the three-question survey in `context.md` (29 October 2026). Stage prompts originated with the previous instrument; apply their inspect/verify workflow to current fields and metrics only. Email consent is independent, and historical data must remain separate. Do not recreate the retired questionnaire.
+
 ## Operating model
 
 The implementation agent works through the stage prompts in `prompts/` in numeric order.

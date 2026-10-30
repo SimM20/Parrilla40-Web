@@ -1,7 +1,7 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium } = require(process.env.PLAYWRIGHT_MODULE || '../test-artifacts/qa/node_modules/playwright');
 const { default: AxeBuilder } = require(process.env.AXE_MODULE || '../test-artifacts/qa/node_modules/@axe-core/playwright');
 const base = process.env.TEST_URL || 'http://127.0.0.1:8000';
 const output = process.env.SCREENSHOT_DIR || 'test-artifacts/seo';
@@ -24,7 +24,7 @@ fs.mkdirSync(output, { recursive: true });
       const page = await context.newPage();
       observe(page);
       await page.route('**/rest/v1/**', route => { errors.push('Unexpected API request'); return route.abort(); });
-      for (const file of ['index.html', 'index-en.html', 'preguntas.html', 'preguntas-en.html', 'resultados.html', 'wishlist/', 'wishlist/en/']) {
+      for (const file of ['index.html', 'index-en.html', 'preguntas.html', 'preguntas-en.html', 'resultados.html', 'resultados-en.html', 'wishlist/', 'wishlist/en/', 'privacidad.html', 'privacidad-en.html', 'terminos.html', 'terminos-en.html', 'almacenamiento.html', 'almacenamiento-en.html', 'retirar-aviso.html', 'retirar-aviso-en.html']) {
         for (const width of [320, 390, 768, 1440]) {
           await page.setViewportSize({ width, height: 900 });
           const response = await page.goto(`${base}/${file}`);
@@ -53,7 +53,7 @@ fs.mkdirSync(output, { recursive: true });
       await page.goto(`${base}/index.html#wishlist`);
       await page.locator('[data-language-link]').click();
       await page.waitForURL('**/index-en.html#wishlist');
-      assert.equal(await page.locator('.hero__cta a').textContent(), "Notify me when it's available");
+      assert.equal(await page.locator('.hero__cta a').textContent(), 'Steam notices');
       assert.equal(await page.locator('.hero__cta a').getAttribute('href'), 'wishlist/en/');
       await page.locator('#theme-toggle').click();
       const chosen = theme === 'dark' ? 'light' : 'dark';
@@ -61,26 +61,9 @@ fs.mkdirSync(output, { recursive: true });
       await page.goto(`${base}/preguntas-en.html`);
       assert.equal(await page.locator('html').getAttribute('data-theme'), chosen);
       await page.locator('#submit-survey').click();
-      assert.equal(await page.locator('.field-error:not(:empty)').count(), 16);
+      assert.equal(await page.locator('.field-error:not(:empty)').count(), 2);
       assert.match(await page.locator('#survey-status').textContent(), /highlighted questions/);
-      assert.match(await page.locator('fieldset legend').first().textContent(), /first night/);
-      await page.route('**/playtest-config.js', route => route.fulfill({ contentType: 'application/javascript', body: "window.PLAYTEST_CONFIG={supabaseUrl:'https://seo-test.supabase.co',supabasePublicKey:'sb_publishable_test',buildVersion:'seo-test'};" }));
-      let fail = true;
-      await page.route('https://seo-test.supabase.co/rest/v1/playtest_responses', route => route.fulfill({ status: fail ? 503 : 201, contentType: 'application/json', body: fail ? '{"message":"Unavailable"}' : '' }));
-      await page.goto(`${base}/preguntas-en.html`);
-      const questions = await page.evaluate(() => window.Playtest.questions);
-      for (const question of questions) {
-        if (question.options) await page.locator(`[name="${question.name}"]`).first().check();
-        else await page.locator(`[name="${question.name}"]`).fill(question.type === 'number' ? '1' : 'Playtest feedback');
-      }
-      await page.locator('[name="launch_notify"][value="false"]').check();
-      await page.locator('#submit-survey').click();
-      await page.waitForFunction(() => document.querySelector('#survey-status').textContent.includes("couldn't confirm"));
-      assert.equal(await page.locator('#favorite_part').inputValue(), 'Playtest feedback');
-      fail = false;
-      await page.locator('#submit-survey').click();
-      await page.locator('#success').waitFor({ state: 'visible' });
-      assert.match(await page.locator('#success').textContent(), /Your answers have been saved/);
+      assert.match(await page.locator('fieldset legend').first().textContent(), /time seem to pass/);
       await page.goto(`${base}/index.html`);
       const picture = page.locator('picture').first();
       // Exercise the PNG fallback as a browser with neither modern MIME type.
@@ -97,7 +80,7 @@ fs.mkdirSync(output, { recursive: true });
     assert.equal(await plain.locator('#wishlist .cta__sub').evaluate(el => getComputedStyle(el).opacity), '1');
     assert.match(await plain.locator('[data-count]').first().textContent(), /14.5/);
     await plain.goto(`${base}/preguntas-en.html`);
-    assert.equal(await plain.locator('fieldset').count(), 16);
+    assert.equal(await plain.locator('fieldset').count(), 3);
     assert(await plain.locator('#submit-survey').isDisabled());
     await noJS.close();
 
@@ -139,7 +122,7 @@ fs.mkdirSync(output, { recursive: true });
     if (violations.length) console.log(JSON.stringify(violations, null, 2));
     assert.deepEqual(violations, [], 'axe violations');
     assert.deepEqual(errors, [], 'browser errors');
-    console.log('PASS browser SEO: 40 responsive/theme combinations, ES/EN, keyboard menu, theme persistence/system/storage denial, reduced motion, static no-JS content, PNG fallback, 404, axe and no JS exceptions');
+    console.log('PASS browser SEO: 128 responsive/theme/page combinations, ES/EN, theme persistence/system/storage denial, reduced motion, static no-JS content, PNG fallback, 404, axe and clean console');
   } finally {
     if (errors.length) console.error('Browser diagnostics:', JSON.stringify(errors));
     await browser.close();

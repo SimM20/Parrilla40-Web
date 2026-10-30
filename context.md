@@ -1,658 +1,76 @@
-# Parrilla Rutera — Playtest Survey Web
+# Parrilla 40 — playtest de tres preguntas
 
-## Product definition
+Especificación vigente desde el pedido del 29 de octubre de 2026. Sustituye definitivamente el cuestionario anterior de 16 preguntas. Los registros anteriores se preservan como históricos; no se mezclan con el nuevo instrumento.
 
-We are extending an existing static website for **Parrilla Rutera** with a focused playtest survey and a private results view.
+## Producto y límites
 
-The existing website is the product baseline. The implementation must preserve its current structure, logic, visual language, assets, and technology choices unless this document explicitly requires a change.
+Sitio estático HTML, CSS y JavaScript vanilla. Sin frameworks, bundler, backend propio ni rediseño de la home. La home sólo recibe el CTA de encuesta, enlaces legales y microcopy necesario para no prometer un envío de email sin integración. Conservar navegación, ES/EN, SEO, temas, assets y futura redirección segura a Steam.
 
-This project is **not** a website redesign.
+Investigar señales indirectas de involucramiento, sensación al terminar y recuerdos espontáneos del ciclo de juego. No preguntar directamente por diversión ni crear un índice que sume dimensiones. La intención declarada no equivale a retención real. No se presenta el cuestionario como escala científicamente validada.
 
-## Why this exists
+## Cuestionario exacto
 
-The survey exists to validate the player experience during the current Parrilla Rutera playtest, especially:
+Única definición en `playtest.js`; el generador produce el HTML ES/EN estático.
 
-- whether players can complete Night 1 and Night 2;
-- whether the game is understandable without excessive explanation;
-- whether controls, cooking, charcoal/heat, and orders feel intuitive;
-- whether difficulty feels fair;
-- whether customer pacing creates enjoyable pressure;
-- whether players feel they are learning;
-- whether they want to continue playing;
-- what they liked most;
-- what single change they would prioritize.
+1. **¿Cómo sentiste que pasó el tiempo mientras jugabas?** Campo `perceived_time_flow`, selección única obligatoria. Valores 1..5: Se me hizo muy largo. / Se me hizo algo largo. / Ni rápido ni lento. / Pasó bastante rápido. / Se me pasó volando.
+2. **Cuando terminaste de jugar, ¿con qué sensación te quedaste?** Campo `post_session_feeling`, selección única obligatoria. Categorías nominales: `another_night` (Me quedé con ganas de jugar otra noche.), `retry_better` (Me quedé con ganas de volver a intentar para hacerlo mejor.), `enough_for_now` (Sentí que había jugado suficiente por el momento.), `prefer_stop` (Prefería dejar de jugar.), `unsure` (No sabría decir.). Mantenerlas separadas, sin puntuación artificial.
+3. **¿Qué momento de la partida recordás más y por qué?** Campo `memorable_moment`, texto opcional de hasta 1200 caracteres. Ayuda: “Puede ser algo que te gustó, te frustró o te aburrió. Contanos qué pasó.” Sin sugerencias concretas de mecánicas, sin pedir identidad.
 
-The results view exists so the development team can review all survey submissions and aggregated metrics without exposing that data publicly.
+Las traducciones conservan el mismo significado. No se agregan preguntas, perfiles, demografía ni email dentro de la encuesta.
 
-## Audience
+## Experiencia y envío
 
-### Survey
-Playtest participants who have just played Parrilla Rutera.
+`preguntas.html` / `preguntas-en.html`: una página con tres preguntas visibles, controles nativos, estados seleccionados, foco visible, errores junto al campo, un envío principal y agradecimiento después de confirmación real.
 
-### Results
-Internal development team only.
+- Usar fuentes, colores, sprites y gramática del juego. Diseño de comanda breve, sin ocultar preguntas del formulario anterior.
+- Q1/Q2 obligatorias; Q3 puede quedar vacía y se guarda `null`.
+- Sin solicitudes al backend por cargar la encuesta.
+- UUID aleatorio anónimo por sesión de envío, fecha del servidor, build configurada sólo en `playtest-config.js`.
+- Bloquear envíos concurrentes. Conservar el mismo UUID y snapshot pendiente ante errores o recarga/cambio de idioma para reintento idempotente.
+- Tras un envío incierto, bloquear edición del snapshot y permitir reintentar el mismo envío. No dar éxito hasta confirmar.
+- `sessionStorage` temporal guarda snapshot pendiente; se elimina al confirmar y conserva sólo ID/estado. Si está bloqueado, recuperación sólo en memoria de la página. No garantiza evitar duplicados entre navegadores/pestañas independientes.
+- Sin datos privados en consola ni mensajes de error técnicos al jugador.
 
-## V1 scope
+## Datos y seguridad
 
-V1 includes:
+Migración aditiva en `supabase/migrations/20261029233053_playtest_three_questions_and_consent.sql`, posterior al setup histórico.
 
-1. A single new button added to the existing `index` that sends players to the survey.
-2. A survey on a separate HTML page/route.
-3. 15 anonymous survey questions plus Q16, an optional launch-notice opt-in (see Q16).
-4. Client-side validation and clear completion states.
-5. Storage of each completed response in Supabase.
-6. Automatic storage of response metadata:
-   - submission timestamp;
-   - anonymous session ID;
-   - build version.
-7. A separate private results page/route.
-8. No visible link to the results page anywhere in the public website.
-9. Password-gated access to survey results.
-10. Results loaded from Supabase only after successful password validation.
-11. No public read access to survey responses.
-12. Visual integration with the existing website.
-13. Responsive behavior appropriate for desktop and mobile.
+- Tabla nueva `playtest_responses_v2`, restricciones estructuradas y UUID único. Histórica `playtest_responses` intacta.
+- API pública escribe exclusivamente mediante `submit_playtest_v2`; no SELECT/INSERT/UPDATE/DELETE directos en tablas nuevas. RLS habilitada y sin políticas públicas.
+- Mismo UUID y payload: confirmación idempotente; UUID existente y payload distinto: rechazar sin sobrescribir.
+- Panel vía `playtest_results_v2(admin_password)`; historial vía RPC anterior `playtest_results`.
+- Validación bcrypt del lado servidor usando verificador existente. Nunca contraseña hardcodeada ni clave privilegiada en navegador. `SECURITY DEFINER` con `search_path` fijo vacío y sólo EXECUTE a anon para funciones requeridas.
+- No devolver UUID/id ni email en resultados de investigación. No exponer esquema privado. Revocar escrituras antiguas sin borrar registros al migrar.
 
-## Locked technology decisions
+## Panel privado
 
-The website remains:
+`resultados.html` / `resultados-en.html`, sin links públicos y `noindex`. Acceder por URL no devuelve datos. Elegir fuente actual o histórica y validar contraseña para cada consulta. Contraseña y datasets sólo en memoria, se limpian al cerrar, recargar o navegar.
 
-- HTML
-- CSS
-- vanilla JavaScript
+Mostrar total, distribución completa del tiempo, cinco sensaciones separadas, porcentajes continuar y reintentar por separado con n/N, textos opcionales y comparación descriptiva por build con n. Filtrar distribuciones/comentarios por build. No inferir causalidad, significación, diversión ni retención por diferencias pequeñas. Históricos conservan métricas originales y aviso de no comparabilidad.
 
-Do **not** migrate to:
+## Email independiente
 
-- React
-- Next.js
-- Vue
-- Svelte
-- Angular
-- TypeScript
-- Vite
-- another frontend framework or bundler
+Sólo después del éxito de encuesta y en `/wishlist/` / `/wishlist/en/`. Formulario independiente, email + consentimiento específico sin preselección para un único aviso de disponibilidad de wishlist Steam. Enlace de privacidad y textos breves. El sitio sólo registra los emails; el equipo enviará el aviso manualmente más adelante. No se necesita integrar un proveedor de envío en la web.
 
-Supabase is the only new backend/data service expected for V1.
+- Nueva tabla `launch_notice_consents`, email único, idioma, versión/aceptación de consentimiento y fecha, sin ID de encuesta/sesión ni clave de unión.
+- Los emails se guardan en el mismo proyecto Supabase que las respuestas, configurado en `playtest-config.js`, pero en su tabla separada. No crear ni utilizar un proyecto de otra cuenta para este flujo.
+- RPC `subscribe_launch_notice` con token aleatorio de 256 bits generado por cliente; base sólo almacena hash SHA-256. Respuesta uniforme y sin enumerar emails.
+- Duplicado conserva el token original, nunca permite sustituir autoridad de retirada con sólo conocer un email. UI explica conservar enlace original.
+- Durante petición incierta, email/token se mantienen en una clave de sessionStorage aparte para reintentar tras recarga. Se eliminan del almacenamiento al confirmar. Recibo con link privado y descarga .txt.
+- `retirar-aviso.html` / `retirar-aviso-en.html` reciben token en fragmento, sin query/email ni referrer. Cargar el enlace no elimina nada; botón llama RPC `revoke_launch_notice` para eliminar el registro. Respuesta uniforme para token válido, desconocido o ya retirado.
+- Sin token, canal atendido de privacidad con verificación proporcional de titularidad (externo pendiente). No reutilizar lista histórica sin base/consentimiento verificado. No enviar ni prometer promociones adicionales.
+- La lista para el envío manual sólo se consulta con acceso del propietario en Supabase; no se agrega un endpoint público de exportación. Respetar las bajas y la finalidad del aviso al usarla.
 
-The Supabase browser client may be used from vanilla JavaScript.
+## Legales y publicación
 
-Do not add a custom application server.
+Privacidad, términos y cookies/almacenamiento en ES/EN, enlazados en formularios y footers. No banner de cookies: no hay analytics ni tecnologías de seguimiento agregadas. Explicar almacenamiento real, proveedores, logs técnicos, transferencias, conservación y derechos según fuentes argentinas vigentes.
 
-## Existing index protection
+Responsable informado por usuario: **Parrilla40.SA**, **Av gelly y obes 2267, Recoleta, CABA, 1425, Argentina**. No inventar CUIT, correo, hosting, región ni proveedor de envío. Faltan correo atendido y verificaciones operativas; legales quedan borrador/noindex y publicación pendiente. Ver `LEGAL_PUBLICACION.md`.
 
-The existing index must not be redesigned or refactored.
+Conservación propuesta: encuesta e históricos 12 meses; email hasta aviso+30 días o máximo 12 meses, antes si retira. Requiere procedimiento real y revisar backups. No se afirma que la purga está automatizada.
 
-The only intended product change to the index is:
+## Validación y fuentes
 
-- add one visually compatible CTA/button that navigates to the survey.
+`INVESTIGACION_PLAYTEST.md`: GUR, PXI, GEQ y Schell Games, sesgos y protocolo de comprensión. Sin participantes reales disponibles: validación empírica y objetivo de menos de un minuto pendientes.
 
-Default label if the existing copy does not suggest a better equivalent:
-
-`Responder encuesta`
-
-The agent must inspect the current index and reuse its existing button/CTA patterns.
-
-## Public survey route
-
-Preferred filename if the repository has no routing convention:
-
-`preguntas.html`
-
-If the repository already has a clear page naming/routing convention, follow that convention instead.
-
-The survey must not be embedded into the index.
-
-## Private results route
-
-Preferred filename if the repository has no routing convention:
-
-`resultados.html`
-
-Rules:
-
-- do not add a link to it from the index;
-- do not add it to navigation;
-- do not add it to footer links;
-- do not add it to the survey completion screen;
-- access is only possible by knowing the URL;
-- knowing the URL alone must **not** expose survey data;
-- the results data must require password validation before being returned.
-
-The page shell itself may be statically reachable. The protected resource is the survey data.
-
-## Admin password requirement
-
-The user has defined a fixed password for the private results area.
-
-**Do not commit the plaintext password into HTML, CSS, JavaScript, Markdown, or repository history.**
-
-Implementation requirement:
-
-- store only a secure password verifier/hash on the Supabase side;
-- validate the entered password through a Supabase database function/RPC or equivalent Supabase-side mechanism;
-- do not implement `if (password === "...")` in browser JavaScript;
-- do not expose a `service_role` key to the browser;
-- do not create a public SELECT policy on the responses table.
-
-When provisioning the Supabase secret/hash, the deployment operator must set the agreed password out-of-band. If that value is not available to the implementing agent at deployment time, it is the only acceptable secret-related blocking question.
-
-## Survey content
-
-The V1 questionnaire contains exactly these 15 player-facing questions.
-
-### Q1 — Night 1 completion
-
-**¿Pudiste completar la primera noche?**
-
-Options:
-- Sí
-- No
-
-Stored field:
-`completed_night_1`
-
-### Q2 — Night 2 completion
-
-**¿Pudiste completar la segunda noche?**
-
-Options:
-- Sí
-- No
-- No llegué a jugarla
-
-Stored field:
-`completed_night_2`
-
-Recommended stored values:
-- `yes`
-- `no`
-- `not_reached`
-
-### Q3 — Highest night
-
-**¿Hasta qué noche llegaste?**
-
-Input:
-- integer number
-
-Validation:
-- minimum 0
-- no decimals
-- reasonable upper bound may be configured from current build data if the repository exposes one;
-- otherwise do not invent game progression limits: accept a non-negative integer.
-
-Stored field:
-`highest_night`
-
-### Q4 — Initial understanding
-
-**¿Qué tan fácil fue entender qué tenías que hacer al comenzar?**
-
-Scale:
-1 = Nada fácil
-5 = Muy fácil
-
-Stored field:
-`initial_understanding`
-
-### Q5 — Controls
-
-**¿Qué tan intuitivos te parecieron los controles?**
-
-Scale:
-1 = Nada intuitivos
-5 = Muy intuitivos
-
-Stored field:
-`controls_intuitiveness`
-
-### Q6 — Cooking and flipping
-
-**¿Qué tan fácil fue entender cómo cocinar y dar vuelta la carne?**
-
-Scale:
-1 = Nada fácil
-5 = Muy fácil
-
-Stored field:
-`cooking_understanding`
-
-### Q7 — Charcoal and heat
-
-**¿Qué tan fácil fue entender el funcionamiento del carbón y las zonas de calor?**
-
-Scale:
-1 = Nada fácil
-5 = Muy fácil
-
-Stored field:
-`heat_understanding`
-
-### Q8 — Orders
-
-**¿Qué tan fácil fue leer los pedidos y saber qué quería cada cliente?**
-
-Scale:
-1 = Nada fácil
-5 = Muy fácil
-
-Stored field:
-`order_readability`
-
-### Q9 — Fairness
-
-**¿Qué tan justa te pareció la dificultad?**
-
-Scale:
-1 = Muy injusta
-5 = Muy justa
-
-Stored field:
-`difficulty_fairness`
-
-### Q10 — Customer arrival pace
-
-**¿Cómo te pareció el ritmo de llegada de clientes?**
-
-Options:
-- Muy lento
-- Lento
-- Bien
-- Rápido
-- Muy rápido
-
-Recommended stored values:
-- `very_slow`
-- `slow`
-- `good`
-- `fast`
-- `very_fast`
-
-Stored field:
-`customer_pacing`
-
-### Q11 — Learning
-
-**¿Sentiste que mejorabas y entendías mejor el juego mientras jugabas?**
-
-Scale:
-1 = Para nada
-5 = Muchísimo
-
-Stored field:
-`learning_feeling`
-
-### Q12 — Stress experience
-
-**¿El estrés de atender varios pedidos te resultó divertido o frustrante?**
-
-Options:
-- Muy divertido
-- Más divertido que frustrante
-- Mitad y mitad
-- Más frustrante que divertido
-- Muy frustrante
-
-Recommended stored values:
-- `very_fun`
-- `mostly_fun`
-- `balanced`
-- `mostly_frustrating`
-- `very_frustrating`
-
-Stored field:
-`stress_experience`
-
-### Q13 — Desire to continue
-
-**¿Te dieron ganas de jugar otra noche para intentar hacerlo mejor?**
-
-Options:
-- Sí
-- Tal vez
-- No
-
-Recommended stored values:
-- `yes`
-- `maybe`
-- `no`
-
-Stored field:
-`want_to_continue`
-
-### Q14 — Favorite part
-
-**¿Qué fue lo que más te gustó?**
-
-Input:
-- free text
-
-Stored field:
-`favorite_part`
-
-### Q15 — One change
-
-**Si pudieras cambiar una sola cosa del juego, ¿qué cambiarías?**
-
-Input:
-- free text
-
-Stored field:
-`one_thing_to_change`
-
-### Q16 — Launch notice (added after V1)
-
-**¿Querés que te avisemos cuando puedas agregarlo a tu lista de deseados en Steam?**
-
-Options:
-- Sí, avisame
-- No, gracias
-
-If the player chooses yes, an email field appears and becomes required. The yes/no answer is not stored with
-the response. The email goes to `public.launch_notify_signups` (insert-only for `anon`, created by
-`supabase/launch-notify.sql`), with no `session_id` or link to the anonymous answers. It is used only to send
-one email when the game can be added to a Steam wishlist. This is the only email collection in the project.
-
-## Form behavior
-
-### Entry
-
-The player enters from the new index button or by direct URL.
-
-### Completion
-
-The player answers the 16 questions and submits once.
-
-Required behavior:
-
-- required structured questions cannot be left blank;
-- open-text answers may be required unless testing shows a strong reason not to; V1 preference is to require both because they are core qualitative signals;
-- show field-level validation near the relevant question;
-- do not wipe completed answers after a validation error;
-- disable duplicate submit while a request is in flight;
-- display a clear sending state;
-- display a clear success state;
-- display a recoverable error state if Supabase submission fails;
-- do not claim success until the insert succeeds.
-
-### After success
-
-Show a simple thank-you state.
-
-Do not link to the private results page.
-
-## Anonymous session ID
-
-Generate an anonymous UUID/session identifier in the browser for the submission.
-
-Purpose:
-
-- distinguish rows;
-- support debugging;
-- avoid collecting personal identity.
-
-Do not ask for:
-
-- name;
-- email;
-- phone;
-- account;
-- demographic profile
-
-in V1.
-
-## Build version
-
-Every response must include `build_version`.
-
-Implementation rule:
-
-- use one clearly configurable value in JavaScript or the existing project configuration pattern;
-- do not duplicate the build version string across multiple files;
-- changing the tested build should require editing one place.
-
-If the existing site already exposes a build/version value, reuse it.
-
-## Supabase data model
-
-Preferred table:
-
-`playtest_responses`
-
-Recommended columns:
-
-| Column | Type | Rules |
-|---|---|---|
-| `id` | uuid | primary key, generated server-side |
-| `created_at` | timestamptz | default `now()` |
-| `session_id` | uuid or text | required |
-| `build_version` | text | required |
-| `completed_night_1` | boolean | required |
-| `completed_night_2` | text | `yes`, `no`, `not_reached` |
-| `highest_night` | integer | >= 0 |
-| `initial_understanding` | smallint | 1..5 |
-| `controls_intuitiveness` | smallint | 1..5 |
-| `cooking_understanding` | smallint | 1..5 |
-| `heat_understanding` | smallint | 1..5 |
-| `order_readability` | smallint | 1..5 |
-| `difficulty_fairness` | smallint | 1..5 |
-| `customer_pacing` | text | allowed values only |
-| `learning_feeling` | smallint | 1..5 |
-| `stress_experience` | text | allowed values only |
-| `want_to_continue` | text | allowed values only |
-| `favorite_part` | text | required in V1 |
-| `one_thing_to_change` | text | required in V1 |
-
-Use database CHECK constraints for enumerated/ranged values where practical.
-
-## Supabase security model
-
-### Public survey
-
-The browser uses only the Supabase public/anon/publishable client credentials.
-
-Those credentials are expected to be visible in a static frontend and are **not** a substitute for RLS.
-
-Requirements:
-
-- enable RLS on `playtest_responses`;
-- allow public/anon INSERT for valid rows;
-- do not allow public/anon SELECT;
-- do not allow public/anon UPDATE;
-- do not allow public/anon DELETE.
-
-### Results
-
-The results page must not gain access by receiving a privileged Supabase key.
-
-Use a protected Supabase-side function/RPC that:
-
-1. receives the submitted admin password;
-2. checks it against a server-side password verifier/hash;
-3. rejects invalid passwords;
-4. returns only the result data needed by the admin page after successful validation.
-
-Security notes:
-
-- use a secure hash/verifier mechanism available in Supabase/Postgres;
-- keep the verifier inaccessible to the browser;
-- a `SECURITY DEFINER` function must use a fixed safe `search_path`;
-- grant only the minimum EXECUTE permission needed;
-- never expose `service_role`;
-- never add a public table SELECT policy as a shortcut.
-
-This is a low-complexity internal dashboard, not a full account/authentication system.
-
-## Results dashboard
-
-After successful password validation, show:
-
-### Summary
-
-- total responses;
-- Night 1 completion rate;
-- Night 2 completion rate:
-  - calculate clearly and label the denominator;
-  - preferred: show completion among all respondents and, if useful, also among players who reached Night 2;
-- average highest night reached;
-- averages for each 1–5 rating question;
-- distribution of customer pacing;
-- distribution of stress experience;
-- distribution of desire to continue.
-
-### Qualitative responses
-
-Show the text answers for:
-
-- favorite part;
-- one thing to change.
-
-### Build visibility
-
-Because `build_version` is stored, the dashboard should make build provenance visible.
-
-V1 preferred behavior:
-
-- show build version in each result;
-- if multiple build versions exist, provide a simple build filter.
-
-Do not add a complex analytics suite.
-
-## Main user flows
-
-### Flow A — Player survey
-
-`Index CTA → Survey → Validate → Submit to Supabase → Success`
-
-### Flow B — Direct survey
-
-`Direct survey URL → Survey → Validate → Submit → Success`
-
-### Flow C — Admin results
-
-`Direct private URL → Password gate → Supabase validation → Results`
-
-### Flow D — Invalid admin password
-
-`Results URL → Password gate → Invalid password → No data returned → Retry`
-
-### Flow E — Supabase unavailable
-
-Survey:
-- keep answers in the form;
-- show submission failure;
-- allow retry.
-
-Results:
-- show a clear load error;
-- do not expose cached/private data accidentally;
-- allow retry.
-
-## Visual behavior
-
-The new pages must feel like part of the existing Parrilla Rutera website.
-
-The repository itself is the visual source of truth.
-
-The implementation agent must inspect:
-
-- current CSS;
-- fonts;
-- palette;
-- spacing;
-- buttons;
-- containers;
-- backgrounds;
-- assets;
-- pixel-art usage;
-- breakpoints;
-- hover/focus states;
-- existing motion.
-
-Do not invent a separate design system.
-
-## Responsive requirements
-
-The survey and password/results pages must work on:
-
-- desktop;
-- tablet;
-- mobile.
-
-Survey priorities on narrow screens:
-
-- readable question text;
-- large touch targets;
-- no horizontal scrolling;
-- rating controls remain understandable;
-- text inputs remain usable;
-- submit state remains visible.
-
-The index must retain its existing responsive behavior.
-
-## Accessibility baseline
-
-V1 requirements:
-
-- semantic form controls;
-- associated labels;
-- keyboard navigation;
-- visible focus states;
-- sufficient contrast using the existing visual language;
-- validation not communicated by color alone;
-- reduced-motion respect for non-essential motion;
-- meaningful button text;
-- native HTML whenever possible.
-
-## Performance
-
-Keep the feature lightweight.
-
-Do not add a frontend framework, charting library, CSS framework, or heavy animation dependency for this feature.
-
-The survey should be usable quickly on a normal mobile connection.
-
-## Error handling
-
-Do not expose raw database errors to end users.
-
-Log useful development details to the console during development, but user-facing messages should be concise and safe.
-
-## Non-goals / Out of Scope
-
-Do not build in V1:
-
-- user accounts;
-- player login;
-- email collection;
-- social login;
-- public survey analytics;
-- public results;
-- a CMS;
-- a custom backend server;
-- React/Next/Vue/Svelte/Angular migration;
-- TypeScript migration;
-- a design-system rewrite;
-- an index redesign;
-- changes to the game itself;
-- gameplay telemetry integration;
-- automatic game-to-survey deep linking;
-- CAPTCHA unless later required by real abuse;
-- complex role management;
-- multiple admin accounts;
-- export to Excel/CSV unless later requested;
-- advanced charting libraries;
-- notification/email systems;
-- A/B testing;
-- localization beyond the existing site behavior.
-
-## Open Decisions
-
-These do not block local implementation and should follow the existing repository where possible:
-
-1. Exact final public filenames/routes if the repository already has a routing convention.
-2. Existing hosting/deployment target if not discoverable in the repository.
-3. Exact build-version value for the build being tested.
-4. Exact Supabase project credentials and the out-of-band admin password verifier setup.
-
-Do not reopen already locked product decisions.
+`PLAYTEST_QA.md` y tests: validación, SQL/roles, envío válido/omitidos/red/reintento/doble clic, passwords correctos/incorrectos/directo, no lecturas públicas, histórico, XSS, consentimiento/retirada, mobile/desktop, temas, teclado, consola, ES/EN y SEO. No sustituir verificación del proyecto Supabase y hosting reales por fixtures locales.

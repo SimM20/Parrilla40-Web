@@ -76,3 +76,28 @@ html[data-theme="light"] .survey-progress progress::-moz-progress-bar { backgrou
   .hero__layer { will-change: auto; }
   .hero__content { transform: none !important; opacity: 1 !important; }
 }
+
+/* Legal navigation is shared by the existing site and the new forms. */
+.legal-links { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 13px; }
+.legal-links a { color: inherit; padding-block: 8px; text-underline-offset: 3px; }
+.legal-links a:focus-visible { outline: 3px solid var(--ember); outline-offset: 3px; }
+.survey-cta { margin: 24px 0 0; }
+.consent-signup.signup { display: grid; grid-template-columns: minmax(0, 1fr); width: 100%; min-width: 0; max-width: 600px; margin: 20px auto 0; gap: 12px; text-align: left; }
+.consent-signup > label:first-child { font-weight: 900; }
+.playtest-page .consent-signup input[type=email] { width: 100%; max-width: none; border-radius: 4px; padding: 12px; }
+.consent-choice { display: flex; align-items: flex-start; gap: 12px; font-size: 15px; line-height: 1.5; cursor: pointer; }
+.playtest-page .consent-choice input[type=checkbox] { width: 20px; height: 20px; min-width: 20px; flex: 0 0 20px; margin-top: 2px; padding: 0; accent-color: var(--ember); }
+.consent-choice:has(input:focus-visible) { outline: 3px solid var(--ember); outline-offset: 5px; }
+.consent-signup .field-hint { margin: 0; font-size: 13px; }
+.consent-signup button { justify-self: start; border-radius: 4px; font-size: 13px; }
+.signup-receipt { max-width: 600px; margin: 20px auto; border: 1px dashed var(--cream-dim); padding: 16px; text-align: left; font-size: 14px; overflow-wrap: anywhere; }
+.signup-receipt a { display: inline-block; margin: 0 12px 12px 0; }
+.legal-content { overflow-wrap: anywhere; }
+.legal-content h1 { font: clamp(26px,5vw,42px)/1.2 "Bungee",sans-serif; }
+.legal-content h2 { margin-top: 32px; font-size: 23px; }
+.results-section h3 { font: 20px "Bungee",sans-serif; }
+.response h4 { color: var(--gold); font-size: 16px; margin: 0 0 16px; }
+.table-scroll { overflow-x: auto; max-width: 100%; }
+.build-comparison { width: 100%; border-collapse: collapse; font-size: 14px; }
+.build-comparison :is(th,td) { padding: 12px; border: 1px solid var(--cream-dim); text-align: left; vertical-align: top; }
+.build-comparison caption { text-align: left; margin-bottom: 12px; }

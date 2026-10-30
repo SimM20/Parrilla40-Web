@@ -55,7 +55,10 @@ for (const page of config.pages) {
     assert(/\bwidth=/.test(match[0]) && /\bheight=/.test(match[0]));
     if (/hero__layer/.test(match[0])) assert(!match[0].includes('loading="lazy"'));
   }
-  if (page.file.startsWith('preguntas')) assert.equal((html.match(/<fieldset\b/g) || []).length, 16);
+  if (page.file.startsWith('preguntas')) {
+    assert.equal((html.match(/<fieldset\b/g) || []).length, 3);
+    assert(!/16 preguntas|16 .*questions/.test(html));
+  }
 }
 const sitemap = read('sitemap.xml');
 assert.deepEqual([...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => match[1]), urls);
@@ -69,6 +72,18 @@ assert(!robots.includes('Disallow:'));
 assert.match(read('resultados.html'), /name="robots" content="noindex, nofollow, noarchive"/);
 assert.match(read('ranking-evento.html'), /name="robots" content="noindex, nofollow, noarchive"/);
 assert.match(read('404.html'), /name="robots" content="noindex, follow"/);
+for (const file of ['privacidad.html','privacidad-en.html','terminos.html','terminos-en.html','almacenamiento.html','almacenamiento-en.html','retirar-aviso.html','retirar-aviso-en.html','resultados-en.html']) {
+  const html = read(file);
+  assert.equal((html.match(/<h1\b/g) || []).length, 1, file);
+  assert.match(html, /name="robots" content="noindex/);
+  assert.match(html, /<footer[\s\S]*href="privacidad(?:-en)?\.html"/);
+  if (!file.startsWith('resultados')) assert(!html.includes('href="resultados.html"'), 'no public link to private results');
+  for (const match of html.matchAll(/\b(?:href|src)="([^"]+)"/g)) {
+    const ref = match[1];
+    if (/^(https?:|mailto:|#)/.test(ref)) continue;
+    assert(fs.existsSync(ref.split('#')[0].replace(/^\//, '')), `${file}: missing ${ref}`);
+  }
+}
 for (const data of Object.values(require('../assets/optimized/manifest.json'))) {
   for (const variant of data.variants) {
     const avif = fs.readFileSync(`assets/optimized/${variant.stem}.avif`);
@@ -79,8 +94,8 @@ for (const data of Object.values(require('../assets/optimized/manifest.json'))) 
   }
 }
 for (const file of fs.readdirSync('.').filter(file => file.endsWith('.js'))) execFileSync(process.execPath, ['--check', file]);
-const generated = [...config.pages.map(page => page.file), 'resultados.html', 'ranking-evento.html', '404.html', 'robots.txt', 'sitemap.xml', 'site-data.js'];
+const generated = [...config.pages.map(page => page.file), 'resultados.html', 'resultados-en.html', 'ranking-evento.html', '404.html', 'privacidad.html','privacidad-en.html','terminos.html','terminos-en.html','almacenamiento.html','almacenamiento-en.html','retirar-aviso.html','retirar-aviso-en.html', 'robots.txt', 'sitemap.xml', 'site-data.js'];
 const before = generated.map(read);
 execFileSync(process.execPath, ['tools/generate-site.cjs']);
-assert.deepEqual(generated.map(read), before, 'generation must be idempotent');
-console.log('PASS SEO: initial HTML, 16 static questions per language, metadata, reciprocal hreflang, canonical, JSON-LD, sitemap, robots, assets, syntax, repeatable generation');
+generated.forEach((file, i) => assert.equal(require('node:crypto').createHash('sha256').update(read(file)).digest('hex'), require('node:crypto').createHash('sha256').update(before[i]).digest('hex'), `generation must be idempotent: ${file}`));
+console.log('PASS SEO: three static questions per language, metadata, reciprocal hreflang, canonical, JSON-LD, sitemap, robots, assets, syntax, repeatable generation');

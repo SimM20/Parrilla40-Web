@@ -1,3 +1,5 @@
+> Current specification (29 October 2026): context.md replaces the retired questionnaire with exactly three questions and an independent email consent form. Keep historical records separate. Apply this stage workflow to current fields, metrics and tests only.
+
 # Stage 00 — Repository audit and guardrails
 
 Before implementing this stage, read the four root source-of-truth documents, then inspect the current repository.

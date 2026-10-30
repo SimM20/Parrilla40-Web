@@ -4,6 +4,8 @@ Sitio estático para el juego, en español e inglés, sin framework ni build de 
 Para revisar todas las rutas, usá un servidor HTTP estático según `PLAYTEST_SETUP.md`.
 Las fuentes, imágenes e interacciones de la landing son locales; la encuesta y el panel usan Supabase.
 
+Encuesta vigente: exactamente tres preguntas, con email opcional independiente después del envío y en `/wishlist/`. Históricos separados. Encuesta y emails ya están habilitados en el proyecto Supabase original de Parri; las 4 respuestas anteriores se conservaron. El equipo enviará el aviso manualmente. Ver `context.md`, `PLAYTEST_SETUP.md`, `PLAYTEST_QA.md`, `INVESTIGACION_PLAYTEST.md` y `LEGAL_PUBLICACION.md`. Contacto de privacidad y publicación del sitio pendientes; los documentos legales son borradores.
+
 ## Qué hay adentro
 
 ```

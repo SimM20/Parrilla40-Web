@@ -1,154 +1,67 @@
-# Playtest V1 — ejecución y conexión
+# Encuesta de tres preguntas — operación y publicación
 
-Implementación estática, sin build ni servidor de aplicación. La configuración pública está en `playtest-config.js`.
-La presencia de URL y clave no verifica el esquema, el verificador de contraseña ni los permisos del proyecto remoto:
-comprobarlos con los pasos siguientes antes de publicar. El producto sólo muestra éxito cuando Supabase confirma el envío.
+Estado del 29/10/2026: migración aplicada en el proyecto original `nyrkyrycfabytctgaewz`, organización **Parri**, mediante su SQL Editor con la cuenta del usuario. Las 4 respuestas históricas se conservaron. Emails y encuesta usan este mismo proyecto. Guardado y baja verificados con la API pública y el formulario real; pruebas eliminadas. No se desplegó el sitio en el hosting público.
 
-## Ejecutar localmente
+## Ejecutar y verificar
 
-Desde PowerShell en este equipo:
+Desde la raíz: `python -m http.server 8000 --bind 127.0.0.1`. Abrir `http://127.0.0.1:8000/preguntas.html`, `preguntas-en.html`, `/wishlist/` o `resultados.html` (este último nunca tiene enlaces públicos).
 
-```powershell
-cd D:\Git\Parrilla40-Web
-& 'C:\Users\carge\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe' -m http.server 8000 --bind 127.0.0.1
-```
+No hay build de producto. `node tools/generate-site.cjs` regenera preguntas ES/EN, metadatos y páginas traducidas desde `playtest.js`, fuentes HTML, `translations.json` y `site-config.json`. Legales y shells de resultados tienen fuente ES/EN propia. No editar a mano el bloque generado de preguntas ni duplicar sus definiciones.
 
-En otro equipo con Python instalado: `python -m http.server 8000 --bind 127.0.0.1` desde la raíz del repositorio.
-
-- Inicio: <http://127.0.0.1:8000/index.html>
-- Encuesta: <http://127.0.0.1:8000/preguntas.html>
-- Acceso privado, sólo mediante URL: <http://127.0.0.1:8000/resultados.html>
-
-El cliente oficial Supabase está fijado a `2.117.2` por CDN; las páginas nuevas requieren conexión para cargarlo y para enviar/consultar datos. No usar `file://` para validar la integración. Sin configuración, se puede completar y validar la encuesta, pero enviar/consultar muestra un error recuperable.
-
-## Conectar Supabase una vez
-
-1. Confirmar el proyecto destinado a Parrilla Rutera. No reutilizar un proyecto ajeno por conveniencia. Hacer primero la prueba en un proyecto de desarrollo.
-2. Abrir su SQL Editor como `postgres`. Comprobar dónde está `pgcrypto`:
-
-   ```sql
-   select n.nspname from pg_extension e
-   join pg_namespace n on n.oid = e.extnamespace
-   where e.extname = 'pgcrypto';
-   ```
-
-   Debe devolver `extensions` o ninguna fila. El setup lo instala si falta. Si está en otro esquema, adaptar las referencias `extensions.crypt` y `extensions.gen_salt` al esquema confirmado; no mover una extensión usada por otras funciones sin revisar sus dependencias.
-3. Ejecutar completo `supabase/setup.sql` **una sola vez**. Es transaccional y falla ante objetos preexistentes, sin sobreescribirlos. Crea la tabla, restricciones, esquema privado, tabla del verificador, RLS y RPC. No repetirlo sobre una instalación existente; aplicar cambios futuros mediante migraciones específicas.
-4. Configurar la contraseña acordada fuera del repositorio. Generar el hash localmente en una terminal privada (la contraseña se pide sin eco):
-
-   ```powershell
-   python -m venv "$env:TEMP\parrilla-admin"
-   & "$env:TEMP\parrilla-admin\Scripts\python.exe" -m pip install bcrypt==5.0.0
-   & "$env:TEMP\parrilla-admin\Scripts\python.exe" tools/admin-verifier.py
-   ```
-
-   En este equipo se puede sustituir el primer `python` por la ruta completa del comando de ejecución local. La herramienta imprime **sólo el hash bcrypt** con costo 12. No pasar la contraseña como argumento, no guardarla en archivos, historial de terminal, SQL Editor ni chats. Bcrypt admite hasta 72 bytes UTF-8; no se truncan contraseñas largas.
-5. En el SQL Editor del proyecto confirmado, sustituir el marcador siguiente por el **hash generado**, nunca por la contraseña:
-
-   ```sql
-   insert into playtest_private.admin_verifier (singleton, password_hash)
-   values (true, 'PEGAR_HASH_BCRYPT_AQUI')
-   on conflict (singleton) do update set password_hash = excluded.password_hash;
-   ```
-
-   El mismo procedimiento sirve para cambiar la contraseña. El marcador no satisface el CHECK y no puede habilitar acceso accidentalmente. No publicar el hash. Sin verificador, el RPC rechaza todo acceso.
-6. En la configuración Data API del proyecto, habilitar la API y exponer `public`. **No exponer `playtest_private`**. Mantener las concesiones del setup: `anon` sólo inserta las columnas de respuestas y ejecuta el RPC; no tiene SELECT, UPDATE, DELETE ni TRUNCATE. `authenticated` tampoco accede a estos objetos.
-7. En `playtest-config.js`, completar únicamente:
-
-   - `supabaseUrl`: URL HTTPS del proyecto confirmado.
-   - `supabasePublicKey`: clave publishable (o legacy anon), nunca clave privada/service role.
-   - `buildVersion`: identificador real de la build probada, de 1 a 100 caracteres. Se cambia sólo aquí.
-
-   La URL y la clave publishable aparecen en **Connect** dentro del proyecto. También se puede elegir una clave desde **Settings → API Keys**. Usar la clave que comienza con `sb_publishable_`, no `sb_secret_`. Este sitio estático lee el archivo de configuración directamente; no necesita un archivo `.env` ni un build.
-
-8. Ejecutar completo `supabase/launch-notify.sql` **una sola vez** (también sobre una instalación existente). Crea `launch_notify_signups`, donde quedan los emails de la pregunta 16, separados de las respuestas y sin UUID de sesión. `anon` sólo puede insertar `email` y `language`; no puede leerlos. Para exportar la lista, usar la consulta comentada al final del archivo en el SQL Editor.
-9. Ejecutar las comprobaciones reales del apartado siguiente antes de publicar. No habilitar SELECT para resolver errores de inserción: el cliente inserta sin pedir filas de vuelta.
-
-## Verificación de la conexión real
-
-Con el sitio servido y el proyecto de desarrollo configurado:
-
-1. Enviar una encuesta completa y comprobar en SQL Editor la fila: 15 respuestas (la 16 no se guarda ahí), UUID de sesión, build correcta y `created_at` generado por la base.
-2. Con la clave pública, realizar GET, PATCH y DELETE sobre `/rest/v1/playtest_responses`. Deben fallar por permisos y no devolver datos. No usar una clave privilegiada para esta prueba.
-3. Abrir resultados directamente. No debe haber solicitudes de datos antes del submit. Una contraseña incorrecta debe devolver `P0001` sin filas; la correcta debe mostrar resultados.
-4. Revisar permisos y configuración:
-
-   ```sql
-   select relrowsecurity from pg_class
-   where oid = 'public.playtest_responses'::regclass;
-   select cmd, roles from pg_policies
-   where schemaname = 'public' and tablename = 'playtest_responses';
-   select has_table_privilege('anon','public.playtest_responses','SELECT') as can_select,
-          has_table_privilege('anon','public.playtest_responses','UPDATE') as can_update,
-          has_table_privilege('anon','public.playtest_responses','DELETE') as can_delete;
-   select prosecdef, proconfig from pg_proc
-   where oid = 'public.playtest_results(text)'::regprocedure;
-   ```
-
-   Esperado: RLS `true`, única política `INSERT` para `anon`, tres permisos `false`, función definidora con `search_path` vacío. El permiso de INSERT es por columnas, no un permiso global de tabla.
-5. Revisar los asesores de seguridad de Supabase. Validar permisos de la función y que el esquema privado no sea accesible por API.
-6. Bloquear la solicitud de envío en DevTools y verificar respuestas conservadas, error y reintento. Refrescar resultados: debe volver al acceso por contraseña. Verificar también desde móvil y con teclado.
-
-El RPC devuelve un único array JSON, evitando que el límite de filas de PostgREST recorte silenciosamente los totales. Excluye ID y UUID de sesión. Los resultados sólo quedan en memoria y DOM durante la sesión; cerrar, navegar o recargar los limpia. La contraseña viaja únicamente en el cuerpo HTTPS del RPC. No se guarda en almacenamiento del navegador ni se compara con una constante local.
-
-Los textos tienen un máximo visible de 4000 caracteres por respuesta, validado también en la base; no hay truncamiento silencioso. La noche máxima usa el límite de almacenamiento de PostgreSQL `integer` (2147483647), no un límite inventado del juego. Un reintento después de una pérdida de conexión justo tras guardar puede generar otra fila; V1 bloquea envíos concurrentes, no implementa deduplicación entre solicitudes.
-
-## Publicación con el modelo existente
-
-El repositorio sólo documenta subir archivos a un hosting estático. No tiene workflow, dominio ni proveedor configurado verificable; no se eligió otro proveedor ni se desplegó infraestructura.
-
-1. Conectar y verificar primero Supabase según lo anterior.
-2. Actualizar `buildVersion` para la build del playtest y revisar que no haya secretos.
-3. Subir al mismo directorio público del hosting existente, conservando rutas relativas:
-
-   ```text
-   index.html
-   index-en.html
-   styles.css
-   script.js
-   preguntas.html
-   preguntas-en.html
-   preguntas.js
-   resultados.html
-   resultados.js
-   playtest.css
-   playtest.js
-   playtest-config.js
-   site.css
-   site.js
-   site-data.js
-   robots.txt
-   sitemap.xml
-   404.html
-   assets/ (completo)
-   fonts/ (completo)
-   ```
-
-   Alternativa reproducible: `node tools/package-site.cjs` copia esta lista y sus assets a `test-artifacts/public`.
-   Publicar el contenido de esa carpeta. Ver `SEO_DEPLOY.md` para HTTPS, canonical, redirecciones, MIME y Search Console.
-
-   No hay comando de build. No es necesario publicar `supabase/`, `tools/`, `tests/`, `prompts/` ni documentos internos. Si el hosting publica el repositorio completo, estos archivos tampoco contienen secretos; no agregar allí el verificador.
-4. Usar HTTPS. Si existe CSP, permitir scripts desde `https://cdn.jsdelivr.net`, conexiones al URL HTTPS del proyecto y recursos locales. Servir `.js` con MIME JavaScript; no reescribir las dos páginas a `index.html`.
-5. Evitar caché permanente de HTML y `playtest-config.js`; invalidar su caché tras una actualización. Si el hosting admite cabeceras por ruta, usar `Cache-Control: no-store` para las respuestas del RPC; no poner la API detrás de una caché pública.
-6. Probar en la URL publicada: CTA, acceso directo a `preguntas.html`, envío real, acceso directo a `resultados.html`, contraseña incorrecta/correcta, filtro si existen varias builds, recarga, teclado y móvil. El panel no debe aparecer en navegación ni sitemap.
-
-La verificación en hosting y Supabase reales queda pendiente hasta conectar ambos servicios.
-
-## Pruebas locales reproducibles
-
-Sin dependencias: `node tests/validation.cjs`.
-
-Las herramientas opcionales de QA se instalan fuera del producto; no hay bundler ni dependencias npm en el sitio. Con Node y Edge instalados:
+Comandos de QA:
 
 ```powershell
-npm install --prefix "$env:TEMP\parrilla-playtest-qa" --ignore-scripts --no-audit --no-fund @electric-sql/pglite@0.5.8 playwright@1.62.1
-$env:PGLITE_MODULE="$env:TEMP\parrilla-playtest-qa\node_modules\@electric-sql\pglite"
-$env:PLAYWRIGHT_MODULE="$env:TEMP\parrilla-playtest-qa\node_modules\playwright"
+node tests/validation.cjs
+$env:PGLITE_MODULE = "$PWD/test-artifacts/qa/node_modules/@electric-sql/pglite"
 node tests/database.cjs
-# Con el servidor local iniciado en otra terminal:
+node tests/seo.cjs
+# Con servidor local en ejecución:
 node tests/browser.cjs
+node tests/browser-seo.cjs
+node tools/package-site.cjs
 ```
 
-`BROWSER_CHANNEL=chrome` permite usar Chrome. `TEST_URL` cambia la URL local. `SCREENSHOT_DIR` apunta a una carpeta existente para capturas. Las pruebas de navegador interceptan configuración y API con datos sintéticos: nunca envían a un proyecto real. Las pruebas SQL ejecutan el archivo real en PostgreSQL/WASM con pgcrypto, recreando los roles de Supabase; no sustituyen la prueba final de su Data API.
+QA usa Node, Edge, Playwright 1.62.1, PGlite 0.5.8 y axe 4.14.0 instalados fuera del producto en `test-artifacts/qa`. Para reproducir desde cero: `npm install --prefix test-artifacts/qa --ignore-scripts --no-audit --no-fund @electric-sql/pglite@0.5.8 playwright@1.62.1 @axe-core/playwright@4.14.0`. `PLAYWRIGHT_MODULE`, `AXE_MODULE`, `BROWSER_CHANNEL`, `TEST_URL` y `SCREENSHOT_DIR` permiten cambiar rutas/entorno. Todas las llamadas browser de QA están interceptadas; no graban pruebas en producción.
 
-Referencias: [cliente oficial Supabase](https://supabase.com/docs/reference/javascript/installing), [funciones y permisos](https://supabase.com/docs/guides/database/functions), [extensiones de PGlite](https://pglite.dev/extensions/).
+## Migración segura
+
+1. Obtener acceso al proyecto exacto. Auditar esquema, políticas, extensión pgcrypto, verificador existente y conteos históricos, sin mostrar emails/secretos en reportes. Ver `SUPABASE_V2_AUDIT.md`.
+2. Si es instalación nueva, ejecutar una sola vez `supabase/setup.sql`. La tabla histórica de emails es opcional; la migración no requiere `supabase/launch-notify.sql`. En una existente, no repetir el setup. No cambiar ni publicar la contraseña real.
+3. `supabase/migrations/20261029233053_playtest_three_questions_and_consent.sql` **ya está aplicada en el proyecto original: no repetirla**. Es transaccional: crea tablas/RPC v2 y revoca escrituras y permisos públicos de las tablas antiguas; no elimina históricos. Para otra instalación, aplicar una sola vez y coordinar con los archivos estáticos nuevos, pues clientes anteriores dejan de poder enviar. Comprobar conteos antes/después.
+
+   También está aplicada `20261030012521_restrict_legacy_results_role.sql`, que limita el RPC histórico al rol anon previsto, manteniendo su contraseña. En instalaciones nuevas aplicar ambas en ese orden.
+4. El verificador bcrypt actual es compartido por los dos paneles. Si falta, generarlo fuera del repositorio con `tools/admin-verifier.py` (bcrypt costo 12); insertar **el hash** mediante terminal/editor seguro en `playtest_private.admin_verifier`. Nunca pegar la contraseña en SQL, código, chat o argumentos.
+5. Data API expone `public`, nunca `playtest_private`. No conceder lectura directa para arreglar errores. El navegador sólo usa clave publishable existente. Revisar asesores de seguridad.
+6. Verificar con clave pública: GET/PATCH/DELETE y INSERT directo sobre tablas nuevas denegados; RPC de envío válido y su repetición generan una fila; cambios con UUID usado se rechazan; no leer emails ni respuestas. Probar consentimiento y retirada reales con dirección de prueba controlada y eliminarla.
+7. Verificar RPC v2 y antiguo con contraseña incorrecta (sin datos) y correcta (datos mínimos). No guardarla en el navegador; recargar/cerrar limpia el panel. Probar builds y red interrumpida.
+
+## Configuración
+
+`playtest-config.js` centraliza URL pública, clave publicable y build. `buildVersion` actual `playtest-2026-10` debe corresponder al ejecutable entregado. No añadir claves privadas. Cliente Supabase CDN fijado en 2.117.2, sin persistencia de autenticación.
+
+`steam-config.js`: conservar vacío hasta disponer de URL real del store. El flujo wishlist sólo redirige a HTTPS de `store.steampowered.com`; las URL de otros hosts se ignoran.
+
+El sitio sólo guarda emails y consentimiento en el mismo proyecto que las respuestas. El equipo enviará el aviso manualmente; no se necesita integrar SMTP, un proveedor de correo ni sus credenciales en la web. El registro depende de que la migración esté aplicada al proyecto configurado. No utilizar históricos como lista consentida.
+
+Para consultar la lista desde el SQL Editor del proyecto, con acceso del propietario:
+
+```sql
+select email, language, created_at
+from public.launch_notice_consents
+where consent and consent_version = 'steam-wishlist-v1'
+order by created_at;
+```
+
+Los emails son únicos y las bajas eliminan el registro. Consultar la lista vigente cerca del envío, respetar las bajas, enviar sólo el aviso consentido y retirar las copias exportadas cuando dejen de ser necesarias. No publicar esta consulta como RPC ni conceder SELECT al cliente público.
+
+## Publicación
+
+Antes de publicar resolver checklist de `LEGAL_PUBLICACION.md`: correo atendido, identidad/domicilio confirmados, proveedores/región/transferencias, trámites AAIP si corresponden y retención real. Los legales están visibles como borradores y noindex; retirarlo sólo cuando sean definitivos.
+
+`node tools/package-site.cjs` copia exclusivamente runtime público y assets a `test-artifacts/public`. Subir **el contenido** al hosting estático existente, conservando `/wishlist/`, fuentes, JS, CSS y rutas HTML. No publicar SQL, herramientas, tests, docs ni recibos de prueba. No se eligió otro hosting ni se hizo deploy.
+
+Usar HTTPS; servir JS con MIME correcto; conservar robots/sitemap/canonical. No reescribir páginas a index. Si hay CSP permitir jsDelivr y conexiones al proyecto HTTPS. Evitar caché permanente del HTML/configuración e invalidar al publicar. No poner RPC de resultados detrás de caché pública. Recuperación local usa sessionStorage: UUID/estado, respuestas pendientes y, en otra clave, email/token pendiente; se borra contenido pendiente al confirmar. En almacenamiento bloqueado sólo se recupera dentro de la página abierta.
+
+Reversión: restaurar archivos previos sólo si también se restaura explícitamente el permiso de escritura anterior revisado. No borrar tablas v2 ni filas para revertir. Se puede dejar todo protegido, deshabilitar el CTA y conservar resultados mientras se corrige. La migración no tiene rollback destructivo automático.
+
+Finalmente repetir en hosting real: idiomas, enlaces legales, mobile/teclado, envío, error/reintento, recibo y retirada, panel nuevo/histórico, contraseña y ausencia de lectura pública. PGlite y las APIs simuladas no acreditan este último paso.

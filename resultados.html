@@ -11,34 +11,41 @@
 <!-- SITE:END -->
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="referrer" content="no-referrer">
-  <title>Resultados de playtest — Parrilla Rutera</title>
-  <link rel="icon" href="assets/extras/carbon-prendido.png">
-  <link rel="stylesheet" href="styles.css">
+  <title>Resultados privados de playtest — Parrilla 40</title>
+    <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="playtest.css">
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
   <script defer src="playtest-config.js"></script>
   <script defer src="playtest.js"></script>
+  <script defer src="playtest-legacy.js"></script>
   <script defer src="resultados.js"></script>
+<link rel="icon" href="assets/extras/carbon-prendido.png">
 <!-- SITE:START -->
 <link rel="preload" href="fonts/Bungee-Regular.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="site.css">
 <!-- SITE:END -->
 </head>
-<body class="playtest-page">
+<body class="playtest-page results-page">
   <a class="skip-link" href="#main">Ir al contenido</a>
-  <header class="playtest-nav wrap"><a class="nav__brand" href="index.html"><span class="nav__dot"></span>PARRILLA 40</a><a href="index.html">Volver al sitio</a><button class="site-control" id="theme-toggle" type="button" aria-label="Modo oscuro" aria-pressed="true" hidden><span aria-hidden="true">☀</span></button></header>
+  <header class="playtest-nav wrap"><a class="nav__brand" href="index.html"><span class="nav__dot"></span>PARRILLA 40</a><a href="index.html">Volver al sitio</a><div class="site-tools"><a class="site-control" href="resultados-en.html" lang="en" hreflang="en" aria-label="EN: Cambiar a inglés" data-language-link>EN</a><button class="site-control" id="theme-toggle" type="button" aria-label="Modo oscuro" aria-pressed="true" hidden><span aria-hidden="true">☀</span></button></div></header>
   <main class="wrap wrap--narrow playtest-main" id="main">
     <div class="playtest-intro">
       <picture><source type="image/avif" srcset="assets/optimized/candado-169.avif 169w, assets/optimized/candado-337.avif 337w" sizes="84px"><source type="image/webp" srcset="assets/optimized/candado-169.webp 169w, assets/optimized/candado-337.webp 337w" sizes="84px"><img class="px playtest-sprite" src="assets/ui/candado.png" alt="" width="163" height="236" loading="eager" decoding="async"></picture>
-      <p class="eyebrow">Parrilla Rutera · Equipo</p>
+      <p class="eyebrow">Parrilla 40 · Equipo</p>
       <h1 class="h2">Lo que dejó <em>la jornada.</em></h1>
       <p class="lead">Resultados privados del playtest.</p>
     </div>
     <noscript><p class="feedback">Activá JavaScript para consultar los resultados.</p></noscript>
     <form id="gate" class="playtest-panel gate" novalidate>
       <p>Ingresá la contraseña del equipo para ver las respuestas.</p>
+      <label for="results-source">Conjunto de respuestas</label>
+      <select id="results-source" name="results-source" aria-describedby="source-hint">
+        <option value="current">Encuesta actual · 3 preguntas</option>
+        <option value="historical">Histórico · cuestionario anterior</option>
+      </select>
+      <p class="field-hint" id="source-hint">Los datos actuales y los históricos se consultan por separado.</p>
       <label for="admin-password">Contraseña</label>
-      <input id="admin-password" name="admin-password" type="password" autocomplete="current-password" required aria-describedby="gate-status">
+      <input id="admin-password" name="admin-password" type="password" autocomplete="current-password" required aria-describedby="gate-status" spellcheck="false">
       <p class="feedback" id="gate-status" role="status" aria-live="polite"></p>
       <button class="btn" id="unlock" type="submit" disabled>Ver resultados</button>
     </form>
@@ -51,6 +58,6 @@
       <div id="results-content" aria-live="polite"></div>
     </section>
   </main>
-  <footer class="foot"><div class="wrap"><span class="foot__brand">PARRILLA 40</span></div></footer>
+  <footer class="foot"><div class="wrap foot__in"><span class="foot__brand">PARRILLA 40</span><nav class="legal-links" aria-label="Información legal"><a href="privacidad.html">Privacidad</a><a href="terminos.html">Términos</a><a href="almacenamiento.html">Almacenamiento</a></nav></div></footer>
 </body>
 </html>

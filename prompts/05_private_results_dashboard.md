@@ -1,3 +1,5 @@
+> Current specification (29 October 2026): context.md replaces the retired questionnaire with exactly three questions and an independent email consent form. Keep historical records separate. Apply this stage workflow to current fields, metrics and tests only.
+
 # Stage 05 — Private results page
 
 Read the root source-of-truth documents and inspect the Stage 01 Supabase security implementation before coding.

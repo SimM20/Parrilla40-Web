@@ -1,4 +1,6 @@
-# MASTER PROMPT — Autonomous V1 Implementation
+# MASTER PROMPT — Current survey implementation
+
+The 29 October 2026 specification in `context.md` supersedes the earlier questionnaire: exactly three questions, independent launch consent, preserved history and bilingual legal documents. Existing stage prompts are workflow guides only; never restore the retired questionnaire, its metrics or inline Q16 email collection. Use `tasks/todo.md`, `PLAYTEST_SETUP.md` and `PLAYTEST_QA.md` for the current acceptance and deployment state.
 
 Implement the Parrilla Rutera playtest survey V1 in this repository.
 

@@ -2,42 +2,32 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 const context = { window: {} };
-vm.createContext(context);
-vm.runInContext(fs.readFileSync('playtest.js', 'utf8'), context);
-const { questions, validate } = context.window.Playtest;
-assert.equal(questions.length, 16);
-assert.equal(new Set(questions.map(q => q.name)).size, 16);
-assert.equal(Object.keys(validate({}).errors).length, 16);
-const values = Object.fromEntries(questions.map(q => [q.name, q.options ? q.options[0][0] : q.type === 'number' ? '0' : 'Texto']));
-values.launch_email = 'Vos@Ejemplo.com ';
-for (const q of questions.filter(item => item.name !== 'launch_notify')) {
-  if (q.options) for (const [option] of q.options) {
+vm.runInNewContext(fs.readFileSync('playtest.js', 'utf8'), context);
+const { questions, validate, launchEmail } = context.window.Playtest;
+assert.deepEqual(Array.from(questions, q => q.name), ['perceived_time_flow', 'post_session_feeling', 'memorable_moment']);
+assert.equal(Object.keys(validate({}).errors).length, 2);
+const values = { perceived_time_flow: '3', post_session_feeling: 'enough_for_now', memorable_moment: '' };
+assert.equal(Object.keys(validate(values).errors).length, 0);
+assert.equal(validate(values).answers.memorable_moment, null);
+for (const q of questions.filter(q => q.options)) {
+  assert.equal(q.options.length, 5);
+  for (const [option] of q.options) {
     const result = validate({ ...values, [q.name]: option });
     assert.equal(Object.keys(result.errors).length, 0);
-    assert.equal(result.answers[q.name], q.type === 'rating' ? Number(option) : q.name === 'completed_night_1' ? option === 'true' : option);
+    assert.equal(result.answers[q.name], q.name === 'perceived_time_flow' ? Number(option) : option);
   }
-  if (q.type === 'rating') {
-    assert(q.low && q.high);
-    for (const invalid of ['0', '6', '1.5', 'invalid']) assert(validate({ ...values, [q.name]: invalid }).errors[q.name]);
-  }
+  for (const invalid of ['', '0', '6', '1.5', 'unknown']) assert(validate({ ...values, [q.name]: invalid }).errors[q.name]);
 }
-for (const invalid of ['-1', '1.5', '1e2', '2147483648', 'NaN']) {
-  assert(validate({ ...values, highest_night: invalid }).errors.highest_night);
+assert.equal(validate({ ...values, memorable_moment: '  recuerdo  ' }).answers.memorable_moment, 'recuerdo');
+assert(!validate({ ...values, memorable_moment: 'x'.repeat(1200) }).errors.memorable_moment);
+assert(validate({ ...values, memorable_moment: 'x'.repeat(1201) }).errors.memorable_moment);
+assert(!validate({ ...values, memorable_moment: '😀'.repeat(600) }).errors.memorable_moment);
+assert(validate({ ...values, memorable_moment: '😀'.repeat(1201) }).errors.memorable_moment);
+const answers = validate({ ...values, email: 'never@store.example', launch_notify: 'true' }).answers;
+assert.equal(Object.keys(answers).length, 3);
+for (const invalid of ['', 'vos', 'vos@ejemplo', 'vos @ejemplo.com', 'x'.repeat(251) + '@b.c']) assert.equal(launchEmail(invalid), null);
+assert.equal(launchEmail(' Vos@Ejemplo.com '), 'vos@ejemplo.com');
+for (const file of ['index.html', 'index-en.html', 'preguntas.html', 'preguntas-en.html', 'wishlist/index.html', 'wishlist/en/index.html']) {
+  assert(!fs.readFileSync(file, 'utf8').includes('resultados.html'));
 }
-// The launch question never reaches the anonymous answers; only a valid email leaves validate.
-assert.equal(validate(values).answers.launch_notify, undefined);
-assert.equal(validate(values).notifyEmail, 'vos@ejemplo.com');
-assert.equal(validate({ ...values, launch_notify: 'false', launch_email: 'nope' }).notifyEmail, null);
-assert.equal(Object.keys(validate({ ...values, launch_notify: 'false', launch_email: 'nope' }).errors).length, 0);
-assert(validate({ ...values, launch_notify: 'maybe' }).errors.launch_notify);
-for (const invalid of ['', '   ', 'vos', 'vos@ejemplo', 'vos @ejemplo.com', 'a@b.c' + 'x'.repeat(250)]) {
-  assert(validate({ ...values, launch_email: invalid }).errors.launch_email, invalid);
-}
-for (const valid of ['0', '2', '2147483647']) assert.equal(validate({ ...values, highest_night: valid }).errors.highest_night, undefined);
-for (const name of ['favorite_part', 'one_thing_to_change']) {
-  for (const invalid of [' ', '\n\t', 'x'.repeat(4001)]) assert(validate({ ...values, [name]: invalid }).errors[name]);
-  assert.equal(validate({ ...values, [name]: 'x'.repeat(4000) }).errors[name], undefined);
-}
-assert(!fs.readFileSync('index.html', 'utf8').includes('resultados.html'));
-assert(!fs.readFileSync('preguntas.html', 'utf8').includes('resultados.html'));
-console.log('PASS validation: exactly 16 questions, optional launch email kept out of the answers, all option mappings and rating labels, numeric boundaries, whitespace and text lengths, no public results links');
+console.log('PASS: exactly three questions, all categories, required/optional fields, 1200-character boundary, anonymous payload and email validation');

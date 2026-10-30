@@ -20,50 +20,48 @@ vm.runInNewContext(read('playtest.js'), context);
 const { questions } = context.window.Playtest;
 
 function survey(language) {
-  const blocks = {
-    0: ['Tu partida', 'Empecemos por las noches que jugaste.', 'assets/extras/carbon-prendido.png'],
-    3: ['La experiencia', 'Pensá en cómo se sintió jugar, desde el primer pedido.', 'assets/cortes/chorizo-jugoso.png'],
-    13: ['Lo que te llevás', 'Dos respuestas para ayudarnos a mejorar. No incluyas datos personales.', 'assets/cortes/choripan-hecho.png'],
-    15: ['Una última cosa', 'Cada lista de deseados en Steam nos da una mano enorme.', 'assets/ui/radio.png']
-  };
   let html = '<div id="questions">';
   questions.forEach((q, index) => {
-    if (blocks[index]) {
-      if (index) html += '</section>';
-      const [title, text, sprite] = blocks[index];
-      html += `<section class="survey-block" aria-labelledby="block-${index}"><div class="survey-section-heading"><img class="px" src="${sprite}" alt="" width="56" height="56" loading="lazy" decoding="async"><div><h2 id="block-${index}">${escape(t(title, language))}</h2><p>${escape(t(text, language))}</p></div></div>`;
-    }
-    html += `<fieldset class="question" id="question-${q.name}"><legend><span class="question-number">${String(index + 1).padStart(2, '0')}</span><span>${escape(t(q.label, language))}</span></legend>`;
+    html += `<fieldset class="question" id="question-${q.name}"><legend><span class="question-number">0${index + 1}</span><span>${escape(t(q.label, language))}</span></legend>`;
+    if (q.optional) html += `<p class="question-kind">${escape(t('Opcional', language))}</p>`;
     if (q.options) {
-      html += `<div class="choices${q.type === 'rating' ? ' ratings' : ''}">`;
+      html += '<div class="choices">';
       for (const [value, label] of q.options) {
         html += `<label class="choice"><input type="radio" name="${q.name}" value="${value}" required aria-describedby="error-${q.name}${q.type === 'rating' ? ` hint-${q.name}` : ''}"><span>${escape(t(label, language))}</span></label>`;
       }
       html += '</div>';
-      if (q.type === 'rating') html += `<p class="field-hint scale-ends" id="hint-${q.name}"><span>1 · ${escape(t(q.low, language))}</span><span>5 · ${escape(t(q.high, language))}</span></p>`;
-      if (q.name === 'launch_notify') {
-        html += `<div class="notify-email" id="notify-email" hidden><label for="launch_email">${escape(t('¿A qué email te escribimos?', language))}</label>`;
-        html += `<input id="launch_email" name="launch_email" type="email" autocomplete="email" inputmode="email" maxlength="254" spellcheck="false" placeholder="${escape(t('vos@ejemplo.com', language))}" required disabled aria-describedby="hint-launch_email error-launch_email">`;
-        html += `<p class="field-hint" id="hint-launch_email">${escape(t('Un solo email, cuando ya se pueda. Se guarda aparte de tus respuestas y no lo compartimos con nadie.', language))}</p>`;
-        html += '<p class="field-error" id="error-launch_email"></p></div>';
-      }
     } else {
+      html += `<p class="field-hint" id="hint-${q.name}">${escape(t(q.hint, language))}</p>`;
       html += `<label class="sr-only" for="${q.name}">${escape(t(q.label, language))}</label>`;
-      const attributes = `id="${q.name}" name="${q.name}" required aria-describedby="hint-${q.name} error-${q.name}"`;
-      html += q.type === 'text'
-        ? `<textarea ${attributes} rows="4" maxlength="4000"></textarea>`
-        : `<input ${attributes} type="number" min="0" max="2147483647" step="1" inputmode="numeric">`;
-      const hint = q.type === 'text' ? 'Hasta 4000 caracteres. No incluyas datos personales.' : 'Un número entero, sin decimales. Si no llegaste a ninguna noche, ingresá 0.';
-      html += `<p class="field-hint" id="hint-${q.name}">${escape(t(hint, language))}</p>`;
-      if (q.type === 'text') html += `<span class="text-count" id="count-${q.name}">0 / 4000</span>`;
+      html += `<textarea id="${q.name}" name="${q.name}" rows="2" maxlength="1200" aria-describedby="hint-${q.name} error-${q.name} text-count"></textarea>`;
+      html += '<div class="text-meta"><span id="text-count">0 / 1200</span></div>';
     }
     html += `<p class="field-error" id="error-${q.name}"></p></fieldset>`;
   });
-  return `<!-- QUESTIONS:START -->\n${html}</section></div>\n<!-- QUESTIONS:END -->`;
+  return `<!-- QUESTIONS:START -->\n${html}</div>\n<!-- QUESTIONS:END -->`;
+}
+
+function signup(language) {
+  const tr = text => escape(t(text, language));
+  const privacy = language === 'en' ? '/privacidad-en.html' : '/privacidad.html';
+  return `<!-- SIGNUP:START -->
+<form class="signup consent-signup" id="signup" novalidate>
+  <label for="signupMail">${tr('Tu email')}</label>
+  <input type="email" id="signupMail" name="email" autocomplete="email" inputmode="email" maxlength="254" spellcheck="false" required aria-describedby="signupNote">
+  <label class="consent-choice"><input type="checkbox" name="consent" required aria-describedby="signupNote"><span>${tr('Quiero recibir un único aviso por email cuando pueda agregar Parrilla 40 a mi lista de deseados en Steam.')} <a href="${privacy}">${tr('Privacidad')}</a></span></label>
+  <button class="btn" type="submit" disabled>${tr('Anotarme')}</button>
+</form>
+<p class="signup__note" id="signupNote" role="status"></p>
+<div class="signup-receipt" id="signup-receipt" hidden>
+  <p>${tr('Guardá este enlace privado para darte de baja. Si ya te anotaste antes, usá tu enlace original.')}</p>
+  <a id="withdrawal-link" href="#" referrerpolicy="no-referrer">${tr('Darme de baja')}</a>
+  <button class="site-control" id="download-withdrawal" type="button">${tr('Guardar enlace')}</button>
+</div>
+<!-- SIGNUP:END -->`;
 }
 
 function translate(html, page) {
-  const spanish = config.pages.find(p => p.file === page.alternate);
+  const spanish = config.pages.find(p => p.file === page.alternate) || { file: page.alternate, path: page.alternate };
   const unchanged = new Set(['PARRILLA 40', 'PARRILLA', 'EN', 'Q', 'R', 'T', 'C', 'M', 'Strike', '2026 release', 'Management', 'PC (Steam)']);
   const start = html.indexOf('<body');
   return html.slice(0, start) + html.slice(start)
@@ -79,6 +77,7 @@ function translate(html, page) {
     .replace(/href="preguntas.html"/g, 'href="preguntas-en.html"')
     .replace(/href="\/"/g, 'href="/index-en.html"')
     .replace(/href="wishlist\/"/g, 'href="wishlist/en/"')
+    .replace(/href="(\/)?(privacidad|terminos|almacenamiento)\.html"/g, 'href="$1$2-en.html"')
     .replace(/<a class="site-control"[^>]+data-language-link>EN<\/a>/g, match => match
       .replace(/href="[^"]+"/, `href="${page.file.includes('/') ? '/' + spanish.path : spanish.file}"`)
       .replace('lang="en"', 'lang="es"').replace('hreflang="en"', 'hreflang="es"')
@@ -117,6 +116,7 @@ function head(html, page) {
   // Pages served from a directory (and the 404 at any path) use root-absolute assets.
   const prefix = page.file === '404.html' || page.file.includes('/') ? '/' : '';
   before = before.replace(/<script defer src="\/?site(?:-data)?\.js"><\/script>\n?/g, '');
+  if (!before.includes('rel="icon"')) before = before.replace(/(<meta name="viewport"[^>]*>)/, `$1\n<link rel="icon" href="${prefix}assets/extras/carbon-prendido.png">`);
   if (config.pages.includes(page)) {
     before = before.replace(/<title>[\s\S]*?<\/title>\n?/g, '').replace(/<meta name="(?:description|robots|theme-color)"[^>]*>\n?/g, '');
     const es = page.language === 'es' ? page : config.pages.find(p => p.file === page.alternate);
@@ -164,7 +164,6 @@ function head(html, page) {
 <link rel="preload" href="${prefix}fonts/Bungee-Regular.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="${prefix}site.css">
 <!-- SITE:END -->\n`;
-  if (!before.includes('rel="icon"')) before += `<link rel="icon" href="${prefix}assets/extras/carbon-prendido.png">\n`;
   return (before + '</head>' + after).replace(/<html lang="[^"]+"/, `<html lang="${page.language || 'es'}"`);
 }
 
@@ -172,13 +171,20 @@ function head(html, page) {
 let surveySource = read('preguntas.html').replace(/<!-- QUESTIONS:START -->[\s\S]*?<!-- QUESTIONS:END -->|<div id="questions"><\/div>/, '<!-- QUESTIONS -->');
 for (const page of config.pages) {
   const spanish = page.language === 'es' ? page : config.pages.find(p => p.file === page.alternate);
-  const source = spanish.file === 'preguntas.html' ? surveySource : read(spanish.file);
+  const source = (spanish.file === 'preguntas.html' ? surveySource : read(spanish.file))
+    .replace(/<!-- SIGNUP:START -->[\s\S]*?<!-- SIGNUP:END -->/, '<!-- SIGNUP -->');
   let html = page.language === 'en' ? translate(source, page) : source;
   if (page.file.startsWith('preguntas')) html = html.replace('<!-- QUESTIONS -->', survey(page.language));
+  html = html.replace('<!-- SIGNUP -->', signup(page.language));
   fs.mkdirSync(path.dirname(path.join(root, page.file)), { recursive: true });
   write(page.file, optimizeImages(head(html, page)));
 }
-for (const file of ['resultados.html', 'ranking-evento.html', '404.html']) write(file, optimizeImages(head(read(file), { file, language: 'es' })));
+const withdrawalSource = read('retirar-aviso.html');
+write('retirar-aviso.html', head(withdrawalSource, { file: 'retirar-aviso.html', language: 'es' }));
+write('retirar-aviso-en.html', head(translate(withdrawalSource, { file: 'retirar-aviso-en.html', alternate: 'retirar-aviso.html' }), { file: 'retirar-aviso-en.html', language: 'en' }).replace('<title>Retirar consentimiento — Parrilla 40</title>', '<title>Withdraw consent — Parrilla 40</title>'));
+for (const file of ['resultados.html', 'resultados-en.html', 'ranking-evento.html', '404.html', 'privacidad.html', 'privacidad-en.html', 'terminos.html', 'terminos-en.html', 'almacenamiento.html', 'almacenamiento-en.html']) {
+  if (fs.existsSync(path.join(root, file))) write(file, optimizeImages(head(read(file), { file, language: file.includes('-en') ? 'en' : 'es' })));
+}
 write('site-data.js', '// Generated by tools/generate-site.cjs from translations.json and the image manifest.\nwindow.TRANSLATIONS=' + JSON.stringify({ es: {}, en: english }) + ';\nwindow.SITE_IMAGES=' + JSON.stringify(images) + ';\n');
 write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${config.pages.map(p => `  <url><loc>${escape(absolute(p.path))}</loc></url>`).join('\n')}\n</urlset>\n`);
 write('robots.txt', `User-agent: *\nAllow: /\n\nSitemap: ${absolute('sitemap.xml')}\n`);

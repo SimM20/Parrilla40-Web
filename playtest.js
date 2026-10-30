@@ -1,86 +1,54 @@
 (function () {
   'use strict';
   const t = window.Site?.t || (text => text);
-  const choice = (name, label, options) => ({ name, label, type: 'choice', options });
-  const rating = (name, label, low, high) => ({ name, label, type: 'rating', low, high,
-    options: [1, 2, 3, 4, 5].map(value => [String(value), String(value)]) });
+  // Single questionnaire definition, also used by the static-page generator and private panel.
   const questions = [
-    choice('completed_night_1', '¿Pudiste completar la primera noche?', [['true', 'Sí'], ['false', 'No']]),
-    choice('completed_night_2', '¿Pudiste completar la segunda noche?', [['yes', 'Sí'], ['no', 'No'], ['not_reached', 'No llegué a jugarla']]),
-    { name: 'highest_night', label: '¿Hasta qué noche llegaste?', type: 'number' },
-    rating('initial_understanding', '¿Qué tan fácil fue entender qué tenías que hacer al comenzar?', 'Nada fácil', 'Muy fácil'),
-    rating('controls_intuitiveness', '¿Qué tan intuitivos te parecieron los controles?', 'Nada intuitivos', 'Muy intuitivos'),
-    rating('cooking_understanding', '¿Qué tan fácil fue entender cómo cocinar y dar vuelta la carne?', 'Nada fácil', 'Muy fácil'),
-    rating('heat_understanding', '¿Qué tan fácil fue entender el funcionamiento del carbón y las zonas de calor?', 'Nada fácil', 'Muy fácil'),
-    rating('order_readability', '¿Qué tan fácil fue leer los pedidos y saber qué quería cada cliente?', 'Nada fácil', 'Muy fácil'),
-    rating('difficulty_fairness', '¿Qué tan justa te pareció la dificultad?', 'Muy injusta', 'Muy justa'),
-    choice('customer_pacing', '¿Cómo te pareció el ritmo de llegada de clientes?', [['very_slow', 'Muy lento'], ['slow', 'Lento'], ['good', 'Bien'], ['fast', 'Rápido'], ['very_fast', 'Muy rápido']]),
-    rating('learning_feeling', '¿Sentiste que mejorabas y entendías mejor el juego mientras jugabas?', 'Para nada', 'Muchísimo'),
-    choice('stress_experience', '¿El estrés de atender varios pedidos te resultó divertido o frustrante?', [['very_fun', 'Muy divertido'], ['mostly_fun', 'Más divertido que frustrante'], ['balanced', 'Mitad y mitad'], ['mostly_frustrating', 'Más frustrante que divertido'], ['very_frustrating', 'Muy frustrante']]),
-    choice('want_to_continue', '¿Te dieron ganas de jugar otra noche para intentar hacerlo mejor?', [['yes', 'Sí'], ['maybe', 'Tal vez'], ['no', 'No']]),
-    { name: 'favorite_part', label: '¿Qué fue lo que más te gustó?', type: 'text' },
-    { name: 'one_thing_to_change', label: 'Si pudieras cambiar una sola cosa del juego, ¿qué cambiarías?', type: 'text' },
-    // Not stored with the anonymous answers: a "yes" only adds a separate launch-notice email.
-    choice('launch_notify', '¿Querés que te avisemos cuando puedas agregarlo a tu lista de deseados en Steam?', [['true', 'Sí, avisame'], ['false', 'No, gracias']])
+    { name: 'perceived_time_flow', type: 'choice', label: '¿Cómo sentiste que pasó el tiempo mientras jugabas?', options: [
+      ['1', 'Se me hizo muy largo.'], ['2', 'Se me hizo algo largo.'], ['3', 'Ni rápido ni lento.'],
+      ['4', 'Pasó bastante rápido.'], ['5', 'Se me pasó volando.']
+    ] },
+    { name: 'post_session_feeling', type: 'choice', label: 'Cuando terminaste de jugar, ¿con qué sensación te quedaste?', options: [
+      ['another_night', 'Me quedé con ganas de jugar otra noche.'],
+      ['retry_better', 'Me quedé con ganas de volver a intentar para hacerlo mejor.'],
+      ['enough_for_now', 'Sentí que había jugado suficiente por el momento.'],
+      ['prefer_stop', 'Prefería dejar de jugar.'], ['unsure', 'No sabría decir.']
+    ] },
+    { name: 'memorable_moment', type: 'text', optional: true, label: '¿Qué momento de la partida recordás más y por qué?',
+      hint: 'Puede ser algo que te gustó, te frustró o te aburrió. Contanos qué pasó.' }
   ];
-
-  // Same rule as the launch_notify_signups CHECK constraint. Returns the stored form, or null.
+  function validate(values) {
+    const answers = {}, errors = {};
+    for (const q of questions) {
+      const raw = String(values[q.name] ?? '');
+      const value = raw.trim();
+      if (q.type === 'text') {
+        if ([...raw].length > 1200) errors[q.name] = t('Usá como máximo 1200 caracteres.');
+        else answers[q.name] = value || null;
+      } else if (!value) errors[q.name] = t('Elegí una opción.');
+      else if (!q.options.some(([option]) => option === value)) errors[q.name] = t('Elegí una de las opciones disponibles.');
+      else answers[q.name] = q.name === 'perceived_time_flow' ? Number(value) : value;
+    }
+    return { answers, errors };
+  }
   function launchEmail(value) {
     const email = String(value ?? '').trim().toLowerCase();
     return email.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : null;
   }
-
-  function validate(values) {
-    const answers = {}, errors = {};
-    let notifyEmail = null;
-    for (const q of questions) {
-      if (q.name === 'launch_notify') {
-        const value = String(values[q.name] ?? '');
-        if (!value) errors[q.name] = t('Respondé esta pregunta para continuar.');
-        else if (value !== 'true' && value !== 'false') errors[q.name] = t('Elegí una de las opciones disponibles.');
-        else if (value === 'true') {
-          notifyEmail = launchEmail(values.launch_email);
-          if (!String(values.launch_email ?? '').trim()) errors.launch_email = t('Escribí tu email para que podamos avisarte.');
-          else if (!notifyEmail) errors.launch_email = t('Revisá el email: parece que le falta algo.');
-        }
-        continue;
-      }
-      const value = String(values[q.name] ?? '').trim();
-      if (!value) errors[q.name] = t('Respondé esta pregunta para continuar.');
-      else if (q.type === 'number') {
-        // PostgreSQL integer storage bound, not a game progression limit.
-        if (!/^\d+$/.test(value) || Number(value) > 2147483647) {
-          errors[q.name] = t('Ingresá un entero entre 0 y 2147483647, sin decimales.');
-        } else answers[q.name] = Number(value);
-      } else if (q.type === 'text') {
-        if ([...value].length > 4000) errors[q.name] = t('Usá como máximo 4000 caracteres.');
-        else answers[q.name] = value;
-      } else if (!q.options.some(([option]) => option === value)) {
-        errors[q.name] = t('Elegí una de las opciones disponibles.');
-      } else answers[q.name] = q.type === 'rating' ? Number(value)
-        : q.name === 'completed_night_1' ? value === 'true' : value;
-    }
-    return { answers, errors, notifyEmail };
-  }
-
   let client;
   function getClient() {
     const config = window.PLAYTEST_CONFIG;
-    if (!config?.supabaseUrl || !config?.supabasePublicKey || !window.supabase) {
-      throw new Error('Supabase configuration or client unavailable');
-    }
+    if (!config?.supabaseUrl || !config?.supabasePublicKey || !window.supabase) throw new Error('Supabase unavailable');
     if (!client) client = window.supabase.createClient(config.supabaseUrl, config.supabasePublicKey, {
       auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
     });
     return client;
   }
-
-  // Kept apart from playtest_responses, with no session ID, so survey answers stay anonymous.
-  function saveLaunchEmail(email) {
-    return getClient().from('launch_notify_signups').insert({ email,
-      language: document.documentElement.lang === 'en' ? 'en' : 'es' }).abortSignal(AbortSignal.timeout(20000));
+  function saveLaunchEmail(email, token) {
+    return getClient().rpc('subscribe_launch_notice', { p_email: email,
+      p_language: document.documentElement.lang === 'en' ? 'en' : 'es',
+      p_consent_version: 'steam-wishlist-v1', p_consent: true, p_withdrawal_token: token
+    }).abortSignal(AbortSignal.timeout(20000));
   }
-
   function element(tag, text, className) {
     const node = document.createElement(tag);
     if (text !== undefined) node.textContent = text;

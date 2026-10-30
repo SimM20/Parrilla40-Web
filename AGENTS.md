@@ -27,7 +27,7 @@ Do not introduce React, Next.js, Vue, Svelte, Angular, TypeScript, Vite, a CSS f
 
 Do not redesign the existing index.
 
-The index may only receive the required survey CTA plus the minimum supporting markup/style necessary to make that CTA fit the existing page.
+The index may only receive the required survey CTA, legal footer links and the minimum supporting markup/style or honest email-status copy required by the current specification. Preserve its composition and behavior.
 
 ## Existing project protection
 
@@ -48,6 +48,8 @@ Do not:
 - reformat unrelated files.
 
 Keep diffs narrow.
+
+Keep player-facing copy brief and natural. Avoid filler, repeated instructions, and explanations of internal processing. Preserve the questionnaire meaning, useful help, accessible errors, and essential consent information.
 
 ## Implementation rules
 
@@ -75,7 +77,7 @@ Avoid:
 
 ## Questionnaire integrity
 
-The survey has exactly 16 questions as defined in `context.md`: 15 anonymous questions plus the Q16 launch-notice opt-in.
+The active survey has exactly 3 questions as defined in `context.md`: two required single-choice questions and one optional memorable-moment text. The previous questionnaire is historical only. Launch-notice consent is a separate form after survey success and at `/wishlist/`, never a fourth question.
 
 Do not:
 
@@ -123,7 +125,7 @@ Do not add:
 - account ID;
 - demographic profile.
 
-The only exception is the optional Q16 launch-notice email, stored apart from the answers as described in `context.md`.
+The only exception is the optional independent launch-notice email, stored apart from the answers with explicit consent and secure withdrawal as described in `context.md`.
 
 Use anonymous session IDs.
 
