@@ -44,7 +44,7 @@ Subís la carpeta entera tal cual está.
 
 ## Encuesta de playtest V1
 
-El índice incluye un acceso a `preguntas.html`. La encuesta requiere un servidor HTTP
+El índice incluye un acceso a `/preguntas/`. La encuesta requiere un servidor HTTP
 estático y configurar Supabase para enviar respuestas. El panel privado se abre sólo
 por su URL y valida la contraseña en la base de datos.
 
@@ -53,7 +53,7 @@ provisionar el verificador sin guardar la contraseña, probar y publicar la V1.
 
 ## Ranking del evento
 
-`ranking-evento.html` muestra el leaderboard del evento (rama `event/leaderboard` del juego):
+`/ranking-evento/` muestra el leaderboard del evento (rama `event/leaderboard` del juego):
 la mejor run de cada nombre según la plata total cobrada, sin restar lo gastado. No está enlazada
 ni en el sitemap y lleva `noindex`; se abre sólo con el link y se actualiza sola cada 20 s.
 Usa su propio proyecto de Supabase (`ranking-evento-config.js`), separado del de la encuesta. Antes de usarla,
@@ -62,7 +62,7 @@ correr una vez `supabase/event-leaderboard.sql` en el SQL Editor de ese proyecto
 ## SEO, idiomas y rendimiento
 
 El dominio canónico confirmado es `https://parrilla40.com.ar/`. Las versiones públicas son
-`index.html`, `index-en.html`, `preguntas.html` y `preguntas-en.html`. El panel conserva su acceso privado.
+`/`, `/en/`, `/preguntas/`, `/preguntas/en/`, `/wishlist/` y `/wishlist/en/`. El panel conserva su acceso privado.
 
 Ver [SEO_REPORT.md](SEO_REPORT.md) para cambios, pruebas y mediciones, y
 [SEO_DEPLOY.md](SEO_DEPLOY.md) para publicar los archivos correctos y conectar Search Console.

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://parrilla40.com.ar/</loc></url>
-  <url><loc>https://parrilla40.com.ar/index-en.html</loc></url>
-  <url><loc>https://parrilla40.com.ar/preguntas.html</loc></url>
-  <url><loc>https://parrilla40.com.ar/preguntas-en.html</loc></url>
+  <url><loc>https://parrilla40.com.ar/en/</loc></url>
+  <url><loc>https://parrilla40.com.ar/preguntas/</loc></url>
+  <url><loc>https://parrilla40.com.ar/preguntas/en/</loc></url>
   <url><loc>https://parrilla40.com.ar/wishlist/</loc></url>
   <url><loc>https://parrilla40.com.ar/wishlist/en/</loc></url>
 </urlset>

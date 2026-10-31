@@ -3,22 +3,22 @@
   "name": "Parrilla 40",
   "pages": [
     {
-      "file": "index.html", "path": "", "language": "es", "alternate": "index-en.html",
+      "file": "index.html", "path": "", "language": "es", "alternate": "en/index.html",
       "title": "Parrilla 40 — Simulador de parrilla argentina",
       "description": "Prendé el carbón, cociná al punto y atendé a tus clientes junto a la Ruta 40. Conocé Parrilla 40, un juego de gestión y simulación de parrilla argentina."
     },
     {
-      "file": "index-en.html", "path": "index-en.html", "language": "en", "alternate": "index.html",
+      "file": "en/index.html", "path": "en/", "language": "en", "alternate": "index.html",
       "title": "Parrilla 40 — Argentine roadside grill simulator",
       "description": "Light the charcoal, grill each cut and serve your customers beside Route 40. Discover Parrilla 40, an Argentine grill management and simulation game."
     },
     {
-      "file": "preguntas.html", "path": "preguntas.html", "language": "es", "alternate": "preguntas-en.html",
+      "file": "preguntas/index.html", "path": "preguntas/", "language": "es", "alternate": "preguntas/en/index.html",
       "title": "Encuesta de playtest de Parrilla 40 — Tu experiencia",
       "description": "Tres preguntas sobre tu experiencia en el playtest de Parrilla 40: cómo pasó el tiempo, qué sensación te quedó y qué momento recordás. Encuesta anónima, sin email obligatorio."
     },
     {
-      "file": "preguntas-en.html", "path": "preguntas-en.html", "language": "en", "alternate": "preguntas.html",
+      "file": "preguntas/en/index.html", "path": "preguntas/en/", "language": "en", "alternate": "preguntas/index.html",
       "title": "Parrilla 40 playtest survey — Share your experience",
       "description": "Three questions about your Parrilla 40 playtest: how time passed, how you felt afterwards and what moment you remember. Anonymous survey, no email required."
     },

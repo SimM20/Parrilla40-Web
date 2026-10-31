@@ -41,7 +41,7 @@
       const { error } = await window.Playtest.saveLaunchEmail(email, token);
       if (error) throw error;
       saved = true;
-      const target = new URL(document.documentElement.lang === 'en' ? '/retirar-aviso-en.html' : '/retirar-aviso.html', location.href);
+      const target = new URL(document.documentElement.lang === 'en' ? '/retirar-aviso/en/' : '/retirar-aviso/', location.href);
       target.hash = token;
       link.href = target.href;
       receipt.hidden = false;

@@ -27,7 +27,7 @@ const answers = validate({ ...values, email: 'never@store.example', launch_notif
 assert.equal(Object.keys(answers).length, 3);
 for (const invalid of ['', 'vos', 'vos@ejemplo', 'vos @ejemplo.com', 'x'.repeat(251) + '@b.c']) assert.equal(launchEmail(invalid), null);
 assert.equal(launchEmail(' Vos@Ejemplo.com '), 'vos@ejemplo.com');
-for (const file of ['index.html', 'index-en.html', 'preguntas.html', 'preguntas-en.html', 'wishlist/index.html', 'wishlist/en/index.html']) {
-  assert(!fs.readFileSync(file, 'utf8').includes('resultados.html'));
+for (const file of ['index.html', 'en/index.html', 'preguntas/index.html', 'preguntas/en/index.html', 'wishlist/index.html', 'wishlist/en/index.html']) {
+  assert(!fs.readFileSync(file, 'utf8').includes('/resultados/'));
 }
 console.log('PASS: exactly three questions, all categories, required/optional fields, 1200-character boundary, anonymous payload and email validation');

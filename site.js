@@ -80,9 +80,9 @@
   });
   function picture(source) {
     const data = window.SITE_IMAGES?.[source];
-    if (!data) return `<img class="px" src="${source}" alt="" width="100" height="100" loading="lazy" decoding="async">`;
+    if (!data) return `<img class="px" src="/${source}" alt="" width="100" height="100" loading="lazy" decoding="async">`;
     const variant = data.variants[0];
-    return `<picture><source type="image/avif" srcset="assets/optimized/${variant.stem}.avif"><source type="image/webp" srcset="assets/optimized/${variant.stem}.webp"><img class="px" src="${source}" alt="" width="${data.width}" height="${data.height}" loading="lazy" decoding="async"></picture>`;
+    return `<picture><source type="image/avif" srcset="/assets/optimized/${variant.stem}.avif"><source type="image/webp" srcset="/assets/optimized/${variant.stem}.webp"><img class="px" src="/${source}" alt="" width="${data.width}" height="${data.height}" loading="lazy" decoding="async"></picture>`;
   }
   window.Site = { t, motionAllowed, picture };
   updateMotion();

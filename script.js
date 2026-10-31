@@ -119,7 +119,7 @@
   const track = $('#marqueeTrack');
   if (track) {
     const build = () => MARQUEE.map(([src, txt]) =>
-      `<div class="marquee__item">${window.Site?.picture(src) || `<img class="px" src="${src}" alt="" width="100" height="100" loading="lazy" decoding="async">`}<span>${t(txt)}</span></div>`
+      `<div class="marquee__item">${window.Site?.picture(src) || `<img class="px" src="/${src}" alt="" width="100" height="100" loading="lazy" decoding="async">`}<span>${t(txt)}</span></div>`
     ).join('');
     track.innerHTML = build() + build();   // duplicado para el loop infinito
   }
@@ -149,7 +149,7 @@
   function renderCook(i) {
     const s = STATES[i];
     const fakeBurnt = i === 5 && NO_BURNT_SPRITE.has(currentCut);
-    meatImg.src = `assets/cortes/${currentCut}-${fakeBurnt ? 'pasado' : s.file}.png`;
+    meatImg.src = `/assets/cortes/${currentCut}-${fakeBurnt ? 'pasado' : s.file}.png`;
     // Sin sprite "Quemado" propio, se oscurece el de "Pasado".
     meatImg.style.filter = fakeBurnt
       ? 'drop-shadow(0 10px 16px rgba(0,0,0,.7)) brightness(.34) saturate(.35) contrast(1.15)'

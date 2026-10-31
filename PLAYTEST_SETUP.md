@@ -4,7 +4,7 @@ Estado del 29/10/2026: migración aplicada en el proyecto original `nyrkyrycfaby
 
 ## Ejecutar y verificar
 
-Desde la raíz: `python -m http.server 8000 --bind 127.0.0.1`. Abrir `http://127.0.0.1:8000/preguntas.html`, `preguntas-en.html`, `/wishlist/` o `resultados.html` (este último nunca tiene enlaces públicos).
+Desde la raíz: `python -m http.server 8000 --bind 127.0.0.1`. Abrir `http://127.0.0.1:8000/preguntas/`, `/preguntas/en/`, `/wishlist/` o `/resultados/` (este último nunca tiene enlaces públicos).
 
 No hay build de producto. `node tools/generate-site.cjs` regenera preguntas ES/EN, metadatos y páginas traducidas desde `playtest.js`, fuentes HTML, `translations.json` y `site-config.json`. Legales y shells de resultados tienen fuente ES/EN propia. No editar a mano el bloque generado de preguntas ni duplicar sus definiciones.
 

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- SITE:START -->
+<meta name="theme-color" content="#100c0a">
+<script>(function(){var t;try{t=localStorage.getItem('parrilla40-theme')}catch(e){}if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t;document.documentElement.dataset.js='true';document.querySelector('meta[name="theme-color"]').content=t==='dark'?'#100c0a':'#f6e8d6'})();</script>
+<script defer src="/site-data.js"></script>
+<script defer src="/site.js"></script>
+<!-- SITE:END -->
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/playtest.css">
+  <link rel="stylesheet" href="/survey.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
+  <script defer src="/playtest-config.js"></script>
+  <script defer src="/playtest.js"></script>
+  <script defer src="/preguntas.js"></script>
+  <script defer src="/wishlist.js"></script>
+<link rel="icon" href="/assets/extras/carbon-prendido.png">
+<!-- SEO:START -->
+<title>Parrilla 40 playtest survey — Share your experience</title>
+<meta name="description" content="Three questions about your Parrilla 40 playtest: how time passed, how you felt afterwards and what moment you remember. Anonymous survey, no email required.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://parrilla40.com.ar/preguntas/en/">
+<link rel="alternate" hreflang="es" href="https://parrilla40.com.ar/preguntas/">
+<link rel="alternate" hreflang="en" href="https://parrilla40.com.ar/preguntas/en/">
+<link rel="alternate" hreflang="x-default" href="https://parrilla40.com.ar/preguntas/">
+<meta property="og:site_name" content="Parrilla 40">
+<meta property="og:title" content="Parrilla 40 playtest survey — Share your experience">
+<meta property="og:description" content="Three questions about your Parrilla 40 playtest: how time passed, how you felt afterwards and what moment you remember. Anonymous survey, no email required.">
+<meta property="og:url" content="https://parrilla40.com.ar/preguntas/en/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="es_AR">
+<meta property="og:image" content="https://parrilla40.com.ar/assets/og-en.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Parrilla 40 — Argentine roadside grill simulator">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Parrilla 40 playtest survey — Share your experience">
+<meta name="twitter:description" content="Three questions about your Parrilla 40 playtest: how time passed, how you felt afterwards and what moment you remember. Anonymous survey, no email required.">
+<meta name="twitter:image" content="https://parrilla40.com.ar/assets/og-en.png">
+<meta name="twitter:image:alt" content="Parrilla 40">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://parrilla40.com.ar/#website","url":"https://parrilla40.com.ar/","name":"Parrilla 40","inLanguage":["es","en"]},{"@type":"VideoGame","@id":"https://parrilla40.com.ar/#game","name":"Parrilla 40","url":"https://parrilla40.com.ar/","description":"Light the charcoal, grill each cut and serve your customers beside Route 40. Discover Parrilla 40, an Argentine grill management and simulation game.","gamePlatform":"PC","genre":["Simulation","Management"],"image":"https://parrilla40.com.ar/assets/og-en.png"},{"@type":"WebPage","@id":"https://parrilla40.com.ar/preguntas/en/#webpage","url":"https://parrilla40.com.ar/preguntas/en/","name":"Parrilla 40 playtest survey — Share your experience","description":"Three questions about your Parrilla 40 playtest: how time passed, how you felt afterwards and what moment you remember. Anonymous survey, no email required.","inLanguage":"en","isPartOf":{"@id":"https://parrilla40.com.ar/#website"},"about":{"@id":"https://parrilla40.com.ar/#game"}}]}</script>
+<!-- SEO:END -->
+<!-- SITE:START -->
+<link rel="preload" href="/fonts/Bungee-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/site.css">
+<!-- SITE:END -->
+</head>
+<body class="playtest-page survey-page">
+  <a class="skip-link" href="#main">Skip to the survey</a>
+  <header class="playtest-nav wrap"><a class="nav__brand" href="/en/"><span class="nav__dot"></span>PARRILLA 40</a><a href="/en/">Back to the site</a><div class="site-tools"><a class="site-control" href="/preguntas/" lang="es" hreflang="es" aria-label="ES: Switch to Spanish" data-language-link>ES</a><button class="site-control" id="theme-toggle" type="button" aria-label="Dark mode" aria-pressed="true" hidden><span aria-hidden="true">☀</span></button></div></header>
+  <main class="wrap survey-main" id="main">
+    <div class="survey-heading">
+      <div class="route-stamp" aria-hidden="true"><span>ROUTE</span><b>40</b></div>
+      <div><p class="eyebrow">Playtest survey</p><h1>Your session, in three questions.</h1></div>
+      <img class="px survey-charcoal" src="/assets/extras/carbon-prendido.png" alt="" width="64" height="64" loading="lazy" decoding="async">
+    </div>
+    <noscript><p class="feedback">Enable JavaScript to complete and submit the survey.</p></noscript>
+    <form id="survey" class="survey-ticket" novalidate>
+      <!-- QUESTIONS:START -->
+<div id="questions"><fieldset class="question" id="question-perceived_time_flow"><legend><span class="question-number">01</span><span>How did time seem to pass while you were playing?</span></legend><div class="choices"><label class="choice"><input type="radio" name="perceived_time_flow" value="1" required aria-describedby="error-perceived_time_flow"><span>It felt very slow.</span></label><label class="choice"><input type="radio" name="perceived_time_flow" value="2" required aria-describedby="error-perceived_time_flow"><span>It felt somewhat slow.</span></label><label class="choice"><input type="radio" name="perceived_time_flow" value="3" required aria-describedby="error-perceived_time_flow"><span>Neither fast nor slow.</span></label><label class="choice"><input type="radio" name="perceived_time_flow" value="4" required aria-describedby="error-perceived_time_flow"><span>It passed quite quickly.</span></label><label class="choice"><input type="radio" name="perceived_time_flow" value="5" required aria-describedby="error-perceived_time_flow"><span>Time flew by.</span></label></div><p class="field-error" id="error-perceived_time_flow"></p></fieldset><fieldset class="question" id="question-post_session_feeling"><legend><span class="question-number">02</span><span>When you finished playing, how did you feel?</span></legend><div class="choices"><label class="choice"><input type="radio" name="post_session_feeling" value="another_night" required aria-describedby="error-post_session_feeling"><span>I felt like playing another night.</span></label><label class="choice"><input type="radio" name="post_session_feeling" value="retry_better" required aria-describedby="error-post_session_feeling"><span>I felt like trying again to do better.</span></label><label class="choice"><input type="radio" name="post_session_feeling" value="enough_for_now" required aria-describedby="error-post_session_feeling"><span>I felt I had played enough for now.</span></label><label class="choice"><input type="radio" name="post_session_feeling" value="prefer_stop" required aria-describedby="error-post_session_feeling"><span>I preferred to stop playing.</span></label><label class="choice"><input type="radio" name="post_session_feeling" value="unsure" required aria-describedby="error-post_session_feeling"><span>I am not sure.</span></label></div><p class="field-error" id="error-post_session_feeling"></p></fieldset><fieldset class="question" id="question-memorable_moment"><legend><span class="question-number">03</span><span>What moment from your session do you remember most, and why?</span></legend><p class="question-kind">Optional</p><p class="field-hint" id="hint-memorable_moment">It could be something you liked, found frustrating or found boring. Tell us what happened.</p><label class="sr-only" for="memorable_moment">What moment from your session do you remember most, and why?</label><textarea id="memorable_moment" name="memorable_moment" rows="2" maxlength="1200" aria-describedby="hint-memorable_moment error-memorable_moment text-count"></textarea><div class="text-meta"><span id="text-count">0 / 1200</span></div><p class="field-error" id="error-memorable_moment"></p></fieldset></div>
+<!-- QUESTIONS:END -->
+      <div class="ticket-submit">
+        <button class="btn" id="submit-survey" type="submit" disabled>Submit answers</button>
+        <p class="feedback" id="survey-status" role="status" aria-live="polite"></p>
+        <p class="survey-legal"><a href="/privacidad/en/">Privacy Policy</a> · <a href="/terminos/en/">Terms and Conditions</a> · <a href="/almacenamiento/en/">Cookies and storage</a></p>
+      </div>
+    </form>
+    <section id="success" class="survey-ticket survey-thanks" aria-labelledby="thanks" hidden>
+      <img class="px" src="/assets/extras/carbon-prendido.png" alt="" width="64" height="64" loading="lazy" decoding="async">
+      <h2 id="thanks" tabindex="-1">Thanks for sharing.</h2>
+      <a href="/en/">Back to the site</a>
+      <div class="survey-signup"><h3>Steam notice (optional)</h3>
+      <!-- SIGNUP:START -->
+<form class="signup consent-signup" id="signup" novalidate>
+  <label for="signupMail">Your email</label>
+  <input type="email" id="signupMail" name="email" autocomplete="email" inputmode="email" maxlength="254" spellcheck="false" required aria-describedby="signupNote">
+  <label class="consent-choice"><input type="checkbox" name="consent" required aria-describedby="signupNote"><span>I want to receive one email when I can add Parrilla 40 to my Steam wishlist. <a href="/privacidad/en/">Privacy</a></span></label>
+  <button class="btn" type="submit" disabled>Sign me up</button>
+</form>
+<p class="signup__note" id="signupNote" role="status"></p>
+<div class="signup-receipt" id="signup-receipt" hidden>
+  <p>Save this private link to unsubscribe. If you signed up before, use your original link.</p>
+  <a id="withdrawal-link" href="#" referrerpolicy="no-referrer">Unsubscribe</a>
+  <button class="site-control" id="download-withdrawal" type="button">Save link</button>
+</div>
+<!-- SIGNUP:END -->
+      </div>
+    </section>
+  </main>
+  <footer class="foot"><div class="wrap foot__in"><span class="foot__brand">PARRILLA 40</span><nav class="legal-links" aria-label="Legal information"><a href="/privacidad/en/">Privacy</a><a href="/terminos/en/">Terms</a><a href="/almacenamiento/en/">Storage</a></nav></div></footer>
+</body>
+</html>

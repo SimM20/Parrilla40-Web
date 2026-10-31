@@ -24,7 +24,7 @@ fs.mkdirSync(output, { recursive: true });
       const page = await context.newPage();
       observe(page);
       await page.route('**/rest/v1/**', route => { errors.push('Unexpected API request'); return route.abort(); });
-      for (const file of ['index.html', 'index-en.html', 'preguntas.html', 'preguntas-en.html', 'resultados.html', 'resultados-en.html', 'wishlist/', 'wishlist/en/', 'privacidad.html', 'privacidad-en.html', 'terminos.html', 'terminos-en.html', 'almacenamiento.html', 'almacenamiento-en.html', 'retirar-aviso.html', 'retirar-aviso-en.html']) {
+      for (const file of ['index.html', 'en/', 'preguntas/', 'preguntas/en/', 'resultados/', 'resultados/en/', 'wishlist/', 'wishlist/en/', 'privacidad/', 'privacidad/en/', 'terminos/', 'terminos/en/', 'almacenamiento/', 'almacenamiento/en/', 'retirar-aviso/', 'retirar-aviso/en/']) {
         for (const width of [320, 390, 768, 1440]) {
           await page.setViewportSize({ width, height: 900 });
           const response = await page.goto(`${base}/${file}`);
@@ -41,7 +41,7 @@ fs.mkdirSync(output, { recursive: true });
             }
           }
         }
-        if (file.includes('-en') || file.includes('/en/')) {
+        if (/(^|\/)en\/$/.test(file)) {
           assert.equal(await page.locator('html').getAttribute('lang'), 'en');
           assert(!/¿|Respondé|Volver al sitio|Pausar el día/.test(await page.locator('main').innerText()));
         }
@@ -50,15 +50,15 @@ fs.mkdirSync(output, { recursive: true });
       }
       // Equivalent language route keeps the section.
       await page.setViewportSize({ width: 390, height: 900 });
-      await page.goto(`${base}/index.html#wishlist`);
+      await page.goto(`${base}/#wishlist`);
       await page.locator('[data-language-link]').click();
-      await page.waitForURL('**/index-en.html#wishlist');
+      await page.waitForURL('**/en/#wishlist');
       assert.equal(await page.locator('.hero__cta a').textContent(), 'Steam notices');
-      assert.equal(await page.locator('.hero__cta a').getAttribute('href'), 'wishlist/en/');
+      assert.equal(await page.locator('.hero__cta a').getAttribute('href'), '/wishlist/en/');
       await page.locator('#theme-toggle').click();
       const chosen = theme === 'dark' ? 'light' : 'dark';
       assert.equal(await page.locator('html').getAttribute('data-theme'), chosen);
-      await page.goto(`${base}/preguntas-en.html`);
+      await page.goto(`${base}/preguntas/en/`);
       assert.equal(await page.locator('html').getAttribute('data-theme'), chosen);
       await page.locator('#submit-survey').click();
       assert.equal(await page.locator('.field-error:not(:empty)').count(), 2);
@@ -76,10 +76,10 @@ fs.mkdirSync(output, { recursive: true });
     // No JS: the game copy and all questionnaire content are in the initial HTML.
     const noJS = await browser.newContext({ javaScriptEnabled: false, colorScheme: 'dark' });
     const plain = await noJS.newPage();
-    await plain.goto(`${base}/index-en.html`);
+    await plain.goto(`${base}/en/`);
     assert.equal(await plain.locator('#wishlist .cta__sub').evaluate(el => getComputedStyle(el).opacity), '1');
     assert.match(await plain.locator('[data-count]').first().textContent(), /14.5/);
-    await plain.goto(`${base}/preguntas-en.html`);
+    await plain.goto(`${base}/preguntas/en/`);
     assert.equal(await plain.locator('fieldset').count(), 3);
     assert(await plain.locator('#submit-survey').isDisabled());
     await noJS.close();

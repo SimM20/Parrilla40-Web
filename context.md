@@ -20,7 +20,7 @@ Las traducciones conservan el mismo significado. No se agregan preguntas, perfil
 
 ## Experiencia y envío
 
-`preguntas.html` / `preguntas-en.html`: una página con tres preguntas visibles, controles nativos, estados seleccionados, foco visible, errores junto al campo, un envío principal y agradecimiento después de confirmación real.
+`/preguntas/` / `/preguntas/en/`: una página con tres preguntas visibles, controles nativos, estados seleccionados, foco visible, errores junto al campo, un envío principal y agradecimiento después de confirmación real.
 
 - Usar fuentes, colores, sprites y gramática del juego. Diseño de comanda breve, sin ocultar preguntas del formulario anterior.
 - Q1/Q2 obligatorias; Q3 puede quedar vacía y se guarda `null`.
@@ -44,7 +44,7 @@ Migración aditiva en `supabase/migrations/20261029233053_playtest_three_questio
 
 ## Panel privado
 
-`resultados.html` / `resultados-en.html`, sin links públicos y `noindex`. Acceder por URL no devuelve datos. Elegir fuente actual o histórica y validar contraseña para cada consulta. Contraseña y datasets sólo en memoria, se limpian al cerrar, recargar o navegar.
+`/resultados/` / `/resultados/en/`, sin links públicos y `noindex`. Acceder por URL no devuelve datos. Elegir fuente actual o histórica y validar contraseña para cada consulta. Contraseña y datasets sólo en memoria, se limpian al cerrar, recargar o navegar.
 
 Mostrar total, distribución completa del tiempo, cinco sensaciones separadas, porcentajes continuar y reintentar por separado con n/N, textos opcionales y comparación descriptiva por build con n. Filtrar distribuciones/comentarios por build. No inferir causalidad, significación, diversión ni retención por diferencias pequeñas. Históricos conservan métricas originales y aviso de no comparabilidad.
 
@@ -57,7 +57,7 @@ Sólo después del éxito de encuesta y en `/wishlist/` / `/wishlist/en/`. Formu
 - RPC `subscribe_launch_notice` con token aleatorio de 256 bits generado por cliente; base sólo almacena hash SHA-256. Respuesta uniforme y sin enumerar emails.
 - Duplicado conserva el token original, nunca permite sustituir autoridad de retirada con sólo conocer un email. UI explica conservar enlace original.
 - Durante petición incierta, email/token se mantienen en una clave de sessionStorage aparte para reintentar tras recarga. Se eliminan del almacenamiento al confirmar. Recibo con link privado y descarga .txt.
-- `retirar-aviso.html` / `retirar-aviso-en.html` reciben token en fragmento, sin query/email ni referrer. Cargar el enlace no elimina nada; botón llama RPC `revoke_launch_notice` para eliminar el registro. Respuesta uniforme para token válido, desconocido o ya retirado.
+- `/retirar-aviso/` / `/retirar-aviso/en/` reciben token en fragmento, sin query/email ni referrer. Cargar el enlace no elimina nada; botón llama RPC `revoke_launch_notice` para eliminar el registro. Respuesta uniforme para token válido, desconocido o ya retirado.
 - Sin token, canal atendido de privacidad con verificación proporcional de titularidad (externo pendiente). No reutilizar lista histórica sin base/consentimiento verificado. No enviar ni prometer promociones adicionales.
 - La lista para el envío manual sólo se consulta con acceso del propietario en Supabase; no se agrega un endpoint público de exportación. Respetar las bajas y la finalidad del aviso al usarla.
 

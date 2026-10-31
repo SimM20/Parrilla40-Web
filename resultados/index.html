@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- SITE:START -->
+<meta name="theme-color" content="#100c0a">
+<script>(function(){var t;try{t=localStorage.getItem('parrilla40-theme')}catch(e){}if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t;document.documentElement.dataset.js='true';document.querySelector('meta[name="theme-color"]').content=t==='dark'?'#100c0a':'#f6e8d6'})();</script>
+<script defer src="/site-data.js"></script>
+<script defer src="/site.js"></script>
+<!-- SITE:END -->
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="referrer" content="no-referrer">
+  <title>Resultados privados de playtest — Parrilla 40</title>
+    <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/playtest.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
+  <script defer src="/playtest-config.js"></script>
+  <script defer src="/playtest.js"></script>
+  <script defer src="/playtest-legacy.js"></script>
+  <script defer src="/resultados.js"></script>
+<link rel="icon" href="/assets/extras/carbon-prendido.png">
+<!-- SITE:START -->
+<link rel="preload" href="/fonts/Bungee-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/site.css">
+<!-- SITE:END -->
+</head>
+<body class="playtest-page results-page">
+  <a class="skip-link" href="#main">Ir al contenido</a>
+  <header class="playtest-nav wrap"><a class="nav__brand" href="/"><span class="nav__dot"></span>PARRILLA 40</a><a href="/">Volver al sitio</a><div class="site-tools"><a class="site-control" href="/resultados/en/" lang="en" hreflang="en" aria-label="EN: Cambiar a inglés" data-language-link>EN</a><button class="site-control" id="theme-toggle" type="button" aria-label="Modo oscuro" aria-pressed="true" hidden><span aria-hidden="true">☀</span></button></div></header>
+  <main class="wrap wrap--narrow playtest-main" id="main">
+    <div class="playtest-intro">
+      <picture><source type="image/avif" srcset="/assets/optimized/candado-169.avif 169w, /assets/optimized/candado-337.avif 337w" sizes="84px"><source type="image/webp" srcset="/assets/optimized/candado-169.webp 169w, /assets/optimized/candado-337.webp 337w" sizes="84px"><img class="px playtest-sprite" src="/assets/ui/candado.png" alt="" width="163" height="236" loading="eager" decoding="async"></picture>
+      <p class="eyebrow">Parrilla 40 · Equipo</p>
+      <h1 class="h2">Lo que dejó <em>la jornada.</em></h1>
+      <p class="lead">Resultados privados del playtest.</p>
+    </div>
+    <noscript><p class="feedback">Activá JavaScript para consultar los resultados.</p></noscript>
+    <form id="gate" class="playtest-panel gate" novalidate>
+      <p>Ingresá la contraseña del equipo para ver las respuestas.</p>
+      <label for="results-source">Conjunto de respuestas</label>
+      <select id="results-source" name="results-source" aria-describedby="source-hint">
+        <option value="current">Encuesta actual · 3 preguntas</option>
+        <option value="historical">Histórico · cuestionario anterior</option>
+      </select>
+      <p class="field-hint" id="source-hint">Los datos actuales y los históricos se consultan por separado.</p>
+      <label for="admin-password">Contraseña</label>
+      <input id="admin-password" name="admin-password" type="password" autocomplete="current-password" required aria-describedby="gate-status" spellcheck="false">
+      <p class="feedback" id="gate-status" role="status" aria-live="polite"></p>
+      <button class="btn" id="unlock" type="submit" disabled>Ver resultados</button>
+    </form>
+    <section id="dashboard" hidden aria-labelledby="results-heading">
+      <h2 id="results-heading" tabindex="-1">Resultados del playtest</h2>
+      <div class="results-tools">
+        <label id="build-filter-label" hidden>Build del juego<select id="build-filter"></select></label>
+        <button class="btn btn--ghost" id="lock" type="button">Cerrar resultados</button>
+      </div>
+      <div id="results-content" aria-live="polite"></div>
+    </section>
+  </main>
+  <footer class="foot"><div class="wrap foot__in"><span class="foot__brand">PARRILLA 40</span><nav class="legal-links" aria-label="Información legal"><a href="/privacidad/">Privacidad</a><a href="/terminos/">Términos</a><a href="/almacenamiento/">Almacenamiento</a></nav></div></footer>
+</body>
+</html>

@@ -18,7 +18,7 @@ for (const page of config.pages) {
   assert(head.indexOf("localStorage.getItem('parrilla40-theme')") < head.indexOf('rel="stylesheet"'));
   assert(head.includes(`rel="canonical" href="${new URL(page.path, config.url).href}"`));
   assert(!head.includes('noindex'));
-  assert(!html.includes('resultados.html'));
+  assert(!html.includes('/resultados/'));
   assert(!html.includes('ranking-evento'));
   assert(!head.includes('name="keywords"'));
   const title = head.match(/<title>([^<]+)<\/title>/)[1];
@@ -47,8 +47,8 @@ for (const page of config.pages) {
   const references = [...html.matchAll(/\b(?:href|src)="([^"]+)"/g)].map(match => match[1]);
   for (const reference of references) {
     if (/^(https?:|#|mailto:|data:)/.test(reference)) continue;
-    const target = reference.split('#')[0].replace(/^\//, '');
-    assert(fs.existsSync(target || 'index.html'), `${page.file}: missing ${reference}`);
+    const target = reference.split('#')[0].replace(/^\//, '').replace(/(^|\/)$/, '$1index.html');
+    assert(fs.existsSync(target), `${page.file}: missing ${reference}`);
   }
   for (const match of html.matchAll(/<img\b[^>]*>/g)) {
     assert(/\balt=/.test(match[0]));
@@ -69,19 +69,19 @@ assert(!read('robots.txt').includes('ranking-evento'));
 const robots = read('robots.txt');
 assert(robots.includes(`Sitemap: ${new URL('sitemap.xml', config.url).href}`));
 assert(!robots.includes('Disallow:'));
-assert.match(read('resultados.html'), /name="robots" content="noindex, nofollow, noarchive"/);
-assert.match(read('ranking-evento.html'), /name="robots" content="noindex, nofollow, noarchive"/);
+assert.match(read('resultados/index.html'), /name="robots" content="noindex, nofollow, noarchive"/);
+assert.match(read('ranking-evento/index.html'), /name="robots" content="noindex, nofollow, noarchive"/);
 assert.match(read('404.html'), /name="robots" content="noindex, follow"/);
-for (const file of ['privacidad.html','privacidad-en.html','terminos.html','terminos-en.html','almacenamiento.html','almacenamiento-en.html','retirar-aviso.html','retirar-aviso-en.html','resultados-en.html']) {
+for (const file of ['privacidad/index.html','privacidad/en/index.html','terminos/index.html','terminos/en/index.html','almacenamiento/index.html','almacenamiento/en/index.html','retirar-aviso/index.html','retirar-aviso/en/index.html','resultados/en/index.html']) {
   const html = read(file);
   assert.equal((html.match(/<h1\b/g) || []).length, 1, file);
   assert.match(html, /name="robots" content="noindex/);
-  assert.match(html, /<footer[\s\S]*href="privacidad(?:-en)?\.html"/);
-  if (!file.startsWith('resultados')) assert(!html.includes('href="resultados.html"'), 'no public link to private results');
+  assert.match(html, /<footer[\s\S]*href="\/privacidad\/(?:en\/)?"/);
+  if (!file.startsWith('resultados')) assert(!html.includes('href="/resultados/"'), 'no public link to private results');
   for (const match of html.matchAll(/\b(?:href|src)="([^"]+)"/g)) {
     const ref = match[1];
     if (/^(https?:|mailto:|#)/.test(ref)) continue;
-    assert(fs.existsSync(ref.split('#')[0].replace(/^\//, '')), `${file}: missing ${ref}`);
+    assert(fs.existsSync(ref.split('#')[0].replace(/^\//, '').replace(/(^|\/)$/, '$1index.html')), `${file}: missing ${ref}`);
   }
 }
 for (const data of Object.values(require('../assets/optimized/manifest.json'))) {
@@ -94,7 +94,7 @@ for (const data of Object.values(require('../assets/optimized/manifest.json'))) 
   }
 }
 for (const file of fs.readdirSync('.').filter(file => file.endsWith('.js'))) execFileSync(process.execPath, ['--check', file]);
-const generated = [...config.pages.map(page => page.file), 'resultados.html', 'resultados-en.html', 'ranking-evento.html', '404.html', 'privacidad.html','privacidad-en.html','terminos.html','terminos-en.html','almacenamiento.html','almacenamiento-en.html','retirar-aviso.html','retirar-aviso-en.html', 'robots.txt', 'sitemap.xml', 'site-data.js'];
+const generated = [...config.pages.map(page => page.file), 'resultados/index.html', 'resultados/en/index.html', 'ranking-evento/index.html', '404.html', 'privacidad/index.html','privacidad/en/index.html','terminos/index.html','terminos/en/index.html','almacenamiento/index.html','almacenamiento/en/index.html','retirar-aviso/index.html','retirar-aviso/en/index.html', 'robots.txt', 'sitemap.xml', 'site-data.js'];
 const before = generated.map(read);
 execFileSync(process.execPath, ['tools/generate-site.cjs']);
 generated.forEach((file, i) => assert.equal(require('node:crypto').createHash('sha256').update(read(file)).digest('hex'), require('node:crypto').createHash('sha256').update(before[i]).digest('hex'), `generation must be idempotent: ${file}`));

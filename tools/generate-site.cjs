@@ -43,7 +43,7 @@ function survey(language) {
 
 function signup(language) {
   const tr = text => escape(t(text, language));
-  const privacy = language === 'en' ? '/privacidad-en.html' : '/privacidad.html';
+  const privacy = language === 'en' ? '/privacidad/en/' : '/privacidad/';
   return `<!-- SIGNUP:START -->
 <form class="signup consent-signup" id="signup" novalidate>
   <label for="signupMail">${tr('Tu email')}</label>
@@ -61,8 +61,8 @@ function signup(language) {
 }
 
 function translate(html, page) {
-  const spanish = config.pages.find(p => p.file === page.alternate) || { file: page.alternate, path: page.alternate };
-  const unchanged = new Set(['PARRILLA 40', 'PARRILLA', 'EN', 'Q', 'R', 'T', 'C', 'M', 'Strike', '2026 release', 'Management', 'PC (Steam)']);
+  const spanish = config.pages.find(p => p.file === page.alternate) || { file: page.alternate, path: page.alternate.replace(/index\.html$/, '') };
+  const unchanged = new Set(['PARRILLA 40', 'PARRILLA', 'EN', 'Q', 'R', 'T', 'C', 'M', 'Strike', '2027 release', 'Management', 'PC (Steam)']);
   const start = html.indexOf('<body');
   return html.slice(0, start) + html.slice(start)
     .replace(/>([^<>]+)</g, (match, text) => {
@@ -73,13 +73,11 @@ function translate(html, page) {
       return english[key] ? `>${text.match(/^\s*/)[0]}${english[key]}${text.match(/\s*$/)[0]}<` : match;
     })
     .replace(/\b(alt|aria-label|placeholder)="([^"]+)"/g, (match, attr, text) => `${attr}="${escape(t(text, 'en'))}"`)
-    .replace(/href="index.html"/g, 'href="index-en.html"')
-    .replace(/href="preguntas.html"/g, 'href="preguntas-en.html"')
-    .replace(/href="\/"/g, 'href="/index-en.html"')
-    .replace(/href="wishlist\/"/g, 'href="wishlist/en/"')
-    .replace(/href="(\/)?(privacidad|terminos|almacenamiento)\.html"/g, 'href="$1$2-en.html"')
+    // Every page is a directory: "/x/" in Spanish, "/x/en/" in English.
+    .replace(/href="\/"/g, 'href="/en/"')
+    .replace(/href="\/(preguntas|wishlist|privacidad|terminos|almacenamiento|retirar-aviso)\/"/g, 'href="/$1/en/"')
     .replace(/<a class="site-control"[^>]+data-language-link>EN<\/a>/g, match => match
-      .replace(/href="[^"]+"/, `href="${page.file.includes('/') ? '/' + spanish.path : spanish.file}"`)
+      .replace(/href="[^"]+"/, `href="/${spanish.path}"`)
       .replace('lang="en"', 'lang="es"').replace('hreflang="en"', 'hreflang="es"')
       .replace('aria-label="EN: Switch to English"', 'aria-label="ES: Switch to Spanish"').replace('>EN<', '>ES<'));
 }
@@ -113,8 +111,8 @@ function head(html, page) {
   html = html.replace(/<!-- SEO:START -->[\s\S]*?<!-- SEO:END -->\n?/g, '')
     .replace(/<!-- SITE:START -->[\s\S]*?<!-- SITE:END -->\n?/g, '');
   let [before, after] = html.split('</head>');
-  // Pages served from a directory (and the 404 at any path) use root-absolute assets.
-  const prefix = page.file === '404.html' || page.file.includes('/') ? '/' : '';
+  // Pages live in directories (and the 404 at any path), so assets are root-absolute.
+  const prefix = '/';
   before = before.replace(/<script defer src="\/?site(?:-data)?\.js"><\/script>\n?/g, '');
   if (!before.includes('rel="icon"')) before = before.replace(/(<meta name="viewport"[^>]*>)/, `$1\n<link rel="icon" href="${prefix}assets/extras/carbon-prendido.png">`);
   if (config.pages.includes(page)) {
@@ -125,7 +123,7 @@ function head(html, page) {
     const graph = [
       { '@type': 'WebSite', '@id': absolute('#website'), url: base.href, name: config.name, inLanguage: ['es', 'en'] },
       { '@type': 'VideoGame', '@id': absolute('#game'), name: config.name, url: base.href,
-        description: config.pages.find(p => p.file.startsWith('index') && p.language === page.language).description,
+        description: config.pages.find(p => /^(en\/)?$/.test(p.path) && p.language === page.language).description,
         gamePlatform: 'PC', genre: ['Simulation', 'Management'], image: absolute(`assets/og-${page.language}.png`) },
       { '@type': 'WebPage', '@id': url + '#webpage', url, name: page.title, description: page.description,
         inLanguage: page.language, isPartOf: { '@id': absolute('#website') }, about: { '@id': absolute('#game') } }
@@ -168,10 +166,10 @@ function head(html, page) {
 }
 
 // Keep the questionnaire definition in playtest.js; no duplicated field definitions.
-let surveySource = read('preguntas.html').replace(/<!-- QUESTIONS:START -->[\s\S]*?<!-- QUESTIONS:END -->|<div id="questions"><\/div>/, '<!-- QUESTIONS -->');
+let surveySource = read('preguntas/index.html').replace(/<!-- QUESTIONS:START -->[\s\S]*?<!-- QUESTIONS:END -->|<div id="questions"><\/div>/, '<!-- QUESTIONS -->');
 for (const page of config.pages) {
   const spanish = page.language === 'es' ? page : config.pages.find(p => p.file === page.alternate);
-  const source = (spanish.file === 'preguntas.html' ? surveySource : read(spanish.file))
+  const source = (spanish.file === 'preguntas/index.html' ? surveySource : read(spanish.file))
     .replace(/<!-- SIGNUP:START -->[\s\S]*?<!-- SIGNUP:END -->/, '<!-- SIGNUP -->');
   let html = page.language === 'en' ? translate(source, page) : source;
   if (page.file.startsWith('preguntas')) html = html.replace('<!-- QUESTIONS -->', survey(page.language));
@@ -179,11 +177,18 @@ for (const page of config.pages) {
   fs.mkdirSync(path.dirname(path.join(root, page.file)), { recursive: true });
   write(page.file, optimizeImages(head(html, page)));
 }
-const withdrawalSource = read('retirar-aviso.html');
-write('retirar-aviso.html', head(withdrawalSource, { file: 'retirar-aviso.html', language: 'es' }));
-write('retirar-aviso-en.html', head(translate(withdrawalSource, { file: 'retirar-aviso-en.html', alternate: 'retirar-aviso.html' }), { file: 'retirar-aviso-en.html', language: 'en' }).replace('<title>Retirar consentimiento — Parrilla 40</title>', '<title>Withdraw consent — Parrilla 40</title>'));
-for (const file of ['resultados.html', 'resultados-en.html', 'ranking-evento.html', '404.html', 'privacidad.html', 'privacidad-en.html', 'terminos.html', 'terminos-en.html', 'almacenamiento.html', 'almacenamiento-en.html']) {
-  if (fs.existsSync(path.join(root, file))) write(file, optimizeImages(head(read(file), { file, language: file.includes('-en') ? 'en' : 'es' })));
+const withdrawalSource = read('retirar-aviso/index.html');
+write('retirar-aviso/index.html', head(withdrawalSource, { file: 'retirar-aviso/index.html', language: 'es' }));
+write('retirar-aviso/en/index.html', head(translate(withdrawalSource, { file: 'retirar-aviso/en/index.html', alternate: 'retirar-aviso/index.html' }), { file: 'retirar-aviso/en/index.html', language: 'en' }).replace('<title>Retirar consentimiento — Parrilla 40</title>', '<title>Withdraw consent — Parrilla 40</title>'));
+for (const file of ['resultados/index.html', 'resultados/en/index.html', 'ranking-evento/index.html', '404.html', 'privacidad/index.html', 'privacidad/en/index.html', 'terminos/index.html', 'terminos/en/index.html', 'almacenamiento/index.html', 'almacenamiento/en/index.html']) {
+  if (fs.existsSync(path.join(root, file))) write(file, optimizeImages(head(read(file), { file, language: file.includes('/en/') ? 'en' : 'es' })));
+}
+// Former .html addresses (printed QR codes, saved withdrawal links) forward to the directory URL,
+// keeping the query and the #token fragment that a server or meta refresh would drop.
+const moved = { 'index-en.html': 'en/', 'ranking-evento.html': 'ranking-evento/' };
+for (const slug of ['preguntas', 'resultados', 'privacidad', 'terminos', 'almacenamiento', 'retirar-aviso']) Object.assign(moved, { [`${slug}.html`]: `${slug}/`, [`${slug}-en.html`]: `${slug}/en/` });
+for (const [file, target] of Object.entries(moved)) {
+  write(file, `<!DOCTYPE html>\n<html lang="${target.endsWith('en/') ? 'en' : 'es'}">\n<head>\n<meta charset="utf-8">\n<meta name="robots" content="noindex">\n<link rel="canonical" href="${absolute(target)}">\n<script>location.replace('/${target}' + location.search + location.hash);</script>\n<meta http-equiv="refresh" content="0; url=/${target}">\n<title>${escape(config.name)}</title>\n</head>\n<body><a href="/${target}">${escape(config.name)}</a></body>\n</html>\n`);
 }
 write('site-data.js', '// Generated by tools/generate-site.cjs from translations.json and the image manifest.\nwindow.TRANSLATIONS=' + JSON.stringify({ es: {}, en: english }) + ';\nwindow.SITE_IMAGES=' + JSON.stringify(images) + ';\n');
 write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${config.pages.map(p => `  <url><loc>${escape(absolute(p.path))}</loc></url>`).join('\n')}\n</urlset>\n`);

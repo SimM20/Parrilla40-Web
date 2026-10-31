@@ -1,63 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- SITE:START -->
-<meta name="theme-color" content="#100c0a">
-<script>(function(){var t;try{t=localStorage.getItem('parrilla40-theme')}catch(e){}if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t;document.documentElement.dataset.js='true';document.querySelector('meta[name="theme-color"]').content=t==='dark'?'#100c0a':'#f6e8d6'})();</script>
-<script defer src="site-data.js"></script>
-<script defer src="site.js"></script>
-<!-- SITE:END -->
-  <meta name="robots" content="noindex, nofollow, noarchive">
-  <meta name="referrer" content="no-referrer">
-  <title>Private playtest results — Parrilla 40</title>
-    <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="playtest.css">
-  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
-  <script defer src="playtest-config.js"></script>
-  <script defer src="playtest.js"></script>
-  <script defer src="playtest-legacy.js"></script>
-  <script defer src="resultados.js"></script>
-<link rel="icon" href="assets/extras/carbon-prendido.png">
-<!-- SITE:START -->
-<link rel="preload" href="fonts/Bungee-Regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="site.css">
-<!-- SITE:END -->
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://parrilla40.com.ar/resultados/en/">
+<script>location.replace('/resultados/en/' + location.search + location.hash);</script>
+<meta http-equiv="refresh" content="0; url=/resultados/en/">
+<title>Parrilla 40</title>
 </head>
-<body class="playtest-page results-page">
-  <a class="skip-link" href="#main">Skip to content</a>
-  <header class="playtest-nav wrap"><a class="nav__brand" href="index-en.html"><span class="nav__dot"></span>PARRILLA 40</a><a href="index-en.html">Back to the site</a><div class="site-tools"><a class="site-control" href="resultados.html" lang="es" hreflang="es" aria-label="ES: Switch to Spanish" data-language-link>ES</a><button class="site-control" id="theme-toggle" type="button" aria-label="Dark mode" aria-pressed="true" hidden><span aria-hidden="true">☀</span></button></div></header>
-  <main class="wrap wrap--narrow playtest-main" id="main">
-    <div class="playtest-intro">
-      <picture><source type="image/avif" srcset="assets/optimized/candado-169.avif 169w, assets/optimized/candado-337.avif 337w" sizes="84px"><source type="image/webp" srcset="assets/optimized/candado-169.webp 169w, assets/optimized/candado-337.webp 337w" sizes="84px"><img class="px playtest-sprite" src="assets/ui/candado.png" alt="" width="163" height="236" loading="eager" decoding="async"></picture>
-      <p class="eyebrow">Parrilla 40 · Team</p>
-      <h1 class="h2">After <em>the shift.</em></h1>
-      <p class="lead">Private playtest results.</p>
-    </div>
-    <noscript><p class="feedback">Enable JavaScript to view the results.</p></noscript>
-    <form id="gate" class="playtest-panel gate" novalidate>
-      <p>Enter the team password to view responses.</p>
-      <label for="results-source">Response dataset</label>
-      <select id="results-source" name="results-source" aria-describedby="source-hint">
-        <option value="current">Current survey · 3 questions</option>
-        <option value="historical">Historical · previous questionnaire</option>
-      </select>
-      <p class="field-hint" id="source-hint">Current and historical data are accessed separately.</p>
-      <label for="admin-password">Password</label>
-      <input id="admin-password" name="admin-password" type="password" autocomplete="current-password" required aria-describedby="gate-status" spellcheck="false">
-      <p class="feedback" id="gate-status" role="status" aria-live="polite"></p>
-      <button class="btn" id="unlock" type="submit" disabled>View results</button>
-    </form>
-    <section id="dashboard" hidden aria-labelledby="results-heading">
-      <h2 id="results-heading" tabindex="-1">Playtest results</h2>
-      <div class="results-tools">
-        <label id="build-filter-label" hidden>Game build<select id="build-filter"></select></label>
-        <button class="btn btn--ghost" id="lock" type="button">Close results</button>
-      </div>
-      <div id="results-content" aria-live="polite"></div>
-    </section>
-  </main>
-  <footer class="foot"><div class="wrap foot__in"><span class="foot__brand">PARRILLA 40</span><nav class="legal-links" aria-label="Legal information"><a href="privacidad-en.html">Privacy</a><a href="terminos-en.html">Terms</a><a href="almacenamiento-en.html">Storage</a></nav></div></footer>
-</body>
+<body><a href="/resultados/en/">Parrilla 40</a></body>
 </html>

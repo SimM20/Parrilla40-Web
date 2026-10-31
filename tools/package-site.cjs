@@ -10,5 +10,6 @@ const files = ['index.html', 'index-en.html', 'preguntas.html', 'preguntas-en.ht
   'preguntas.js', 'resultados.js', 'ranking-evento.js', 'ranking-evento-config.js', 'playtest-config.js', 'steam-config.js', 'wishlist.js', 'robots.txt', 'sitemap.xml'];
 fs.mkdirSync(output, { recursive: true });
 for (const file of files) fs.copyFileSync(path.join(root, file), path.join(output, file));
-for (const directory of ['assets', 'fonts', 'wishlist']) fs.cpSync(path.join(root, directory), path.join(output, directory), { recursive: true });
+// Root *.html other than index/404 are redirects from the former addresses to these directories.
+for (const directory of ['assets', 'fonts', 'wishlist', 'en', 'preguntas', 'resultados', 'ranking-evento', 'privacidad', 'terminos', 'almacenamiento', 'retirar-aviso'])fs.cpSync(path.join(root, directory), path.join(output, directory), { recursive: true });
 console.log(`Public static files copied to ${output}`);

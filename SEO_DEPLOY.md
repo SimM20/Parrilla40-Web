@@ -6,7 +6,7 @@ El hosting efectivo no está declarado en el repositorio. El acceso público no 
 
 ## Archivos y mantenimiento
 
-1. Editar la landing española en `index.html` y la introducción de la encuesta en `preguntas.html`.
+1. Editar la landing española en `index.html` y la introducción de la encuesta en `preguntas/index.html`.
 2. Mantener las 15 preguntas/opciones en **un solo lugar**, `playtest.js`. Los valores almacenados no dependen del idioma.
 3. Actualizar `translations.json` si cambia texto. El generador rechaza textos de la landing sin traducción.
 4. Cambiar dominio, títulos o descripciones en `site-config.json` y ejecutar:
@@ -23,7 +23,7 @@ El hosting efectivo no está declarado en el repositorio. El acceso público no 
    No publicar `test-artifacts/qa`, pruebas, herramientas, SQL ni documentos internos.
    No hay instalación npm ni ejecución de Node en producción.
 
-`index-en.html`, `preguntas-en.html`, los bloques SEO, el cuestionario HTML y `site-data.js` son salidas de autoría guardadas en Git.
+`en/index.html`, `preguntas/en/index.html`, los bloques SEO, el cuestionario HTML y `site-data.js` son salidas de autoría guardadas en Git.
 No editar esas salidas directamente: se sobrescriben al regenerar. Las etiquetas e instrucciones ES/EN se traducen; nunca se traducen las respuestas escritas por los participantes.
 
 Los originales PNG/TTF se conservan. Para regenerar derivados, usar Python con Pillow 12.3.0,
@@ -35,11 +35,12 @@ Estas herramientas no forman parte del sitio. `tools/optimize-assets.py` contien
 | Petición | Comportamiento requerido |
 |---|---|
 | `https://parrilla40.com.ar/` | 200, HTML español |
-| `/index-en.html`, `/preguntas.html`, `/preguntas-en.html` | 200, HTML de la página solicitada |
+| `/en/`, `/preguntas/`, `/preguntas/en/` | 200, HTML de la página solicitada |
 | HTTP o `www` | 301 directo a la misma ruta en HTTPS sin `www`; conservar parámetros |
 | `/index.html` | 301 directo a `https://parrilla40.com.ar/`, también si la petición viene por HTTP/www |
 | URL inexistente | **404 real**, mostrando `404.html`; nunca reescribir todo a un inicio con 200 |
-| `/resultados.html` | Shell estático con `noindex`; sin datos hasta validar la contraseña mediante RPC |
+| `/resultados/` | Shell estático con `noindex`; sin datos hasta validar la contraseña mediante RPC |
+| `/preguntas.html` y demás direcciones `.html` anteriores | Redirigen a la carpeta equivalente conservando parámetros y `#token` (`deploy/apache.htaccess` usa 301) |
 | `/robots.txt` | 200, `text/plain`, permitir recursos y lectura del `noindex` |
 | `/sitemap.xml` | 200, XML; sólo las cuatro URLs públicas canónicas |
 
@@ -71,12 +72,12 @@ Una etiqueta canonical no sustituye una redirección HTTP. La configuración del
    usar `https://parrilla40.com.ar/` y publicar el archivo HTML auténtico facilitado por Google. [Ayuda oficial](https://support.google.com/webmasters/answer/34592).
 2. En **Sitemaps**, enviar `https://parrilla40.com.ar/sitemap.xml`. Confirmar que Google lo pudo leer y que contiene cuatro URLs.
    [Ayuda del informe](https://support.google.com/webmasters/answer/7451001).
-3. En **Inspección de URLs**, probar la raíz, `/index-en.html`, `/preguntas.html` y `/preguntas-en.html`.
+3. En **Inspección de URLs**, probar la raíz, `/en/`, `/preguntas/` y `/preguntas/en/`.
    Revisar HTML, captura, acceso permitido, respuesta 200 y canonical declarada. Comparar con la canonical elegida por Google cuando esté disponible.
 4. Usar **Probar URL publicada** y luego **Solicitar indexación** para las páginas principales.
    Enviar una solicitud no confirma que la página haya sido indexada. [Inspección oficial](https://support.google.com/webmasters/answer/9012289).
 5. Revisar **Indexación → Páginas** y filtrar por sitemap. Investigar errores de servidor, duplicados, canonical inesperada o exclusiones accidentales.
-   `resultados.html` y `404.html` deben permanecer excluidos. `robots.txt` permite rastrearlos para que Google pueda leer su `noindex`.
+   `/resultados/` y `404.html` deben permanecer excluidos. `robots.txt` permite rastrearlos para que Google pueda leer su `noindex`.
    El acceso a resultados se protege en Supabase, independientemente de las etiquetas SEO. [Regla noindex](https://developers.google.com/search/docs/crawling-indexing/block-indexing).
 6. Revisar datos estructurados con [Schema.org](https://validator.schema.org/) y [Rich Results Test](https://search.google.com/test/rich-results).
    Este sitio usa `WebSite`, `WebPage` y `VideoGame`; no se espera una mejora específica de Google para esos tipos por sí solos.

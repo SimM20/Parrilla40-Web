@@ -50,7 +50,7 @@ fs.mkdirSync(output, { recursive: true });
       }
       throw new Error('Unexpected API: ' + endpoint);
     });
-    await page.goto(base + '/preguntas.html');
+    await page.goto(base + '/preguntas/');
     assert.equal(await page.locator('#survey fieldset').count(), 3);
     assert.equal(await page.locator('#survey input[type=email]').count(), 0);
     assert(await page.locator('#signup').isHidden());
@@ -67,12 +67,12 @@ fs.mkdirSync(output, { recursive: true });
     assert.equal(submits.length, 1);
     assert.equal(await page.locator('#memorable_moment').inputValue(), 'Un pedido que salió a tiempo.');
     await page.locator('[data-language-link]').click();
-    await page.waitForURL('**/preguntas-en.html');
+    await page.waitForURL('**/preguntas/en/');
     assert.equal(await page.locator('#memorable_moment').inputValue(), 'Un pedido que salió a tiempo.');
     assert(await page.locator('#memorable_moment').isDisabled());
     assert.match(await page.locator('#survey-status').textContent(), /pending/);
     await page.locator('[data-language-link]').click();
-    await page.waitForURL('**/preguntas.html');
+    await page.waitForURL('**/preguntas/');
     failSubmit = false;
     await page.locator('#submit-survey').click();
     await page.locator('#success').waitFor({ state: 'visible' });
@@ -123,11 +123,11 @@ fs.mkdirSync(output, { recursive: true });
     await page.waitForFunction(() => document.querySelector('#withdraw-status').textContent.includes('Solicitud procesada'));
     assert.deepEqual(withdrawals[0], withdrawals[1]);
     assert(await page.locator('#withdraw').isDisabled());
-    await page.goto(base + '/retirar-aviso.html');
+    await page.goto(base + '/retirar-aviso/');
     assert(await page.locator('#withdraw').isDisabled());
     console.log('PASS survey + consent: required/optional, failed/identical retry, double submit, independent success, consent, token withdrawal');
 
-    await page.goto(base + '/resultados.html');
+    await page.goto(base + '/resultados/');
     assert.equal(resultsCalls.length, 0);
     assert(await page.locator('#dashboard').isHidden());
     const login = async () => { await page.locator('#admin-password').fill('test-input'); await page.locator('#unlock').click(); };
@@ -174,7 +174,7 @@ fs.mkdirSync(output, { recursive: true });
     assert.equal(await page.locator('.response').count(), 0);
     console.log('PASS private results: no prefetch, passwords, network/malformed/empty/large payloads, distributions, builds, legacy, XSS, lock/reload');
 
-    for (const file of ['preguntas.html','preguntas-en.html']) {
+    for (const file of ['preguntas/','preguntas/en/']) {
       await page.evaluate(() => sessionStorage.clear());
       for (const width of [320,390,768,1440]) {
         await page.setViewportSize({ width, height: 900 }); await page.goto(base + '/' + file);
@@ -202,10 +202,10 @@ fs.mkdirSync(output, { recursive: true });
     await page.locator('#signupMail').fill('english@example.com'); await page.locator('[name=consent]').check();
     await page.locator('#signup button[type=submit]').click(); await page.locator('#signup-receipt').waitFor({ state: 'visible' });
     assert.equal(signups.at(-1).p_language, 'en');
-    assert.match(await page.locator('#withdrawal-link').getAttribute('href'), /retirar-aviso-en/);
+    assert.match(await page.locator('#withdrawal-link').getAttribute('href'), /retirar-aviso\/en\//);
     await page.goto(base);
     assert.equal(await page.locator('.hero__cta a').count(), 1);
-    assert.equal(await page.locator('a[href="preguntas.html"]').count(), 1);
+    assert.equal(await page.locator('a[href="/preguntas/"]').count(), 1);
     assert.equal(await page.locator('a[href*="resultados"]').count(), 0);
     let steamVisits = 0;
     await page.route('https://store.steampowered.com/**', route => { steamVisits++; return route.fulfill({ body: '<title>Steam</title>' }); });
